@@ -36,7 +36,8 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
 
 # Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/dist .
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 USER nestjs
 
@@ -44,4 +45,4 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-CMD [ "node", "main.js" ]
+CMD [ "node", "dist/main.js" ]
