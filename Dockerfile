@@ -1,8 +1,10 @@
-FROM node:latest
+FROM node:18
 WORKDIR /app
 
-COPY . .
+COPY package.json ./
 RUN yarn
 
-RUN ["yarn", "build"]
-CMD ["node", "dist/main.js"]
+COPY . .
+RUN yarn build
+
+CMD [ "node", "dist/main.js" ]
