@@ -697,7 +697,7 @@
     webpack "5.75.0"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^9.0.0":
+"@nestjs/common@^9.3.5":
   version "9.3.5"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-9.3.5.tgz#0fb5eff5ffb865e857b2033ee9df94c74b82bf33"
   integrity sha512-18pEYuE+4Lj6r5kYbgy+S2Udmhxqd80dyVZkEcWt8mIwykVeGAITrJ/NIr26aQXoXXy0J3WNhqT7So3qh32ZZA==
@@ -706,7 +706,7 @@
     iterare "1.2.1"
     tslib "2.5.0"
 
-"@nestjs/core@^9.0.0":
+"@nestjs/core@^9.3.5":
   version "9.3.5"
   resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-9.3.5.tgz#6a16f3452d808c8f0b4728908c75cf6b692380dc"
   integrity sha512-dRVasVaIvNVTvoSXMNDS3aQYPwJt30y59i6i29ZjK+kifmBVgThYLev1tAOLVmao4Pmxcua8NNNAg2UZ2RxlQA==
@@ -4070,7 +4070,7 @@ rxjs@6.6.7, rxjs@^6.6.0:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^7.2.0, rxjs@^7.5.5:
+rxjs@^7.5.5, rxjs@^7.8.0:
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.0.tgz#90a938862a82888ff4c7359811a595e14e1e09a4"
   integrity sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==
