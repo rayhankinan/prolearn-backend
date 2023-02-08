@@ -1,0 +1,11 @@
+{
+  "name": "prolearn-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://gitlab.informatika.org/kelompok-1-k02-proyek-perangkat-lunak/prolearn-backend.git",
+  "author": "rayhankinan <rayhankinan@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/cli": "^9.2.0"
+  }
+}
