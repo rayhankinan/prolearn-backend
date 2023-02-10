@@ -37,7 +37,7 @@ RUN adduser --system --uid 1001 nestjs
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 
 USER nestjs
 
