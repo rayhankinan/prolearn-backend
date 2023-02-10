@@ -2,6 +2,9 @@
 variables:
   SERVICE_NAME: 'prolearn-backend-production'
 
+stages:
+  - deploy
+
 deploy:
   stage: deploy
   only:
