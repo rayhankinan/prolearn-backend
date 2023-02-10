@@ -8,7 +8,7 @@ stages:
 deploy:
   stage: deploy
   only:
-    - master # This pipeline stage will run on this branch alone
+    - prod # This pipeline stage will run on this branch alone
 
   image: google/cloud-sdk:latest # We'll use Google Cloud SDK for Cloud Run related commands
   script:
