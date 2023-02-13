@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  TableInheritance,
-} from 'typeorm';
+import { Column, Entity, TableInheritance } from 'typeorm';
 import Base from '@common/models/base';
 
 @Entity('user')

@@ -5,7 +5,6 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import Base from '@common/models/base';
 import CourseLevel from '@course/enum/course-level';
