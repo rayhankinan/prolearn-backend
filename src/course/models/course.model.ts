@@ -1,7 +1,8 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  Index,
+  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,12 +16,13 @@ import CategoryEntity from '@category/models/category.model';
 @Entity('course')
 class CourseEntity extends Base {
   @PrimaryGeneratedColumn()
-  id: number;
+  readonly id: number;
 
-  @Column({ default: 'No Title' })
+  @Column({ default: 'No Title', type: 'varchar', length: 255 })
+  @Index({ fulltext: true })
   title: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'text' })
   description: string;
 
   @Column({ default: CourseLevel.BEGINNER })
@@ -30,10 +32,11 @@ class CourseEntity extends Base {
   status: CourseStatus;
 
   @OneToMany(() => SectionEntity, (section) => section.course)
-  sections: SectionEntity[];
+  sections: Promise<SectionEntity[]>;
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)
-  categories: CategoryEntity[];
+  @JoinTable({ name: 'course_category' })
+  categories: Promise<CategoryEntity[]>;
 }
 
 export default CourseEntity;
