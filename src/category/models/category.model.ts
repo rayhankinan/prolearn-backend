@@ -11,9 +11,6 @@ import CourseEntity from '@course/models/course.model';
 
 @Entity('category')
 class CategoryEntity extends Base {
-  @PrimaryGeneratedColumn()
-  readonly id: number;
-
   @Column({ type: 'varchar', length: 255 })
   @Index({ fulltext: true })
   title: string;

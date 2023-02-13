@@ -17,9 +17,6 @@ import CourseEntity from '@course/models/course.model';
 @Tree('closure-table')
 @TableInheritance({ column: 'type' })
 class SectionEntity extends Base {
-  @PrimaryGeneratedColumn()
-  readonly id: number;
-
   @Column({ type: 'varchar', length: '255', default: 'No Title' })
   @Index({ fulltext: true })
   title: string;

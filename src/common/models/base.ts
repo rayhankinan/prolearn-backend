@@ -1,11 +1,15 @@
 import {
   CreateDateColumn,
   DeleteDateColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
 
 abstract class Base {
+  @PrimaryGeneratedColumn()
+  readonly id: number;
+
   @CreateDateColumn()
   readonly createdDate: Date;
 
