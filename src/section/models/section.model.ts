@@ -5,16 +5,17 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  TableInheritance,
   Tree,
   TreeChildren,
   TreeParent,
 } from 'typeorm';
 import Base from '@common/models/base';
-import SectionType from '@section/enum/section-type';
 import CourseEntity from '@course/models/course.model';
 
 @Entity('section')
 @Tree('closure-table')
+@TableInheritance({ column: 'type' })
 class SectionEntity extends Base {
   @PrimaryGeneratedColumn()
   readonly id: number;
@@ -28,9 +29,6 @@ class SectionEntity extends Base {
 
   @Column()
   duration: number;
-
-  @Column({ type: 'enum', enum: SectionType, default: SectionType.MATERIAL })
-  type: SectionType;
 
   @ManyToOne(() => CourseEntity, (course) => course.sections)
   @JoinColumn({ name: 'courseId' })
