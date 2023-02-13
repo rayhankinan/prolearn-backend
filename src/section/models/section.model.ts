@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import Base from '@common/models/base';
 import SectionType from '@section/enum/section-type';
+import CourseEntity from '@course/models/course.model';
 
 @Entity('section')
 class SectionEntity extends Base {
@@ -27,8 +28,8 @@ class SectionEntity extends Base {
   @Column()
   type: SectionType;
 
-  // @ManyToOne(() => CourseEntity, (course) => course.sections)
-  // course: CourseEntity;
+  @ManyToOne(() => CourseEntity, (course) => course.sections)
+  course: CourseEntity;
 }
 
 export default SectionEntity;

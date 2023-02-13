@@ -12,6 +12,7 @@
     "baseUrl": "./",
     "paths": {
       "@common/*": ["src/common/*"],
+      "@category/*": ["src/category/*"],
       "@course/*": ["src/course/*"],
       "@section/*": ["src/section/*"],
       "@user/*": ["src/user/*"]
