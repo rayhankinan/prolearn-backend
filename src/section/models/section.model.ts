@@ -19,7 +19,7 @@ class SectionEntity extends Base {
   @PrimaryGeneratedColumn()
   readonly id: number;
 
-  @Column({ default: 'No Title', type: 'varchar', length: '255' })
+  @Column({ type: 'varchar', length: '255', default: 'No Title' })
   @Index({ fulltext: true })
   title: string;
 
@@ -29,7 +29,7 @@ class SectionEntity extends Base {
   @Column()
   duration: number;
 
-  @Column()
+  @Column({ type: 'enum', enum: SectionType, default: SectionType.MATERIAL })
   type: SectionType;
 
   @ManyToOne(() => CourseEntity, (course) => course.sections)

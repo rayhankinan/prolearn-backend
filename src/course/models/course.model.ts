@@ -18,17 +18,17 @@ class CourseEntity extends Base {
   @PrimaryGeneratedColumn()
   readonly id: number;
 
-  @Column({ default: 'No Title', type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, default: 'No Title' })
   @Index({ fulltext: true })
   title: string;
 
   @Column({ nullable: true, type: 'text' })
   description: string;
 
-  @Column({ default: CourseLevel.BEGINNER })
+  @Column({ type: 'enum', enum: CourseLevel, default: CourseLevel.BEGINNER })
   difficulty: CourseLevel;
 
-  @Column({ default: CourseStatus.DRAFT })
+  @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.DRAFT })
   status: CourseStatus;
 
   @OneToMany(() => SectionEntity, (section) => section.course)
