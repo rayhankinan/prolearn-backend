@@ -17,9 +17,6 @@ async function bootstrap() {
   /* Global Middleware */
   app.use(compression());
 
-  /* Logging */
-  app.useLogger(app.get(CloudLogger));
-
   /* API Versioning */
   app.enableVersioning({
     type: VersioningType.URI,
