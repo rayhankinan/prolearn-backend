@@ -5,10 +5,7 @@ import CloudLogger from '@logger/models/cloud-logger';
 const loggerProviders: Provider[] = [
   {
     provide: ProviderEnum.LOGGER,
-    useFactory: () => {
-      const cloudLogger = new CloudLogger();
-      return cloudLogger;
-    },
+    useClass: CloudLogger,
   },
 ];
 
