@@ -11,13 +11,15 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@common/*": ["src/common/*"],
+      "@cache/*": ["src/cache/*"],
       "@category/*": ["src/category/*"],
       "@course/*": ["src/course/*"],
+      "@file/*": ["src/file/*"],
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
       "@section/*": ["src/section/*"],
-      "@user/*": ["src/user/*"]
+      "@user/*": ["src/user/*"],
+      "@video/*": ["src/video/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

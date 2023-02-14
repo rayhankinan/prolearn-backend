@@ -1,17 +1,19 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import ProviderEnum from '@common/enum/provider-enum';
-import CloudLogger from '@logger/models/cloud-logger';
+import { InjectRepository } from '@nestjs/typeorm';
+import CloudLogger from '@logger/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
 
 @Injectable()
 class CategoryService {
+  private readonly cloudLogger: CloudLogger;
+
   constructor(
-    @Inject(ProviderEnum.CATEGORY_REPOSITORY)
+    @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
-    @Inject(ProviderEnum.CATEGORY_LOGGER)
-    private readonly cloudLogger: CloudLogger,
-  ) {}
+  ) {
+    this.cloudLogger = new CloudLogger(CategoryEntity.name);
+  }
 }
 
 export default CategoryService;

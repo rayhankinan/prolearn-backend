@@ -2,18 +2,23 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as compression from 'compression';
-import { AppModule } from './app.module';
+import helmet from 'helmet';
+import AppModule from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
+  /* Global Middleware */
+  app.use(helmet());
+  app.use(compression());
+
+  /* CORS */
+  app.enableCors();
+
   /* Input Validation */
   app.useGlobalPipes(new ValidationPipe());
-
-  /* Global Middleware */
-  app.use(compression());
 
   /* API Versioning */
   app.enableVersioning({
