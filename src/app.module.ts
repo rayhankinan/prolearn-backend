@@ -1,8 +1,8 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RedisClientOptions } from 'redis';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RedisClientOptions } from 'redis';
 import dataSourceOptions from '@database/config/data-source.config';
 import cacheOptions from '@cache/config/cache.config';
 import CategoryModule from '@category/category.module';
