@@ -14,9 +14,11 @@
       "@cache/*": ["src/cache/*"],
       "@category/*": ["src/category/*"],
       "@course/*": ["src/course/*"],
+      "@event/*": ["src/event/*"],
       "@file/*": ["src/file/*"],
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
+      "@queue/*": ["src/queue/*"],
       "@section/*": ["src/section/*"],
       "@user/*": ["src/user/*"],
       "@video/*": ["src/video/*"]

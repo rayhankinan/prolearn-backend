@@ -5,8 +5,8 @@ import { redisStore } from 'cache-manager-redis-yet';
 const cacheOptions: CacheModuleOptions<RedisClientOptions> = {
   store: redisStore,
   socket: {
-    host: process.env.REDIS_HOSTNAME || 'localhost',
-    port: +process.env.REDIS_PORT || 6379,
+    host: process.env.API_CACHE_HOSTNAME || 'localhost',
+    port: +process.env.API_CACHE_PORT || 6379,
   },
 };
 
