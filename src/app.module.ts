@@ -1,16 +1,11 @@
-import { CacheModule, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import type { RedisClientOptions } from 'redis';
-import dataSourceOptions from '@common/config/data-source.config';
+import CategoryModule from '@category/category.module';
 
 /* TODO: ADD CACHING LAYER */
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
-    EventEmitterModule.forRoot(),
-  ],
+  imports: [EventEmitterModule.forRoot(), CategoryModule],
   controllers: [],
   providers: [],
 })

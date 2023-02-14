@@ -9,7 +9,7 @@ import {
   TreeChildren,
   TreeParent,
 } from 'typeorm';
-import Base from '@common/models/base';
+import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
 
 @Entity('section')

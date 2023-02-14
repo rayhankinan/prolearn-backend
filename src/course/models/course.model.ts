@@ -6,7 +6,7 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import Base from '@common/models/base';
+import Base from '@database/models/base';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import SectionEntity from '@section/models/section.model';

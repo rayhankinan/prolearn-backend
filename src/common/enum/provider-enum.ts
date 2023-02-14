@@ -1,0 +1,8 @@
+enum ProviderEnum {
+  DATA_SOURCE = 'DATA_SOURCE',
+  LOGGER = 'LOGGER',
+  CATEGORY_REPOSITORY = 'CATEGORY_REPOSITORY',
+  CATEGORY_LOGGER = 'CATEGORY_LOGGER',
+}
+
+export default ProviderEnum;

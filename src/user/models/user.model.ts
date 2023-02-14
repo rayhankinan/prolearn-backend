@@ -1,6 +1,6 @@
 import { Column, Entity, TableInheritance } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import Base from '@common/models/base';
+import Base from '@database/models/base';
 
 @Entity('user')
 @TableInheritance({ column: 'role' })

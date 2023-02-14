@@ -1,12 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import compression from 'compression';
+import * as compression from 'compression';
+
+import CloudLogger from '@logger/models/cloud-logger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    bufferLogs: true,
   });
 
   /* Input Validation */
@@ -14,6 +16,9 @@ async function bootstrap() {
 
   /* Global Middleware */
   app.use(compression());
+
+  /* Logging */
+  app.useLogger(app.get(CloudLogger));
 
   /* API Versioning */
   app.enableVersioning({
@@ -24,7 +29,6 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('ProLearn API')
     .setDescription('The ProLearn API description')
-    .setVersion('v1')
     .addTag('ProLearn')
     .build();
   const document = SwaggerModule.createDocument(app, options);
