@@ -22,7 +22,8 @@
       "@queue/*": ["src/queue/*"],
       "@section/*": ["src/section/*"],
       "@user/*": ["src/user/*"],
-      "@video/*": ["src/video/*"]
+      "@video/*": ["src/video/*"],
+      "@response/*": ["src/response/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
