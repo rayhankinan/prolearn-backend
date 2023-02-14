@@ -27,7 +27,7 @@ class SectionEntity extends Base {
   duration: number;
 
   @ManyToOne(() => CourseEntity, (course) => course.sections)
-  @JoinColumn({ name: 'courseId' })
+  @JoinColumn({ name: 'course_id' })
   course: Promise<CourseEntity>;
 
   @TreeChildren()

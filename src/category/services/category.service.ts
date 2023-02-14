@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import CloudLogger from '@logger/cloud-logger';
+import CloudLogger from '@logger/cloud.logger';
 import CategoryEntity from '@category/models/category.model';
 
 @Injectable()
