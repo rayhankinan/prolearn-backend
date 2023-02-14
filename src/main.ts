@@ -2,8 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as compression from 'compression';
-
-import CloudLogger from '@logger/models/cloud-logger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
