@@ -6,14 +6,12 @@ import CategoryEntity from '@category/models/category.model';
 
 @Injectable()
 class CategoryService {
-  private readonly cloudLogger: CloudLogger;
-
   constructor(
     @Inject(ProviderEnum.CATEGORY_REPOSITORY)
     private readonly categoryRepository: Repository<CategoryEntity>,
-  ) {
-    this.cloudLogger = new CloudLogger(CategoryEntity.name);
-  }
+    @Inject(ProviderEnum.CATEGORY_LOGGER)
+    private readonly cloudLogger: CloudLogger,
+  ) {}
 }
 
 export default CategoryService;
