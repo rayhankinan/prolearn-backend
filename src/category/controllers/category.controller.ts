@@ -1,17 +1,20 @@
-import { 
-  Get, 
-  Post, 
-  Put, 
-  Delete, 
-  Body, 
-  Query, 
+import {
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Query,
   Param,
   Res,
-  Req,
-  Controller } from '@nestjs/common';
+  Controller,
+  HttpException,
+} from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import CategoryService  from '@category/services/category.service';
-import { ResponseService } from '@response/response.service';
+import { Response } from 'express';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import CategoryService from '@category/services/category.service';
+import ResponseService from '@response/response.service';
 import { CreateCategoryDto } from '@category/dto/create-category';
 import { DeleteCategoryDto } from '@category/dto/delete-category';
 import { UpdateCategoryDto } from '@category/dto/update-category';
@@ -21,62 +24,114 @@ class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,
     private readonly ResponseService: ResponseService,
-    ) {}
+  ) {}
 
   @ApiProperty({ description: 'Get all categories' })
   @Get()
-  async getAllCategories(@Res() res): Promise<any> {
+  async getAllCategories(@Res() res: Response): Promise<any> {
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.ResponseService.json(res, 200, 'Categories fetched successfully', categories);
+      this.ResponseService.json(
+        res,
+        StatusCodes.OK,
+        'Categories fetched successfully',
+        categories,
+      );
     } catch (error) {
-      this.ResponseService.json(res, error);
+      throw new HttpException(
+        ReasonPhrases.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @ApiProperty({ description: 'Get categories by title' })
   @Get()
-  async getCategoriesByTitle(@Query('title') title: string, @Res() res): Promise<any> {
+  async getCategoriesByTitle(
+    @Query('title') title: string,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
-      const categories = await this.categoryService.GetCategoriesByTitle(title);
-      this.ResponseService.json(res, 200, 'Categories fetched successfully', categories);
+      const categories = await this.categoryService.getCategoriesByTitle(title);
+      this.ResponseService.json(
+        res,
+        StatusCodes.OK,
+        'Categories fetched successfully',
+        categories,
+      );
     } catch (error) {
-      this.ResponseService.json(res, error);
+      throw new HttpException(
+        ReasonPhrases.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @ApiProperty({ description: 'Create category' })
   @Post()
-  async createCategory(@Body() body: CreateCategoryDto, @Res() res): Promise<any> {
+  async createCategory(
+    @Body() body: CreateCategoryDto,
+    @Res() res: Response,
+  ): Promise<any> {
     try {
       const category = await this.categoryService.create(body);
-      this.ResponseService.json(res, 201, 'Category created successfully', category);
+      this.ResponseService.json(
+        res,
+        StatusCodes.CREATED,
+        'Category created successfully',
+        category,
+      );
     } catch (error) {
-      this.ResponseService.json(res, error);
+      throw new HttpException(
+        ReasonPhrases.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @ApiProperty({ description: 'Delete category' })
-  @Delete(':id/delete')
-  async deleteCategory(@Param() params: DeleteCategoryDto, @Res() res): Promise<any> {
+  @Delete(':id')
+  async deleteCategory(
+    @Param() params: DeleteCategoryDto,
+    @Res() res: Response,
+  ) {
     try {
       const category = await this.categoryService.delete(params);
-      this.ResponseService.json(res, 200, 'Category deleted successfully', category);
+      this.ResponseService.json(
+        res,
+        StatusCodes.OK,
+        'Category deleted successfully',
+        category,
+      );
     } catch (error) {
-      this.ResponseService.json(res, error);
+      throw new HttpException(
+        ReasonPhrases.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @ApiProperty({ description: 'Update category' })
-  @Put(':id/update')
-  async updateCategory(@Param() params: UpdateCategoryDto, @Res() res): Promise<any> {
+  @Put(':id')
+  async updateCategory(
+    @Param() params: UpdateCategoryDto,
+    @Res() res: Response,
+  ) {
     try {
       const category = await this.categoryService.update(params);
-      this.ResponseService.json(res, 200, 'Category updated successfully', category);
+      this.ResponseService.json(
+        res,
+        StatusCodes.OK,
+        'Category updated successfully',
+        category,
+      );
     } catch (error) {
-      this.ResponseService.json(res, error);
+      throw new HttpException(
+        ReasonPhrases.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+      );
     }
-  }  
+  }
 }
 
 export default CategoryController;

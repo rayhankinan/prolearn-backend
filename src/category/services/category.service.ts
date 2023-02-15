@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import CloudLogger from '@logger/cloud.logger';
 import CategoryEntity from '@category/models/category.model';
@@ -19,52 +19,49 @@ class CategoryService {
   }
 
   async getAllCategories(): Promise<CategoryEntity[]> {
-    // this.cloudLogger.log('Getting all categories');
     const categories = await this.categoryRepository.find();
+
     return categories;
   }
 
-  async GetCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
-    // this.cloudLogger.log('Getting all categories');
-    const db = this.categoryRepository
-    .createQueryBuilder('category');
-    db.where('category.title LIKE :title', { title: `%${title}%` });
-    const categories = await db.getMany();
+  async getCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
+    const categories = await this.categoryRepository.find({
+      where: { title: ILike(`%${title}%`) },
+    });
+
+    this.cloudLogger.log(`GET categories by title: ${title}`);
+
     return categories;
   }
 
   async create(request: CreateCategoryDto): Promise<CategoryEntity> {
-    // this.cloudLogger.log('Creating category');
-    const newCategory = new CategoryEntity();
-    newCategory.title = request.title;
+    const { title } = request;
+
+    const category = new CategoryEntity();
+    category.title = title;
+
+    return await this.categoryRepository.save(category);
+  }
+
+  async delete(request: DeleteCategoryDto): Promise<CategoryEntity> {
+    const { id } = request;
+
     const category = await this.categoryRepository.findOne({
-      where: { title: request.title },
+      where: { id },
     });
-    if (category) {
-      throw new BadRequestException('Category already exists');
-    }
-    return this.categoryRepository.save(newCategory);
+
+    return await this.categoryRepository.remove(category);
   }
 
-  async delete(category: DeleteCategoryDto): Promise<CategoryEntity> {
-    // this.cloudLogger.log('Deleting category');
-    const deleted = await this.categoryRepository.softDelete({ id: category.id });
-    if (deleted.affected === 0) {
-      throw new NotFoundException('Category not found');
-    }
-    return deleted.raw[0];
-  }
+  async update(request: UpdateCategoryDto): Promise<CategoryEntity> {
+    const { id, title } = request;
 
-  async update(category: UpdateCategoryDto): Promise<CategoryEntity> {
-    // this.cloudLogger.log('Updating category');
-    const updated = await this.categoryRepository.update(
-      { id: category.id },
-      { title: category.title },
-    );
-    if (updated.affected === 0) {
-      throw new NotFoundException('Category not found');
-    }
-    return updated.raw[0];
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+    });
+    category.title = title;
+
+    return await this.categoryRepository.save(category);
   }
 }
 
