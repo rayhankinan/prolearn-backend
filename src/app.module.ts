@@ -1,5 +1,5 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
@@ -10,6 +10,7 @@ import eventOptions from '@event/config/event.config';
 import queueOptions from '@queue/config/queue.config';
 import CategoryModule from '@category/category.module';
 import { UserModule } from '@user/user.module';
+import { RolesGuard } from './guard/roles.guard';
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { UserModule } from '@user/user.module';
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
     },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    }
   ],
 })
 class AppModule {}
