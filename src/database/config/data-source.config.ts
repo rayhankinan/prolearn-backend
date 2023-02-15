@@ -8,6 +8,7 @@ import QuizEntity from '@section/models/quiz.model';
 import UserEntity from '@user/models/user.model';
 import AdminEntity from '@user/models/admin.model';
 import StudentEntity from '@user/models/student.model';
+import FileEntity from '@file/models/file.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 
 const dataSourceOptions: DataSourceOptions = {
@@ -21,8 +22,8 @@ const dataSourceOptions: DataSourceOptions = {
     type: 'redis',
     options: {
       socket: {
-        host: process.env.REDIS_HOSTNAME || 'localhost',
-        port: +process.env.REDIS_PORT || 6379,
+        host: process.env.DATABASE_CACHE_HOSTNAME || 'localhost',
+        port: +process.env.DATABASE_CACHE_PORT || 6379,
       },
     },
   },
@@ -38,6 +39,7 @@ const dataSourceOptions: DataSourceOptions = {
     UserEntity,
     AdminEntity,
     StudentEntity,
+    FileEntity,
   ],
   subscribers: [UserSubscriber],
   migrations: [],
