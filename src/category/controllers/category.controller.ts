@@ -21,17 +21,18 @@ import UpdateCategoryDto from '@category/dto/update-category';
 
 @Controller({ path: 'category', version: '1' })
 class CategoryController {
-  constructor(
-    private readonly categoryService: CategoryService,
-    private readonly ResponseService: ResponseService,
-  ) {}
+  private readonly responseService: ResponseService;
+
+  constructor(private readonly categoryService: CategoryService) {
+    this.responseService = new ResponseService();
+  }
 
   @ApiProperty({ description: 'Get all categories' })
   @Get()
   async getAllCategories(@Res() res: Response): Promise<any> {
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.ResponseService.json(
+      this.responseService.json(
         res,
         StatusCodes.OK,
         'Categories fetched successfully',
@@ -53,7 +54,7 @@ class CategoryController {
   ): Promise<any> {
     try {
       const categories = await this.categoryService.getCategoriesByTitle(title);
-      this.ResponseService.json(
+      this.responseService.json(
         res,
         StatusCodes.OK,
         'Categories fetched successfully',
@@ -75,7 +76,7 @@ class CategoryController {
   ): Promise<any> {
     try {
       const category = await this.categoryService.create(body);
-      this.ResponseService.json(
+      this.responseService.json(
         res,
         StatusCodes.CREATED,
         'Category created successfully',
@@ -97,7 +98,7 @@ class CategoryController {
   ) {
     try {
       const category = await this.categoryService.delete(params);
-      this.ResponseService.json(
+      this.responseService.json(
         res,
         StatusCodes.OK,
         'Category deleted successfully',
@@ -119,7 +120,7 @@ class CategoryController {
   ) {
     try {
       const category = await this.categoryService.update(params);
-      this.ResponseService.json(
+      this.responseService.json(
         res,
         StatusCodes.OK,
         'Category updated successfully',
