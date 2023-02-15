@@ -5,7 +5,8 @@ import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
-import UpdateCategoryDto from '@category/dto/update-category';
+import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import UpdateCategoryTitleDto from '@category/dto/update-category-title';
 
 @Injectable()
 class CategoryService {
@@ -19,6 +20,7 @@ class CategoryService {
 
   async getAllCategories(): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find();
+
     return categories;
   }
 
@@ -28,6 +30,14 @@ class CategoryService {
     });
 
     return categories;
+  }
+
+  async getCategoryByTitle(title: string): Promise<CategoryEntity> {
+    const category = await this.categoryRepository.findOne({
+      where: { title },
+    });
+
+    return category;
   }
 
   async create(request: CreateCategoryDto): Promise<CategoryEntity> {
@@ -46,11 +56,12 @@ class CategoryService {
       where: { id },
     });
 
-    return await this.categoryRepository.remove(category);
+    return await this.categoryRepository.softRemove(category);
   }
 
-  async update(request: UpdateCategoryDto): Promise<CategoryEntity> {
-    const { id, title } = request;
+  async update(param: UpdateCategoryIDDto, request: UpdateCategoryTitleDto): Promise<CategoryEntity> {
+    const { title } = request;
+    const { id } = param;
 
     const category = await this.categoryRepository.findOne({
       where: { id },

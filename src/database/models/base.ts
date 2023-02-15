@@ -11,13 +11,13 @@ abstract class Base {
   readonly id: number;
 
   @CreateDateColumn()
-  readonly createdDate: Date;
+  readonly createdAt: Date;
 
   @UpdateDateColumn()
-  readonly updatedDate: Date;
+  readonly updatedAt: Date;
 
   @DeleteDateColumn()
-  readonly deletedDate: Date;
+  readonly deletedAt: Date;
 
   @VersionColumn()
   readonly version: number;

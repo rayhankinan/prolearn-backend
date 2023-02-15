@@ -2,7 +2,7 @@ import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class DeleteCategoryDto {
+class UpdateCategoryIDDto {
   @ApiProperty({
     description: 'Category id',
     required: true,
@@ -12,4 +12,4 @@ class DeleteCategoryDto {
   readonly id: number;
 }
 
-export default DeleteCategoryDto;
+export default UpdateCategoryIDDto;

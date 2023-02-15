@@ -17,7 +17,8 @@ import CategoryService from '@category/services/category.service';
 import ResponseService from '@response/services/response.service';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
-import UpdateCategoryDto from '@category/dto/update-category';
+import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import UpdateCategoryTitleDto from '@category/dto/update-category-title';
 import CategoryEntity from '@category/models/category.model';
 
 @Controller({ path: 'category', version: '1' })
@@ -30,7 +31,7 @@ class CategoryController {
   }
 
   @ApiProperty({ description: 'Get all categories' })
-  @Get()
+  @Get('list')
   async getAllCategories(@Res() res: Response) {
     try {
       const categories = await this.categoryService.getAllCategories();
@@ -48,7 +49,7 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Get categories by title' })
+  @ApiProperty({ description: 'Get categories using query' })
   @Get()
   async getCategoriesByTitle(
     @Query('title') title: string,
@@ -59,7 +60,7 @@ class CategoryController {
       this.responseService.json<CategoryEntity[]>(
         res,
         StatusCodes.OK,
-        'Categories fetched successfully',
+        'Search result fetched successfully',
         categories,
       );
     } catch (error) {
@@ -74,6 +75,15 @@ class CategoryController {
   @Post()
   async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
     try {
+      const isExist = await this.categoryService.getCategoryByTitle(
+        body.title,
+      );
+      if (isExist) {
+        throw new HttpException(
+          'Category already exists',
+          StatusCodes.BAD_REQUEST,
+        );
+      }
       const category = await this.categoryService.create(body);
       this.responseService.json<CategoryEntity>(
         res,
@@ -114,11 +124,12 @@ class CategoryController {
   @ApiProperty({ description: 'Update category' })
   @Put(':id')
   async updateCategory(
-    @Param() params: UpdateCategoryDto,
+    @Param() params: UpdateCategoryIDDto,
+    @Body() body: UpdateCategoryTitleDto,
     @Res() res: Response,
   ) {
     try {
-      const category = await this.categoryService.update(params);
+      const category = await this.categoryService.update(params, body);
       this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.OK,
