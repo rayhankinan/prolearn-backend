@@ -11,7 +11,7 @@ import queueOptions from '@queue/config/queue.config';
 import AuthModule from '@auth/auth.module';
 import CategoryModule from '@category/category.module';
 import UserModule from '@user/user.module';
-import RolesGuard from './guard/roles.guard';
+import RolesGuard from './user/guard/roles.guard';
 
 @Module({
   imports: [
