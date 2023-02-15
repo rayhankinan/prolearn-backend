@@ -15,9 +15,9 @@ import { Response } from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import CategoryService from '@category/services/category.service';
 import ResponseService from '@response/response.service';
-import { CreateCategoryDto } from '@category/dto/create-category';
-import { DeleteCategoryDto } from '@category/dto/delete-category';
-import { UpdateCategoryDto } from '@category/dto/update-category';
+import CreateCategoryDto from '@category/dto/create-category';
+import DeleteCategoryDto from '@category/dto/delete-category';
+import UpdateCategoryDto from '@category/dto/update-category';
 
 @Controller({ path: 'category', version: '1' })
 class CategoryController {

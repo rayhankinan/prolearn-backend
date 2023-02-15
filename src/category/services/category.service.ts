@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ILike, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository } from 'typeorm';
 import CloudLogger from '@logger/cloud.logger';
 import CategoryEntity from '@category/models/category.model';
-import { CreateCategoryDto } from '@category/dto/create-category';
-import { DeleteCategoryDto } from '@category/dto/delete-category';
-import { UpdateCategoryDto } from '@category/dto/update-category';
+import CreateCategoryDto from '@category/dto/create-category';
+import DeleteCategoryDto from '@category/dto/delete-category';
+import UpdateCategoryDto from '@category/dto/update-category';
 
 @Injectable()
 class CategoryService {
@@ -28,9 +28,6 @@ class CategoryService {
     const categories = await this.categoryRepository.find({
       where: { title: ILike(`%${title}%`) },
     });
-
-    this.cloudLogger.log(`GET categories by title: ${title}`);
-
     return categories;
   }
 

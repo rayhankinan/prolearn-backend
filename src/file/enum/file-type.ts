@@ -3,3 +3,5 @@ enum FileType {
   DOCUMENT = 'DOCUMENT',
   BINARY = 'BINARY',
 }
+
+export default FileType;

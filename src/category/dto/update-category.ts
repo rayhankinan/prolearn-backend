@@ -1,8 +1,8 @@
 import { IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateCategoryDto {
-  @ApiProperty({ 
+class UpdateCategoryDto {
+  @ApiProperty({
     description: 'Category title',
     required: true,
   })
@@ -16,3 +16,5 @@ export class UpdateCategoryDto {
   @IsNumber()
   readonly id: number;
 }
+
+export default UpdateCategoryDto;
