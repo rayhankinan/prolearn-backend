@@ -1,12 +1,13 @@
 import { Bucket, DownloadResponse, Storage } from '@google-cloud/storage';
 import storageConfig from '@storage/config/storage.config';
-import CloudLogger from '@logger/cloud.logger';
+import CloudLogger from '@logger/class/cloud-logger';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 class StorageService {
   private readonly bucket: Bucket;
-  private readonly cloudLogger: CloudLogger;
 
-  constructor() {
+  constructor(private readonly cloudLogger: CloudLogger) {
     const storage = new Storage();
 
     this.bucket = storage.bucket(storageConfig.bucketName);

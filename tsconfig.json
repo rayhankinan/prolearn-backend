@@ -20,11 +20,11 @@
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
+      "@response/*": ["src/response/*"],
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
-      "@video/*": ["src/video/*"],
-      "@response/*": ["src/response/*"]
+      "@video/*": ["src/video/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

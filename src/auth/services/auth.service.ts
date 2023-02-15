@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import { verify } from 'argon2';
 import UserEntity from '@user/models/user.model';
 
@@ -20,6 +19,11 @@ class AuthService {
       throw new UnauthorizedException();
     }
 
+    return user;
+  }
+
+  async getUserById(id: number): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { id } });
     return user;
   }
 }

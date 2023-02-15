@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
-import CloudLogger from '@logger/cloud.logger';
+import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
@@ -9,9 +9,8 @@ import UpdateCategoryDto from '@category/dto/update-category';
 
 @Injectable()
 class CategoryService {
-  private readonly cloudLogger: CloudLogger;
-
   constructor(
+    private readonly cloudLogger: CloudLogger,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {
