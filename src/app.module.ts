@@ -1,5 +1,5 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
@@ -8,9 +8,9 @@ import dataSourceOptions from '@database/config/data-source.config';
 import cacheOptions from '@cache/config/cache.config';
 import eventOptions from '@event/config/event.config';
 import queueOptions from '@queue/config/queue.config';
+import AuthModule from '@auth/auth.module';
 import CategoryModule from '@category/category.module';
-import { UserModule } from '@user/user.module';
-import { RolesGuard } from './guard/roles.guard';
+import UserModule from '@user/user.module';
 
 @Module({
   imports: [
@@ -18,8 +18,9 @@ import { RolesGuard } from './guard/roles.guard';
     CacheModule.register<RedisClientOptions>(cacheOptions),
     EventEmitterModule.forRoot(eventOptions),
     BullModule.forRoot(queueOptions),
+    AuthModule,
+    UserModule,
     CategoryModule,
-    UserModule
   ],
   controllers: [],
   providers: [
@@ -27,10 +28,6 @@ import { RolesGuard } from './guard/roles.guard';
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
     },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    }
   ],
 })
 class AppModule {}

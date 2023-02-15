@@ -20,7 +20,6 @@ class CategoryService {
 
   async getAllCategories(): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find();
-
     return categories;
   }
 
@@ -28,6 +27,7 @@ class CategoryService {
     const categories = await this.categoryRepository.find({
       where: { title: ILike(`%${title}%`) },
     });
+
     return categories;
   }
 

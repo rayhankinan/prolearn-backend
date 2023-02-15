@@ -1,30 +1,27 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import UserEntity from "@user/models/user.model";
-import { Repository } from "typeorm";
-import { JwtService } from "@nestjs/jwt";
-import * as argon2 from 'argon2';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { verify } from 'argon2';
+import UserEntity from '@user/models/user.model';
 
 @Injectable()
-export class AuthService {
-    constructor(
-        private readonly jwtService: JwtService,
-        @InjectRepository(UserEntity)
-        private readonly userRepository: Repository<UserEntity>,
-    ) {}
+class AuthService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
-    async validateUser(username: string, password: string): Promise<any> {
-        const user = await this.userRepository.findOne({ where: { username } });
-        if (user && (await argon2.verify(user.password, password))) {
-            return user;
-        }
-        return null;
+  async validateUser(username: string, password: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { username } });
+
+    const isValid = await verify(user.password, password);
+    if (!isValid) {
+      throw new UnauthorizedException();
     }
 
-    async login(user: any) {
-        const payload = { id: user.id, username: user.username };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
-    }
+    return user;
+  }
 }
+
+export default AuthService;

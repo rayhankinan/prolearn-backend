@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
+import SectionType from '@section/enum/section-type';
 
 @Entity('section')
 @Tree('closure-table')
@@ -25,6 +26,9 @@ class SectionEntity extends Base {
 
   @Column()
   duration: number;
+
+  @Column({ type: 'enum', enum: SectionType })
+  readonly type: SectionType;
 
   @ManyToOne(() => CourseEntity, (course) => course.sections)
   @JoinColumn({ name: 'course_id' })
