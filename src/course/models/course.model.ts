@@ -27,7 +27,7 @@ class CourseEntity extends Base {
   @Column({ type: 'enum', enum: CourseLevel, default: CourseLevel.BEGINNER })
   difficulty: CourseLevel;
 
-  @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.DRAFT })
+  @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
 
   @OneToMany(() => SectionEntity, (section) => section.course)
