@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
-import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import CategoryService from '@category/services/category.service';
 import ResponseService from '@response/services/response.service';
 import CreateCategoryDto from '@category/dto/create-category';
@@ -22,9 +22,10 @@ import CategoryEntity from '@category/models/category.model';
 
 @Controller({ path: 'category', version: '1' })
 class CategoryController {
-  private readonly responseService: ResponseService;
-
-  constructor(private readonly categoryService: CategoryService) {
+  constructor(
+    private readonly categoryService: CategoryService,
+    private readonly responseService: ResponseService,
+  ) {
     this.responseService = new ResponseService();
   }
 
