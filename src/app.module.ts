@@ -9,6 +9,7 @@ import cacheOptions from '@cache/config/cache.config';
 import eventOptions from '@event/config/event.config';
 import queueOptions from '@queue/config/queue.config';
 import CategoryModule from '@category/category.module';
+import { UserModule } from '@user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import CategoryModule from '@category/category.module';
     EventEmitterModule.forRoot(eventOptions),
     BullModule.forRoot(queueOptions),
     CategoryModule,
+    UserModule
   ],
   controllers: [],
   providers: [
