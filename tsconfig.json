@@ -21,9 +21,10 @@
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
       "@section/*": ["src/section/*"],
+      "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
       "@video/*": ["src/video/*"],
-      "@response/*": ["src/response/*"],
+      "@response/*": ["src/response/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

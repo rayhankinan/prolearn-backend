@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
-import { isNil, isEmpty } from 'lodash';
+import { isNil } from 'lodash';
 
-export class ResponseObject<T> {
+class ResponseObject<T> {
   @ApiProperty({ description: 'Response message' })
   message?: string;
 
@@ -14,13 +13,12 @@ export class ResponseObject<T> {
   meta?: any;
 }
 
-@Injectable()
 class ResponseService {
   json<T>(
     res: Response,
     status: number,
     message?: string,
-    data?: Record<string, any> | Array<Record<string, any>> | T,
+    data?: Record<string, T> | Array<Record<string, T>> | T,
     meta?: any,
   ): void {
     const response: ResponseObject<typeof data> = {};

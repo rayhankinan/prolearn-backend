@@ -16,15 +16,6 @@ class CategoryService {
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {
     this.cloudLogger = new CloudLogger(CategoryEntity.name);
-
-    this.cloudLogger.log(process.env.POSTGRES_HOSTNAME);
-    this.cloudLogger.log(+process.env.POSTGRES_PORT);
-    this.cloudLogger.log(process.env.POSTGRES_USER);
-    this.cloudLogger.log(process.env.POSTGRES_PASSWORD);
-    this.cloudLogger.log(process.env.POSTGRES_DB);
-
-    this.cloudLogger.log(process.env.DATABASE_CACHE_HOSTNAME);
-    this.cloudLogger.log(+process.env.DATABASE_CACHE_PORT);
   }
 
   async getAllCategories(): Promise<CategoryEntity[]> {

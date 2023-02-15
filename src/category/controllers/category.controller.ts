@@ -14,10 +14,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import CategoryService from '@category/services/category.service';
-import ResponseService from '@response/response.service';
+import ResponseService from '@response/services/response.service';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryDto from '@category/dto/update-category';
+import CategoryEntity from '@category/models/category.model';
 
 @Controller({ path: 'category', version: '1' })
 class CategoryController {
@@ -29,10 +30,10 @@ class CategoryController {
 
   @ApiProperty({ description: 'Get all categories' })
   @Get()
-  async getAllCategories(@Res() res: Response): Promise<any> {
+  async getAllCategories(@Res() res: Response) {
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.responseService.json(
+      this.responseService.json<CategoryEntity[]>(
         res,
         StatusCodes.OK,
         'Categories fetched successfully',
@@ -40,8 +41,8 @@ class CategoryController {
       );
     } catch (error) {
       throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }
@@ -51,10 +52,10 @@ class CategoryController {
   async getCategoriesByTitle(
     @Query('title') title: string,
     @Res() res: Response,
-  ): Promise<any> {
+  ) {
     try {
       const categories = await this.categoryService.getCategoriesByTitle(title);
-      this.responseService.json(
+      this.responseService.json<CategoryEntity[]>(
         res,
         StatusCodes.OK,
         'Categories fetched successfully',
@@ -62,21 +63,18 @@ class CategoryController {
       );
     } catch (error) {
       throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }
 
   @ApiProperty({ description: 'Create category' })
   @Post()
-  async createCategory(
-    @Body() body: CreateCategoryDto,
-    @Res() res: Response,
-  ): Promise<any> {
+  async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
     try {
       const category = await this.categoryService.create(body);
-      this.responseService.json(
+      this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.CREATED,
         'Category created successfully',
@@ -84,8 +82,8 @@ class CategoryController {
       );
     } catch (error) {
       throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }
@@ -98,7 +96,7 @@ class CategoryController {
   ) {
     try {
       const category = await this.categoryService.delete(params);
-      this.responseService.json(
+      this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.OK,
         'Category deleted successfully',
@@ -106,8 +104,8 @@ class CategoryController {
       );
     } catch (error) {
       throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }
@@ -120,7 +118,7 @@ class CategoryController {
   ) {
     try {
       const category = await this.categoryService.update(params);
-      this.responseService.json(
+      this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.OK,
         'Category updated successfully',
@@ -128,8 +126,8 @@ class CategoryController {
       );
     } catch (error) {
       throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }
