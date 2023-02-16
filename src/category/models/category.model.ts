@@ -9,7 +9,6 @@ class CategoryEntity extends Base {
   title: string;
 
   @ManyToMany(() => CourseEntity, (course) => course.categories)
-  @JoinTable({ name: 'course_category' })
   courses: CourseEntity[];
 }
 

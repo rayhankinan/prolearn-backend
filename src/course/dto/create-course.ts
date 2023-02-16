@@ -1,4 +1,4 @@
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
@@ -21,6 +21,7 @@ class CreateCourseDto {
     required: false,
   })
   @IsString()
+  @IsOptional()
   @Type(() => String)
   description: string;
 
@@ -37,6 +38,7 @@ class CreateCourseDto {
     required: false,
   })
   @IsNumber({},{each: true})
+  @IsOptional()
   @Type(() => Number)
   category: number[];
 
@@ -53,6 +55,7 @@ class CreateCourseDto {
     isArray: true,
     required: false,
   })
+  @IsOptional()
   @Type(() => CreateSectionDto)
   section: CreateSectionDto[];
 }
