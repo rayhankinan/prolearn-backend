@@ -35,7 +35,7 @@ class CourseEntity extends Base {
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)
   @JoinTable({ name: 'course_category' })
-  categories: Promise<CategoryEntity[]>;
+  categories: CategoryEntity[];
 
   @ManyToOne(() => AdminEntity, (admin) => admin.courses)
   @JoinColumn({ name: 'admin_id' })

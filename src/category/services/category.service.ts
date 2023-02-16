@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
 import CreateCategoryDto from '@category/dto/create-category';
@@ -38,6 +38,10 @@ class CategoryService {
     });
 
     return category;
+  }
+
+  async getCategoryByIds(ids: Array<number>): Promise<CategoryEntity[]> {
+    return await this.categoryRepository.find({ where: { id: In(ids) }});
   }
 
   async create(request: CreateCategoryDto): Promise<CategoryEntity> {

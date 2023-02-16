@@ -5,7 +5,7 @@ import SectionType from '@section/enum/section-type';
 @ChildEntity('material')
 class MaterialEntity extends SectionEntity {
   @Column({ type: 'enum', enum: SectionType, default: SectionType.MATERIAL })
-  readonly type: SectionType;
+  type: SectionType;
 
   @Column({ type: 'varchar', length: 255 })
   linkToMarkdown: string;

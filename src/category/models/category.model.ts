@@ -10,7 +10,7 @@ class CategoryEntity extends Base {
 
   @ManyToMany(() => CourseEntity, (course) => course.categories)
   @JoinTable({ name: 'course_category' })
-  courses: Promise<CourseEntity[]>;
+  courses: CourseEntity[];
 }
 
 export default CategoryEntity;

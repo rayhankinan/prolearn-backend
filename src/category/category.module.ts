@@ -14,6 +14,7 @@ import ResponseModule from '@response/response.module';
   ],
   providers: [CategoryService],
   controllers: [CategoryController],
+  exports: [CategoryService],
 })
 class CategoryModule {}
 

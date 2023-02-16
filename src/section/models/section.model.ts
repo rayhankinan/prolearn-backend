@@ -28,7 +28,7 @@ class SectionEntity extends Base {
   duration: number;
 
   @Column({ type: 'enum', enum: SectionType })
-  readonly type: SectionType;
+  type: SectionType;
 
   @ManyToOne(() => CourseEntity, (course) => course.sections)
   @JoinColumn({ name: 'course_id' })

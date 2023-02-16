@@ -21,7 +21,7 @@ import UpdateCategoryIDDto from '@category/dto/update-category-id';
 import UpdateCategoryTitleDto from '@category/dto/update-category-title';
 import CategoryEntity from '@category/models/category.model';
 
-@Controller({ path: 'category', version: '1' })
+@Controller('category')
 class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,

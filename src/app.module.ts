@@ -10,6 +10,7 @@ import eventOptions from '@event/config/event.config';
 import queueOptions from '@queue/config/queue.config';
 import AuthModule from '@auth/auth.module';
 import CategoryModule from '@category/category.module';
+import CourseModule from '@course/course.module';
 import UserModule from '@user/user.module';
 import RolesGuard from './user/guard/roles.guard';
 
@@ -22,6 +23,7 @@ import RolesGuard from './user/guard/roles.guard';
     AuthModule,
     UserModule,
     CategoryModule,
+    CourseModule,
   ],
   controllers: [],
   providers: [
