@@ -20,8 +20,8 @@ class FetchCourseDto {
   })
   @IsNumber()
   @IsOptional()
-  @Type(() => Number)
-  title?: number;
+  @Type(() => String)
+  title?: string;
 
   @ApiProperty({
     description: 'Course Difficulty',

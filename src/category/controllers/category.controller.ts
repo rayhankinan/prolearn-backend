@@ -18,7 +18,7 @@ import ResponseService from '@response/services/response.service';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
-import UpdateCategoryTitleDto from '@category/dto/update-category-title';
+import UpdateCategoryTitleDto from '@category/dto/update-category-content';
 import CategoryEntity from '@category/models/category.model';
 
 @Controller('category')
@@ -75,7 +75,9 @@ class CategoryController {
   @Post()
   async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
     try {
-      const category = await this.categoryService.create(body);
+      const { title } = body;
+      const category = await this.categoryService.create(title);
+
       this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.CREATED,
@@ -90,14 +92,16 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Delete category' })
+  @ApiProperty({ description: 'Delete Category' })
   @Delete(':id')
   async deleteCategory(
     @Param() params: DeleteCategoryDto,
     @Res() res: Response,
   ) {
     try {
-      const category = await this.categoryService.delete(params);
+      const { id } = params;
+      const category = await this.categoryService.delete(id);
+
       this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.OK,
@@ -112,7 +116,7 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Update category' })
+  @ApiProperty({ description: 'Update Category' })
   @Put(':id')
   async updateCategory(
     @Param() params: UpdateCategoryIDDto,
@@ -120,7 +124,10 @@ class CategoryController {
     @Res() res: Response,
   ) {
     try {
-      const category = await this.categoryService.update(params, body);
+      const { id } = params;
+      const { title } = body;
+      const category = await this.categoryService.update(id, title);
+
       this.responseService.json<CategoryEntity>(
         res,
         StatusCodes.OK,

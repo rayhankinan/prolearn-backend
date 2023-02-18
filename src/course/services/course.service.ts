@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CourseEntity from '@course/models/course.model';
 import CourseRO from '@course/interface/fetch-course.interface';
 import CreateCourseDto from '@course/dto/create-course';
-import DeleteCourseDto from '@course/dto/delete-course';
-import UpdateCourseDto from '@course/dto/update-course';
-import FetchCourseDto from '@course/dto/fetch-course';
+import UpdateCourseContentDto from '@course/dto/update-course-content';
 import CategoryEntity from '@category/models/category.model';
+import CourseLevel from '@course/enum/course-level';
+import CourseStatus from '@course/enum/course-status';
 
 @Injectable()
 class CourseService {
@@ -16,11 +16,19 @@ class CourseService {
     private readonly cloudLogger: CloudLogger,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
   ) {
     this.cloudLogger = new CloudLogger(CourseEntity.name);
   }
 
-  async fetchCourse(query: FetchCourseDto): Promise<CourseRO> {
+  async fetchCourse(
+    categoryId: number,
+    title: string,
+    difficulty: CourseLevel,
+    limit: number,
+    page: number,
+  ): Promise<CourseRO> {
     const [courses, totalCourse] = await Promise.all([
       this.courseRepository.find({
         relations: {
@@ -28,22 +36,22 @@ class CourseService {
         },
         where: {
           categories: {
-            id: query.categoryId,
+            id: categoryId,
           },
-          title: ILike(`%${query.title}%`),
-          difficulty: query.difficulty,
+          title: ILike(`%${title}%`),
+          difficulty,
         },
         order: {
           createdAt: 'DESC',
         },
-        take: query.limit,
-        skip: (query.page - 1) * query.limit,
+        take: limit,
+        skip: (page - 1) * limit,
       }),
       this.courseRepository.count(),
     ]);
 
-    const totalPage = query.limit ? Math.ceil(totalCourse / query.limit) : 1;
-    const currentPage = query.page ? query.page : 1;
+    const totalPage = limit ? Math.ceil(totalCourse / limit) : 1;
+    const currentPage = page ? page : 1;
     const coursesCount = courses.length;
 
     return { courses, coursesCount, currentPage, totalPage };
@@ -57,17 +65,7 @@ class CourseService {
     return course;
   }
 
-  async getCourseByTitle(title: string): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
-      where: { title },
-    });
-
-    return course;
-  }
-
-  async delete(request: DeleteCourseDto): Promise<CourseEntity> {
-    const { id } = request;
-
+  async delete(id: number): Promise<CourseEntity> {
     const category = await this.courseRepository.findOne({
       where: { id },
     });
@@ -76,16 +74,21 @@ class CourseService {
   }
 
   async create(
-    request: CreateCourseDto,
-    categories: CategoryEntity[],
+    title: string,
+    description: string,
+    difficulty: CourseLevel,
+    categoryIDs: number[],
+    status: CourseStatus,
   ): Promise<CourseEntity> {
-    const { title, description, difficulty, status } = request;
-
     const course = new CourseEntity();
     course.title = title;
     course.description = description;
     course.difficulty = difficulty;
     course.status = status;
+
+    const categories = await this.categoryRepository.find({
+      where: { id: In(categoryIDs) },
+    });
     course.categories = Promise.resolve(categories);
 
     return await this.courseRepository.save(course);
@@ -93,11 +96,12 @@ class CourseService {
 
   async update(
     id: number,
-    request: UpdateCourseDto,
-    categories: CategoryEntity[],
+    title: string,
+    description: string,
+    difficulty: CourseLevel,
+    categoryIDs: number[],
+    status: CourseStatus,
   ): Promise<CourseEntity> {
-    const { title, description, difficulty, status } = request;
-
     const course = await this.courseRepository.findOne({
       where: { id },
     });
@@ -106,6 +110,10 @@ class CourseService {
     course.description = description;
     course.difficulty = difficulty;
     course.status = status;
+
+    const categories = await this.categoryRepository.find({
+      where: { id: In(categoryIDs) },
+    });
     course.categories = Promise.resolve(categories);
 
     return await this.courseRepository.save(course);

@@ -30,7 +30,6 @@ class MaterialService {
     material.objective = objective;
     material.duration = duration;
 
-    /* TO DO: Integrasikan service storage */
     const uuid = uuidv4();
     this.storageService.upload(uuid, StorageType.MARKDOWN, file);
     material.uuid = uuid;

@@ -6,7 +6,7 @@ import CategoryEntity from '@category/models/category.model';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
-import UpdateCategoryTitleDto from '@category/dto/update-category-title';
+import UpdateCategoryContentDto from '@category/dto/update-category-content';
 
 @Injectable()
 class CategoryService {
@@ -22,8 +22,8 @@ class CategoryService {
     return categories;
   }
 
-  async getCategoryByIds(ids: Array<number>): Promise<CategoryEntity[]> {
-    return await this.categoryRepository.find({ where: { id: In(ids) } });
+  async getCategoryByIds(IDs: Array<number>): Promise<CategoryEntity[]> {
+    return await this.categoryRepository.find({ where: { id: In(IDs) } });
   }
 
   async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
@@ -34,18 +34,14 @@ class CategoryService {
     return categories;
   }
 
-  async create(request: CreateCategoryDto): Promise<CategoryEntity> {
-    const { title } = request;
-
+  async create(title: string): Promise<CategoryEntity> {
     const category = new CategoryEntity();
     category.title = title;
 
     return await this.categoryRepository.save(category);
   }
 
-  async delete(request: DeleteCategoryDto): Promise<CategoryEntity> {
-    const { id } = request;
-
+  async delete(id: number): Promise<CategoryEntity> {
     const category = await this.categoryRepository.findOne({
       where: { id },
     });
@@ -53,13 +49,7 @@ class CategoryService {
     return await this.categoryRepository.softRemove(category);
   }
 
-  async update(
-    param: UpdateCategoryIDDto,
-    request: UpdateCategoryTitleDto,
-  ): Promise<CategoryEntity> {
-    const { id } = param;
-    const { title } = request;
-
+  async update(id: number, title: string): Promise<CategoryEntity> {
     const category = await this.categoryRepository.findOne({
       where: { id },
     });

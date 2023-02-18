@@ -41,7 +41,7 @@ class CreateCourseDto {
   @IsNumber({}, { each: true })
   @IsOptional()
   @Type(() => Number)
-  category?: number[];
+  categoryIDs?: number[];
 
   @ApiProperty({
     description: 'Course Status',
@@ -50,15 +50,6 @@ class CreateCourseDto {
   @IsCourseStatus()
   @Type(() => String)
   status: CourseStatus;
-
-  @ApiProperty({
-    description: 'Course Section',
-    isArray: true,
-    required: false,
-  })
-  @IsOptional()
-  @Type(() => CreateSectionDto)
-  section?: CreateSectionDto[];
 }
 
 export default CreateCourseDto;

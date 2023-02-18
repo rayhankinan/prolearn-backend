@@ -18,7 +18,9 @@ import ResponseService from '@response/services/response.service';
 import CategoryService from '@category/services/category.service';
 import CreateCourseDto from '@course/dto/create-course';
 import DeleteCourseDto from '@course/dto/delete-course';
-import UpdateCourseDto from '@course/dto/update-course';
+import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import UpdateCourseContentDto from '@course/dto/update-course-content';
+import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
 import CourseEntity from '@course/models/course.model';
 import CourseRO from '@course/interface/fetch-course.interface';
@@ -28,45 +30,26 @@ export default class CourseController {
   constructor(
     private readonly courseService: CourseService,
     private readonly responseService: ResponseService,
-    private readonly categoryService: CategoryService,
   ) {}
 
-  @ApiProperty({ description: 'Create a course' })
-  @Post()
-  async createCourse(
-    @Body() createCourseDto: CreateCourseDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const category = await this.categoryService.getCategoryByIds(
-        createCourseDto.category,
-      );
-      const course = await this.courseService.create(createCourseDto, category);
-      this.responseService.json<CourseEntity>(
-        res,
-        StatusCodes.CREATED,
-        'Course created successfully',
-        course,
-      );
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
-
-  @ApiProperty({ description: 'Fetch course' })
+  @ApiProperty({ description: 'Fetch Courses' })
   @Get()
   async fetchCourse(@Query() query: FetchCourseDto, @Res() res: Response) {
     try {
-      const { courses, coursesCount, currentPage, totalPage } =
-        await this.courseService.fetchCourse(query);
+      const { categoryId, title, difficulty, limit, page } = query;
+      const courseRO = await this.courseService.fetchCourse(
+        categoryId,
+        title,
+        difficulty,
+        limit,
+        page,
+      );
+
       this.responseService.json<CourseRO>(
         res,
         StatusCodes.OK,
         'Courses fetched successfully',
-        { courses, coursesCount, currentPage, totalPage },
+        courseRO,
       );
     } catch (error) {
       throw new HttpException(
@@ -76,11 +59,16 @@ export default class CourseController {
     }
   }
 
-  @ApiProperty({ description: 'Get one course' })
+  @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
-  async fetchCourseById(@Param('id') id: number, @Res() res: Response) {
+  async fetchCourseById(
+    @Param() params: ReadCourseIDDto,
+    @Res() res: Response,
+  ) {
     try {
+      const { id } = params;
       const course = await this.courseService.getCourseById(id);
+
       this.responseService.json<CourseEntity>(
         res,
         StatusCodes.OK,
@@ -95,22 +83,57 @@ export default class CourseController {
     }
   }
 
-  @ApiProperty({ description: 'Update course' })
-  @Put(':id')
-  async updateCourse(
-    @Param('id') id: number,
-    @Body() updateCourseDto: UpdateCourseDto,
+  @ApiProperty({ description: 'Create A Course' })
+  @Post()
+  async createCourse(
+    @Body() createCourseDto: CreateCourseDto,
     @Res() res: Response,
   ) {
     try {
-      const category = await this.categoryService.getCategoryByIds(
-        updateCourseDto.category,
+      const { title, description, difficulty, categoryIDs, status } =
+        createCourseDto;
+      const course = await this.courseService.create(
+        title,
+        description,
+        difficulty,
+        categoryIDs,
+        status,
       );
+
+      this.responseService.json<CourseEntity>(
+        res,
+        StatusCodes.CREATED,
+        'Course created successfully',
+        course,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Update Course' })
+  @Put(':id')
+  async updateCourse(
+    @Param() params: UpdateCategoryIDDto,
+    @Body() updateCourseDto: UpdateCourseContentDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const { id } = params;
+      const { title, description, difficulty, categoryIDs, status } =
+        updateCourseDto;
       const course = await this.courseService.update(
         id,
-        updateCourseDto,
-        category,
+        title,
+        description,
+        difficulty,
+        categoryIDs,
+        status,
       );
+
       this.responseService.json<CourseEntity>(
         res,
         StatusCodes.OK,
@@ -125,11 +148,13 @@ export default class CourseController {
     }
   }
 
-  @ApiProperty({ description: 'Delete course' })
+  @ApiProperty({ description: 'Delete Course' })
   @Delete(':id')
-  async deleteCourse(@Param() id: DeleteCourseDto, @Res() res: Response) {
+  async deleteCourse(@Param() params: DeleteCourseDto, @Res() res: Response) {
     try {
+      const { id } = params;
       const course = await this.courseService.delete(id);
+
       this.responseService.json<CourseEntity>(
         res,
         StatusCodes.OK,
