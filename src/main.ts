@@ -1,34 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import * as compression from 'compression';
-import helmet from 'helmet';
-import AppModule from './app.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bufferLogs: true,
-  });
+  const app = await NestFactory.create(AppModule);
 
-  /* Global Middleware */
-  app.use(helmet());
-  app.use(compression());
-
-  /* CORS */
-  app.enableCors();
-
-  /* Input Validation */
-  app.useGlobalPipes(new ValidationPipe());
-
-  /* API Versioning */
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
-
-  /* Setup OpenAPI */
   const options = new DocumentBuilder()
     .setTitle('ProLearn API')
     .setDescription('The ProLearn API description')
+    .setVersion('v1')
     .addTag('ProLearn')
     .build();
   const document = SwaggerModule.createDocument(app, options);
