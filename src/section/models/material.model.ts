@@ -7,8 +7,8 @@ class MaterialEntity extends SectionEntity {
   @Column({ type: 'enum', enum: SectionType, default: SectionType.MATERIAL })
   type: SectionType;
 
-  @Column({ type: 'varchar', length: 255 })
-  linkToMarkdown: string;
+  @Column({ type: 'uuid' })
+  uuid: string;
 }
 
 export default MaterialEntity;

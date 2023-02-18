@@ -8,8 +8,8 @@ class FileEntity extends Base {
   @Index({ fulltext: true })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  linkToFile: string;
+  @Column({ type: 'uuid' })
+  uuid: string;
 
   @ManyToOne(() => AdminEntity, (admin) => admin.files)
   @JoinColumn({ name: 'admin_id' })
