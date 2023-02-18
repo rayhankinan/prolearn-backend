@@ -1,18 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
 import { isNil } from 'lodash';
-
-class ResponseObject<T> {
-  @ApiProperty({ description: 'Response message' })
-  message?: string;
-
-  @ApiProperty({ description: 'Response data' })
-  data?: T;
-
-  @ApiProperty({ description: 'Response meta' })
-  meta?: any;
-}
+import ResponseObject from '@response/class/response-object';
 
 @Injectable()
 class ResponseService {

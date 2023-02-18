@@ -19,6 +19,15 @@ class MaterialService {
     private readonly materialRepository: Repository<MaterialEntity>,
   ) {}
 
+  async render(uuid: string): Promise<Buffer> {
+    const downloadResponse = await this.storageService.download(
+      uuid,
+      StorageType.MARKDOWN,
+    );
+
+    return downloadResponse[0];
+  }
+
   async create(
     createMaterialDto: CreateMaterialDto,
     file: Express.Multer.File,

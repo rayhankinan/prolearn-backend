@@ -24,11 +24,11 @@ import UpdateCourseContentDto from '@course/dto/update-course-content';
 import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
 import CourseEntity from '@course/models/course.model';
-import CourseRO from '@course/interface/fetch-course.interface';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
+import ResponsePagination from '@response/class/response-pagination';
 
 @Controller('course')
 export default class CourseController {
@@ -51,7 +51,7 @@ export default class CourseController {
       const { categoryId, title, difficulty, limit, page } = query;
       const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
 
-      const courseRO = await this.courseService.fetchCourse(
+      const courseList = await this.courseService.fetchCourse(
         categoryId,
         title,
         difficulty,
@@ -60,11 +60,11 @@ export default class CourseController {
         adminId,
       );
 
-      this.responseService.json<CourseRO>(
+      this.responseService.json<ResponsePagination<CourseEntity>>(
         res,
         StatusCodes.OK,
         'Courses fetched successfully',
-        courseRO,
+        courseList,
       );
     } catch (error) {
       throw new HttpException(

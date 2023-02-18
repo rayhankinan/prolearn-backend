@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, In, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CourseEntity from '@course/models/course.model';
-import CourseRO from '@course/interface/fetch-course.interface';
 import CategoryEntity from '@category/models/category.model';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import AdminEntity from '@user/models/admin.model';
+import ResponsePagination from '@response/class/response-pagination';
 
 @Injectable()
 class CourseService {
@@ -30,8 +30,8 @@ class CourseService {
     limit: number,
     page: number,
     adminId: number,
-  ): Promise<CourseRO> {
-    const [courses, totalCourse] = await Promise.all([
+  ): Promise<ResponsePagination<CourseEntity>> {
+    const [list, totalList] = await Promise.all([
       this.courseRepository.find({
         relations: {
           categories: true,
@@ -55,11 +55,11 @@ class CourseService {
       this.courseRepository.count(),
     ]);
 
-    const totalPage = limit ? Math.ceil(totalCourse / limit) : 1;
+    const count = list.length;
     const currentPage = page ? page : 1;
-    const coursesCount = courses.length;
+    const totalPage = limit ? Math.ceil(totalList / limit) : 1;
 
-    return { courses, coursesCount, currentPage, totalPage };
+    return { list, count, currentPage, totalPage };
   }
 
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
