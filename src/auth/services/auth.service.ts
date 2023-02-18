@@ -20,7 +20,7 @@ class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload: Payload = { userId: user.id, role: user.role };
+    const payload: Payload = { id: user.id, role: user.role };
 
     return payload;
   }

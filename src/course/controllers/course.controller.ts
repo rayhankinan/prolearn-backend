@@ -41,15 +41,23 @@ export default class CourseController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async fetchCourse(@Query() query: FetchCourseDto, @Res() res: Response) {
+  async fetchCourse(
+    @Request() req: AuthRequest,
+    @Query() query: FetchCourseDto,
+    @Res() res: Response,
+  ) {
     try {
+      const { user } = req;
       const { categoryId, title, difficulty, limit, page } = query;
+      const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
+
       const courseRO = await this.courseService.fetchCourse(
         categoryId,
         title,
         difficulty,
         limit,
         page,
+        adminId,
       );
 
       this.responseService.json<CourseRO>(
@@ -71,12 +79,16 @@ export default class CourseController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourseById(
+    @Request() req: AuthRequest,
     @Param() params: ReadCourseIDDto,
     @Res() res: Response,
   ) {
     try {
+      const { user } = req;
       const { id } = params;
-      const course = await this.courseService.getCourseById(id);
+      const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
+
+      const course = await this.courseService.getCourseById(id, adminId);
 
       this.responseService.json<CourseEntity>(
         res,
@@ -111,7 +123,7 @@ export default class CourseController {
         difficulty,
         status,
         categoryIDs,
-        user.userId,
+        user.id,
       );
 
       this.responseService.json<CourseEntity>(
@@ -150,7 +162,7 @@ export default class CourseController {
         difficulty,
         status,
         categoryIDs,
-        user.userId,
+        user.id,
       );
 
       this.responseService.json<CourseEntity>(
@@ -179,7 +191,7 @@ export default class CourseController {
     try {
       const { user } = req;
       const { id } = params;
-      const course = await this.courseService.delete(id, user.userId);
+      const course = await this.courseService.delete(id, user.id);
 
       this.responseService.json<CourseEntity>(
         res,

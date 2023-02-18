@@ -29,6 +29,7 @@ class CourseService {
     difficulty: CourseLevel,
     limit: number,
     page: number,
+    adminId: number,
   ): Promise<CourseRO> {
     const [courses, totalCourse] = await Promise.all([
       this.courseRepository.find({
@@ -38,6 +39,9 @@ class CourseService {
         where: {
           categories: {
             id: categoryId,
+          },
+          admin: {
+            id: adminId,
           },
           title: ILike(`%${title}%`),
           difficulty,
@@ -58,9 +62,9 @@ class CourseService {
     return { courses, coursesCount, currentPage, totalPage };
   }
 
-  async getCourseById(id: number): Promise<CourseEntity> {
+  async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
-      where: { id },
+      where: { id, admin: { id: adminId } },
     });
 
     return course;

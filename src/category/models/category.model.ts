@@ -1,6 +1,15 @@
-import { Column, Entity, Index, JoinTable, ManyToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+} from 'typeorm';
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
+import AdminEntity from '@user/models/admin.model';
 
 @Entity('category')
 class CategoryEntity extends Base {
@@ -10,7 +19,11 @@ class CategoryEntity extends Base {
 
   @ManyToMany(() => CourseEntity, (course) => course.categories)
   @JoinTable({ name: 'course_category' })
-  courses: CourseEntity[];
+  courses: Promise<CourseEntity[]>;
+
+  @ManyToOne(() => AdminEntity, (admin) => admin.courses)
+  @JoinColumn({ name: 'admin_id' })
+  admin: Promise<AdminEntity>;
 }
 
 export default CategoryEntity;
