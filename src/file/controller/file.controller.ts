@@ -5,6 +5,7 @@ import {
   Delete,
   Body,
   Request,
+  Res,
   Query,
   Param,
   Controller,
@@ -17,6 +18,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
+import { Response } from 'express';
 import FileEntity from '@file/models/file.model';
 import FileService from '@file/services/file.service';
 import ResponseObject from '@response/class/response-object';
@@ -61,11 +63,19 @@ class FileController {
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async renderFile(@Param() param: RenderFileDto) {
+  async renderFile(
+    @Param() param: RenderFileDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
       const { id } = param;
 
-      const buffer = await this.fileService.render(id);
+      const [buffer, mimetype] = await this.fileService.render(id);
+      res.set({
+        'Content-Type': mimetype,
+      });
+
+      console.log(buffer);
 
       return new StreamableFile(buffer);
     } catch (error) {

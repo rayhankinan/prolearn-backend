@@ -9,6 +9,9 @@ class FileEntity extends Base {
   @Index({ fulltext: true })
   name: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  mimetype: string;
+
   @Column({ type: 'uuid' })
   @Exclude()
   uuid: string;

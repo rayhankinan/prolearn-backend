@@ -27,7 +27,7 @@ class StorageService {
   ): Promise<void> {
     await this.bucket
       .file(`${AvailableType.AVAILABLE}/${filetype}/${filename}`)
-      .save(content.buffer);
+      .save(content.buffer, { contentType: content.mimetype });
   }
 
   async download(
