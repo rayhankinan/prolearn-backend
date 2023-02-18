@@ -4,6 +4,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   TableInheritance,
   Tree,
   TreeChildren,
@@ -30,8 +31,7 @@ class SectionEntity extends Base {
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
 
-  @ManyToOne(() => CourseEntity, (course) => course.sections)
-  @JoinColumn({ name: 'course_id' })
+  @OneToOne(() => CourseEntity, (course) => course.parentSection)
   course: Promise<CourseEntity>;
 
   @TreeChildren()

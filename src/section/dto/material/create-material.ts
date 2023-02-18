@@ -2,7 +2,6 @@ import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-/* Create class Create Material DTO based on the model */
 class CreateMaterialDto {
   @ApiProperty({
     description: 'Section title',

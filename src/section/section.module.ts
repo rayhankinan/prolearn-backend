@@ -7,10 +7,17 @@ import MaterialService from './services/material.service';
 import LoggerModule from '@logger/logger.module';
 import ResponseModule from '@response/response.module';
 import StorageModule from '@storage/storage.module';
+import CourseEntity from '@course/models/course.model';
+import AdminEntity from '@user/models/admin.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SectionEntity, MaterialEntity]),
+    TypeOrmModule.forFeature([
+      SectionEntity,
+      MaterialEntity,
+      CourseEntity,
+      AdminEntity,
+    ]),
     LoggerModule,
     ResponseModule,
     StorageModule,
