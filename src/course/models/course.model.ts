@@ -14,6 +14,7 @@ import CourseStatus from '@course/enum/course-status';
 import SectionEntity from '@section/models/section.model';
 import CategoryEntity from '@category/models/category.model';
 import AdminEntity from '@user/models/admin.model';
+import { Exclude } from 'class-transformer';
 
 @Entity('course')
 class CourseEntity extends Base {
@@ -29,6 +30,10 @@ class CourseEntity extends Base {
 
   @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @Exclude()
+  thumbnail: string;
 
   @OneToOne(() => SectionEntity, (section) => section.adjoiningCourse)
   parentSection: Promise<SectionEntity>;

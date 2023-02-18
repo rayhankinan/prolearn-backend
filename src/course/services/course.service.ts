@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, In, Repository } from 'typeorm';
-import CloudLogger from '@logger/class/cloud-logger';
-import CourseEntity from '@course/models/course.model';
+import { v4 as uuidv4 } from 'uuid';
 import CategoryEntity from '@category/models/category.model';
+import CourseEntity from '@course/models/course.model';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
+import CloudLogger from '@logger/class/cloud-logger';
+import StorageService from '@storage/services/storage.service';
+import StorageType from '@storage/enum/storage-type';
 import AdminEntity from '@user/models/admin.model';
 
 @Injectable()
 class CourseService {
   constructor(
     private readonly cloudLogger: CloudLogger,
+    private readonly storageService: StorageService,
     @InjectRepository(AdminEntity)
     private readonly adminRepository: Repository<AdminEntity>,
     @InjectRepository(CourseEntity)
@@ -81,12 +85,19 @@ class CourseService {
     status: CourseStatus,
     categoryIds: number[],
     adminId: number,
+    content?: Express.Multer.File
   ): Promise<CourseEntity> {
     const course = new CourseEntity();
     course.title = title;
     course.description = description;
     course.difficulty = difficulty;
     course.status = status;
+
+    if (content) {
+      const uuid = uuidv4();
+      await this.storageService.upload(uuid, StorageType.IMAGE, content);
+      course.thumbnail = uuid;
+    }
 
     const categories = await this.categoryRepository.find({
       where: { id: In(categoryIds) },
@@ -109,6 +120,7 @@ class CourseService {
     status: CourseStatus,
     categoryIDs: number[],
     adminId: number,
+    content?: Express.Multer.File,
   ): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
@@ -119,6 +131,15 @@ class CourseService {
     course.difficulty = difficulty;
     course.status = status;
 
+    if (course.thumbnail) {
+      await this.storageService.delete(course.thumbnail, StorageType.IMAGE);
+    }
+    if (content) {
+      const uuid = uuidv4();
+      await this.storageService.upload(uuid, StorageType.IMAGE, content);
+      course.thumbnail = uuid;
+    }
+  
     const categories = await this.categoryRepository.find({
       where: { id: In(categoryIDs) },
     });
@@ -128,11 +149,15 @@ class CourseService {
   }
 
   async delete(id: number, adminId: number): Promise<CourseEntity> {
-    const category = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
     });
+    console.log(course);
+    if (course.thumbnail) {
+      await this.storageService.delete(course.thumbnail, StorageType.IMAGE);
+    }
 
-    return await this.courseRepository.softRemove(category);
+    return await this.courseRepository.softRemove(course);
   }
 }
 
