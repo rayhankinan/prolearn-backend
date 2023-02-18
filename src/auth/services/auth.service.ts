@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { verify } from 'argon2';
 import UserEntity from '@user/models/user.model';
+import Payload from '@auth/type/payload';
 
 @Injectable()
 class AuthService {
@@ -11,7 +12,7 @@ class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<UserEntity> {
+  async validateUser(username: string, password: string): Promise<Payload> {
     const user = await this.userRepository.findOne({ where: { username } });
 
     const isValid = await verify(user.password, password);
@@ -19,12 +20,9 @@ class AuthService {
       throw new UnauthorizedException();
     }
 
-    return user;
-  }
+    const payload: Payload = { userId: user.id, role: user.role };
 
-  async getUserById(id: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    return user;
+    return payload;
   }
 }
 

@@ -102,7 +102,7 @@ export default class CourseController {
     @Res() res: Response,
   ) {
     try {
-      const { payload } = req;
+      const { user } = req;
       const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
       const course = await this.courseService.create(
@@ -111,7 +111,7 @@ export default class CourseController {
         difficulty,
         status,
         categoryIDs,
-        payload.userId,
+        user.userId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -139,7 +139,7 @@ export default class CourseController {
     @Res() res: Response,
   ) {
     try {
-      const { payload } = req;
+      const { user } = req;
       const { id } = params;
       const { title, description, difficulty, status, categoryIDs } =
         updateCourseDto;
@@ -150,7 +150,7 @@ export default class CourseController {
         difficulty,
         status,
         categoryIDs,
-        payload.userId,
+        user.userId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -177,9 +177,9 @@ export default class CourseController {
     @Res() res: Response,
   ) {
     try {
-      const { payload } = req;
+      const { user } = req;
       const { id } = params;
-      const course = await this.courseService.delete(id, payload.userId);
+      const course = await this.courseService.delete(id, user.userId);
 
       this.responseService.json<CourseEntity>(
         res,

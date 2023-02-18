@@ -13,6 +13,7 @@ import CategoryModule from '@category/category.module';
 import CourseModule from '@course/course.module';
 import UserModule from '@user/user.module';
 import RolesGuard from './user/guard/roles.guard';
+import FileModule from '@file/file.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import RolesGuard from './user/guard/roles.guard';
     UserModule,
     CategoryModule,
     CourseModule,
+    FileModule,
   ],
   controllers: [],
   providers: [

@@ -10,7 +10,7 @@ class UserController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: AuthRequest) {
-    return await this.userService.login(req.payload);
+    return await this.userService.login(req.user);
   }
 }
 
