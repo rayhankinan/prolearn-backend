@@ -22,7 +22,7 @@ class SectionEntity extends Base {
   title: string;
 
   @Column({ nullable: true, type: 'text' })
-  objective: string;
+  objective?: string;
 
   @Column()
   duration: number;

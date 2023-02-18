@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 class UpdateCategoryTitleDto {
   @ApiProperty({
-    description: 'Category title',
+    description: 'Category Title',
     required: true,
   })
   @IsString()

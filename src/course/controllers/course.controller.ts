@@ -19,8 +19,9 @@ import CategoryService from '@category/services/category.service';
 import CreateCourseDto from '@course/dto/create-course';
 import DeleteCourseDto from '@course/dto/delete-course';
 import UpdateCourseDto from '@course/dto/update-course';
+import FetchCourseDto from '@course/dto/fetch-course';
 import CourseEntity from '@course/models/course.model';
-import { CourseRO } from '@course/interface/fetch-course.interface';
+import CourseRO from '@course/interface/fetch-course.interface';
 
 @Controller('course')
 export default class CourseController {
@@ -32,9 +33,14 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Create a course' })
   @Post()
-  async createCourse(@Body() createCourseDto: CreateCourseDto, @Res() res: Response) {
+  async createCourse(
+    @Body() createCourseDto: CreateCourseDto,
+    @Res() res: Response,
+  ) {
     try {
-      const category = await this.categoryService.getCategoryByIds(createCourseDto.category);
+      const category = await this.categoryService.getCategoryByIds(
+        createCourseDto.category,
+      );
       const course = await this.courseService.create(createCourseDto, category);
       this.responseService.json<CourseEntity>(
         res,
@@ -44,40 +50,37 @@ export default class CourseController {
       );
     } catch (error) {
       throw new HttpException(
-        (error as Error).message, 
-        StatusCodes.BAD_REQUEST);
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
 
   @ApiProperty({ description: 'Fetch course' })
   @Get()
-  async fetchCourse(
-    @Query() query, 
-    @Res() res: Response
-  ) {
+  async fetchCourse(@Query() query: FetchCourseDto, @Res() res: Response) {
     try {
-      const {courses, coursesCount, currentPage, totalPage} = await this.courseService.fetchCourse(query);
+      const { courses, coursesCount, currentPage, totalPage } =
+        await this.courseService.fetchCourse(query);
       this.responseService.json<CourseRO>(
         res,
         StatusCodes.OK,
         'Courses fetched successfully',
-        {courses, coursesCount, currentPage, totalPage},
+        { courses, coursesCount, currentPage, totalPage },
       );
     } catch (error) {
       throw new HttpException(
-        (error as Error).message, 
-        StatusCodes.BAD_REQUEST);
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
 
   @ApiProperty({ description: 'Get one course' })
   @Get(':id')
-  async fetchCourseById(
-    @Param('id') id: number,
-    @Res() res: Response
-  ) {
+  async fetchCourseById(@Param('id') id: number, @Res() res: Response) {
     try {
-      const course = await this.courseService.fetchCourseById(id);
+      const course = await this.courseService.getCourseById(id);
       this.responseService.json<CourseEntity>(
         res,
         StatusCodes.OK,
@@ -86,8 +89,9 @@ export default class CourseController {
       );
     } catch (error) {
       throw new HttpException(
-        (error as Error).message, 
-        StatusCodes.BAD_REQUEST);
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
 
@@ -96,11 +100,17 @@ export default class CourseController {
   async updateCourse(
     @Param('id') id: number,
     @Body() updateCourseDto: UpdateCourseDto,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     try {
-      const category = await this.categoryService.getCategoryByIds(updateCourseDto.category);
-      const course = await this.courseService.update(id, updateCourseDto, category);
+      const category = await this.categoryService.getCategoryByIds(
+        updateCourseDto.category,
+      );
+      const course = await this.courseService.update(
+        id,
+        updateCourseDto,
+        category,
+      );
       this.responseService.json<CourseEntity>(
         res,
         StatusCodes.OK,
@@ -109,17 +119,15 @@ export default class CourseController {
       );
     } catch (error) {
       throw new HttpException(
-        (error as Error).message, 
-        StatusCodes.BAD_REQUEST);
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
 
   @ApiProperty({ description: 'Delete course' })
   @Delete(':id')
-  async deleteCourse(
-    @Param() id: DeleteCourseDto,
-    @Res() res: Response
-  ) {
+  async deleteCourse(@Param() id: DeleteCourseDto, @Res() res: Response) {
     try {
       const course = await this.courseService.delete(id);
       this.responseService.json<CourseEntity>(
@@ -130,9 +138,9 @@ export default class CourseController {
       );
     } catch (error) {
       throw new HttpException(
-        (error as Error).message, 
-        StatusCodes.BAD_REQUEST);
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
     }
   }
-
 }

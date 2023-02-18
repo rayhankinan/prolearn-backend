@@ -14,9 +14,7 @@ class CategoryService {
     private readonly cloudLogger: CloudLogger,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
-  ) {
-    this.cloudLogger = new CloudLogger(CategoryEntity.name);
-  }
+  ) {}
 
   async getAllCategories(): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find();
@@ -24,24 +22,16 @@ class CategoryService {
     return categories;
   }
 
-  async getCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
+  async getCategoryByIds(ids: Array<number>): Promise<CategoryEntity[]> {
+    return await this.categoryRepository.find({ where: { id: In(ids) } });
+  }
+
+  async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find({
       where: { title: ILike(`%${title}%`) },
     });
 
     return categories;
-  }
-
-  async getCategoryByTitle(title: string): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
-      where: { title },
-    });
-
-    return category;
-  }
-
-  async getCategoryByIds(ids: Array<number>): Promise<CategoryEntity[]> {
-    return await this.categoryRepository.find({ where: { id: In(ids) }});
   }
 
   async create(request: CreateCategoryDto): Promise<CategoryEntity> {
@@ -63,9 +53,12 @@ class CategoryService {
     return await this.categoryRepository.softRemove(category);
   }
 
-  async update(param: UpdateCategoryIDDto, request: UpdateCategoryTitleDto): Promise<CategoryEntity> {
-    const { title } = request;
+  async update(
+    param: UpdateCategoryIDDto,
+    request: UpdateCategoryTitleDto,
+  ): Promise<CategoryEntity> {
     const { id } = param;
+    const { title } = request;
 
     const category = await this.categoryRepository.findOne({
       where: { id },

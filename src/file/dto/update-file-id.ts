@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class UpdateCategoryIDDto {
+class UpdateFileIDDto {
   @ApiProperty({
-    description: 'Category ID',
+    description: 'File ID',
     required: true,
   })
   @IsNumber()
@@ -12,4 +12,4 @@ class UpdateCategoryIDDto {
   readonly id: number;
 }
 
-export default UpdateCategoryIDDto;
+export default UpdateFileIDDto;

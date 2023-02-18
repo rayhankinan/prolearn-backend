@@ -1,12 +1,10 @@
-//create section dto
-
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import SectionType from 'src/section/enum/section-type';
-import { IsSectionType } from 'src/section/validator/section-validator';
+import SectionType from '@section/enum/section-type';
+import IsSectionType from '@section/validator/section-validator';
 
-//create class Create Section DTO based on the model
+/* Create class Create Section DTO based on the model */
 class CreateSectionDto {
   @ApiProperty({
     description: 'Section title',
@@ -21,8 +19,9 @@ class CreateSectionDto {
     required: false,
   })
   @IsString()
+  @IsOptional()
   @Type(() => String)
-  objective: string;
+  objective?: string;
 
   @ApiProperty({
     description: 'Section duration',
@@ -41,20 +40,21 @@ class CreateSectionDto {
   type: SectionType;
 
   @ApiProperty({
-    description: 'Section linkToMarkdown',
-    required: false,
+    description: 'Section content',
+    required: true,
   })
   @IsString()
   @Type(() => String)
-  linkToMarkdown: string;
+  markdown: string;
 
   @ApiProperty({
     description: 'Section parent',
     required: false,
   })
   @IsNumber()
+  @IsOptional()
   @Type(() => Number)
-  parent: number;
+  parent?: number;
 }
 
 export default CreateSectionDto;

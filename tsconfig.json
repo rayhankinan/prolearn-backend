@@ -24,6 +24,7 @@
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
+      "@validator/*": ["src/validator/*"],
       "@video/*": ["src/video/*"]
     },
     "incremental": true,

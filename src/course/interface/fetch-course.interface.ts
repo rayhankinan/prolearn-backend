@@ -1,8 +1,10 @@
 import CourseEntity from '@course/models/course.model';
 
-export interface CourseRO {
+interface CourseRO {
   courses: CourseEntity[];
   coursesCount: number;
   currentPage: number;
   totalPage: number;
 }
+
+export default CourseRO;

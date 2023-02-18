@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
 import { isNil } from 'lodash';
@@ -13,6 +14,7 @@ class ResponseObject<T> {
   meta?: any;
 }
 
+@Injectable()
 class ResponseService {
   json<T>(
     res: Response,

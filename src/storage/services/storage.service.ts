@@ -1,7 +1,7 @@
+import { Injectable } from '@nestjs/common';
 import { Bucket, DownloadResponse, Storage } from '@google-cloud/storage';
 import storageConfig from '@storage/config/storage.config';
 import CloudLogger from '@logger/class/cloud-logger';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 class StorageService {

@@ -22,7 +22,7 @@ class CourseEntity extends Base {
   title: string;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description?: string;
 
   @Column({ type: 'enum', enum: CourseLevel, default: CourseLevel.BEGINNER })
   difficulty: CourseLevel;
@@ -35,7 +35,7 @@ class CourseEntity extends Base {
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)
   @JoinTable({ name: 'course_category' })
-  categories: CategoryEntity[];
+  categories: Promise<CategoryEntity[]>;
 
   @ManyToOne(() => AdminEntity, (admin) => admin.courses)
   @JoinColumn({ name: 'admin_id' })

@@ -3,13 +3,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
-import { IsCourseLevel, IsCourseStatus } from '@course/validator/course-validator';
+import IsCourseLevel from '@course/validator/course-level';
+import IsCourseStatus from '@course/validator/course-status';
 import CreateSectionDto from '@section/dto/create-section';
 
-//create class Create Course DTO based on the model
 class CreateCourseDto {
   @ApiProperty({
-    description: 'Course title',
+    description: 'Course Title',
     required: true,
   })
   @IsString()
@@ -17,33 +17,34 @@ class CreateCourseDto {
   title: string;
 
   @ApiProperty({
-    description: 'Course description',
+    description: 'Course Description',
     required: false,
   })
   @IsString()
   @IsOptional()
   @Type(() => String)
-  description: string;
+  description?: string;
 
   @ApiProperty({
-    description: 'Course difficulty',
+    description: 'Course Difficulty',
     required: true,
   })
   @IsCourseLevel()
+  @Type(() => String)
   difficulty: CourseLevel;
 
   @ApiProperty({
-    description: 'Course category',
+    description: 'Course Category',
     isArray: true,
     required: false,
   })
-  @IsNumber({},{each: true})
+  @IsNumber({}, { each: true })
   @IsOptional()
   @Type(() => Number)
-  category: number[];
+  category?: number[];
 
   @ApiProperty({
-    description: 'Course status',
+    description: 'Course Status',
     required: true,
   })
   @IsCourseStatus()
@@ -51,13 +52,13 @@ class CreateCourseDto {
   status: CourseStatus;
 
   @ApiProperty({
-    description: 'Course section',
+    description: 'Course Section',
     isArray: true,
     required: false,
   })
   @IsOptional()
   @Type(() => CreateSectionDto)
-  section: CreateSectionDto[];
+  section?: CreateSectionDto[];
 }
 
 export default CreateCourseDto;

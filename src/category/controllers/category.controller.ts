@@ -26,9 +26,7 @@ class CategoryController {
   constructor(
     private readonly categoryService: CategoryService,
     private readonly responseService: ResponseService,
-  ) {
-    this.responseService = new ResponseService();
-  }
+  ) {}
 
   @ApiProperty({ description: 'Get all categories' })
   @Get('list')
@@ -49,14 +47,16 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Get categories using query' })
+  @ApiProperty({ description: 'Search Categories using Query' })
   @Get()
   async getCategoriesByTitle(
     @Query('title') title: string,
     @Res() res: Response,
   ) {
     try {
-      const categories = await this.categoryService.getCategoriesByTitle(title);
+      const categories = await this.categoryService.searchCategoriesByTitle(
+        title,
+      );
       this.responseService.json<CategoryEntity[]>(
         res,
         StatusCodes.OK,
@@ -71,19 +71,10 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Create category' })
+  @ApiProperty({ description: 'Create Category' })
   @Post()
   async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
     try {
-      const isExist = await this.categoryService.getCategoryByTitle(
-        body.title,
-      );
-      if (isExist) {
-        throw new HttpException(
-          'Category already exists',
-          StatusCodes.BAD_REQUEST,
-        );
-      }
       const category = await this.categoryService.create(body);
       this.responseService.json<CategoryEntity>(
         res,

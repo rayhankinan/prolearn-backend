@@ -1,10 +1,10 @@
-import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class DeleteCategoryDto {
   @ApiProperty({
-    description: 'Category id',
+    description: 'Category ID',
     required: true,
   })
   @IsNumber()
