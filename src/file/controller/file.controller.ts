@@ -75,8 +75,6 @@ class FileController {
         'Content-Type': mimetype,
       });
 
-      console.log(buffer);
-
       return new StreamableFile(buffer);
     } catch (error) {
       throw new HttpException(

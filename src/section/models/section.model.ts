@@ -13,7 +13,7 @@ import CourseEntity from '@course/models/course.model';
 import SectionType from '@section/enum/section-type';
 
 @Entity('section')
-@Tree('closure-table')
+@Tree('closure-table', { closureTableName: 'section_closure' })
 @TableInheritance({ column: 'type' })
 class SectionEntity extends Base {
   @Column({ type: 'varchar', length: 255, default: 'No Title' })
@@ -29,8 +29,8 @@ class SectionEntity extends Base {
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
 
-  @OneToOne(() => CourseEntity, (course) => course.parentSection)
-  course: Promise<CourseEntity>;
+  @OneToOne(() => CourseEntity)
+  adjoiningCourse: Promise<CourseEntity>;
 
   @TreeChildren()
   children: Promise<SectionEntity[]>;
