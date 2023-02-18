@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, TreeRepository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import CloudLogger from '@logger/class/cloud-logger';
 import MaterialEntity from '@section/models/material.model';
-import SectionService from '@section/services/section.service';
 import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
 import CourseEntity from '@course/models/course.model';
+import SectionEntity from '@section/models/section.model';
 
 @Injectable()
 class MaterialService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     private readonly storageService: StorageService,
-    private readonly sectionService: SectionService,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(SectionEntity)
+    private readonly sectionRepository: TreeRepository<SectionEntity>,
     @InjectRepository(MaterialEntity)
     private readonly materialRepository: Repository<MaterialEntity>,
   ) {}
@@ -51,7 +52,9 @@ class MaterialService {
     await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
     material.uuid = uuid;
 
-    const parent = await this.sectionService.getSectionById(parentId);
+    const parent = await this.sectionRepository.findOne({
+      where: { id: parentId },
+    });
     material.parent = Promise.resolve(parent);
 
     const adjoinedCourse = await this.courseRepository.findOne({
@@ -85,7 +88,9 @@ class MaterialService {
     await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
     material.uuid = uuid;
 
-    const parent = await this.sectionService.getSectionById(parentId);
+    const parent = await this.sectionRepository.findOne({
+      where: { id: parentId },
+    });
     material.parent = Promise.resolve(parent);
 
     const adjoinedCourse = await this.courseRepository.findOne({

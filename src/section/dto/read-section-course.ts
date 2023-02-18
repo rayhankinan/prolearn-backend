@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class RenderMaterialDto {
+class ReadSectionCourseDto {
   @ApiProperty({
-    description: 'Material ID',
+    description: 'Course ID',
     required: true,
   })
   @IsNumber()
   @Type(() => Number)
-  readonly id: number;
+  readonly courseId: number;
 }
 
-export default RenderMaterialDto;
+export default ReadSectionCourseDto;

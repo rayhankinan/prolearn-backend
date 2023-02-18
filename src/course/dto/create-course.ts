@@ -14,7 +14,7 @@ class CreateCourseDto {
   })
   @IsString()
   @Type(() => String)
-  title: string;
+  readonly title: string;
 
   @ApiProperty({
     description: 'Course Description',
@@ -23,7 +23,7 @@ class CreateCourseDto {
   @IsOptional()
   @IsString()
   @Type(() => String)
-  description?: string;
+  readonly description?: string;
 
   @ApiProperty({
     description: 'Course Difficulty',
@@ -31,7 +31,7 @@ class CreateCourseDto {
   })
   @IsCourseLevel()
   @Type(() => String)
-  difficulty: CourseLevel;
+  readonly difficulty: CourseLevel;
 
   @ApiProperty({
     description: 'Course Category',
@@ -41,7 +41,7 @@ class CreateCourseDto {
   @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
-  categoryIDs?: number[];
+  readonly categoryIDs?: number[];
 
   @ApiProperty({
     description: 'Course Status',
@@ -49,7 +49,7 @@ class CreateCourseDto {
   })
   @IsCourseStatus()
   @Type(() => String)
-  status: CourseStatus;
+  readonly status: CourseStatus;
 }
 
 export default CreateCourseDto;

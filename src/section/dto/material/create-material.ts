@@ -9,7 +9,7 @@ class CreateMaterialDto {
   })
   @IsString()
   @Type(() => String)
-  title: string;
+  readonly title: string;
 
   @ApiProperty({
     description: 'Section Objective',
@@ -18,7 +18,7 @@ class CreateMaterialDto {
   @IsOptional()
   @IsString()
   @Type(() => String)
-  objective?: string;
+  readonly objective?: string;
 
   @ApiProperty({
     description: 'Section Duration',
@@ -26,7 +26,7 @@ class CreateMaterialDto {
   })
   @IsNumber()
   @Type(() => Number)
-  duration: number;
+  readonly duration: number;
 
   @ApiProperty({
     description: 'Section Parent',
@@ -35,7 +35,16 @@ class CreateMaterialDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  parentId?: number;
+  readonly parentId?: number;
+
+  @ApiProperty({
+    description: 'Section Adjoined Course',
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  readonly adjoinedCourseId?: number;
 }
 
 export default CreateMaterialDto;

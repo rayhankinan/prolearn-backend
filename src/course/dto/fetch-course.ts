@@ -12,7 +12,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  categoryId?: number;
+  readonly categoryId?: number;
 
   @ApiProperty({
     description: 'Course Title',
@@ -21,7 +21,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsString()
   @Type(() => String)
-  title?: string;
+  readonly title?: string;
 
   @ApiProperty({
     description: 'Course Difficulty',
@@ -30,7 +30,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsCourseLevel()
   @Type(() => String)
-  difficulty?: CourseLevel;
+  readonly difficulty?: CourseLevel;
 
   @ApiProperty({
     description: 'Page Limit',
@@ -39,7 +39,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  limit?: number;
+  readonly limit?: number;
 
   @ApiProperty({
     description: 'Page Number',
@@ -48,7 +48,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  page?: number;
+  readonly page?: number;
 }
 
 export default FetchCourseDto;

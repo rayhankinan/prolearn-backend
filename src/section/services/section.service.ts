@@ -4,25 +4,16 @@ import { ILike, Repository, TreeRepository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import SectionEntity from '@section/models/section.model';
 import CourseEntity from '@course/models/course.model';
-import SectionType from '@section/enum/section-type';
 
 @Injectable()
 class SectionService {
   constructor(
-    public readonly cloudLogger: CloudLogger,
+    private readonly cloudLogger: CloudLogger,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(SectionEntity)
     private readonly sectionRepository: TreeRepository<SectionEntity>,
   ) {}
-
-  async getSectionById(id: number): Promise<SectionEntity> {
-    const section = await this.sectionRepository.findOne({
-      where: { id },
-    });
-
-    return section;
-  }
 
   async getSectionByCourse(courseId: number): Promise<SectionEntity> {
     const course = await this.courseRepository.findOne({
