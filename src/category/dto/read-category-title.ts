@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class UpdateFileNameDto {
+class ReadCategoryTitleDto {
   @ApiProperty({
-    description: 'File Name',
+    description: 'Category Title',
     required: true,
   })
   @IsString()
   @Type(() => String)
-  readonly name: string;
+  readonly title: string;
 }
 
-export default UpdateFileNameDto;
+export default ReadCategoryTitleDto;

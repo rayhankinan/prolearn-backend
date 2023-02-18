@@ -8,10 +8,10 @@ import ResponseObject from '@response/class/response-object';
 class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   async login(@Request() req: AuthRequest) {
-    const token = await this.userService.login(req.user);
+    const token = await this.userService.tokenize(req.user);
 
     return new ResponseObject<string>('Login is successful', token);
   }

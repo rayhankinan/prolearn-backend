@@ -1,4 +1,5 @@
 import { ChildEntity, Column } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import SectionEntity from '@section/models/section.model';
 import SectionType from '@section/enum/section-type';
 
@@ -8,6 +9,7 @@ class MaterialEntity extends SectionEntity {
   type: SectionType;
 
   @Column({ type: 'uuid' })
+  @Exclude()
   uuid: string;
 }
 

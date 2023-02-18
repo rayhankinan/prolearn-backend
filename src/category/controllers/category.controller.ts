@@ -17,6 +17,7 @@ import CategoryEntity from '@category/models/category.model';
 import CategoryService from '@category/services/category.service';
 import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
+import ReadCategoryTitleDto from '@category/dto/read-category-title';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
@@ -32,7 +33,7 @@ class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @ApiProperty({ description: 'Get All Categories' })
-  @Get('list')
+  @Get('all')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getAllCategories() {
@@ -55,14 +56,16 @@ class CategoryController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async getCategoriesByTitle(@Query('title') title: string) {
+  async getCategoriesByTitle(@Query() query: ReadCategoryTitleDto) {
     try {
+      const { title } = query;
+
       const categories = await this.categoryService.searchCategoriesByTitle(
         title,
       );
 
       return new ResponseList<CategoryEntity>(
-        'Search result fetched successfully',
+        'Categories searched successfully',
         categories,
       );
     } catch (error) {

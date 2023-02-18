@@ -5,6 +5,7 @@ import FileService from './services/file.service';
 import LoggerModule from '@logger/logger.module';
 import StorageModule from '@storage/storage.module';
 import AdminEntity from '@user/models/admin.model';
+import FileController from '@file/controller/file.controller';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import AdminEntity from '@user/models/admin.model';
     StorageModule,
   ],
   providers: [FileService],
-  controllers: [],
+  controllers: [FileController],
 })
 class FileModule {}
 

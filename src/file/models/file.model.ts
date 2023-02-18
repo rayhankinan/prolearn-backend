@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import Base from '@database/models/base';
 import AdminEntity from '@user/models/admin.model';
+import { Exclude } from 'class-transformer';
 
 @Entity('file')
 class FileEntity extends Base {
@@ -9,6 +10,7 @@ class FileEntity extends Base {
   name: string;
 
   @Column({ type: 'uuid' })
+  @Exclude()
   uuid: string;
 
   @ManyToOne(() => AdminEntity, (admin) => admin.files)

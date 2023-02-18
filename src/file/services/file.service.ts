@@ -19,6 +19,14 @@ class FileService {
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
+  async getAllFiles(adminId: number): Promise<FileEntity[]> {
+    const files = await this.fileRepository.find({
+      where: { admin: { id: adminId } },
+    });
+
+    return files;
+  }
+
   async render(fileId: number): Promise<Buffer> {
     const file = await this.fileRepository.findOne({
       where: { id: fileId },
@@ -30,14 +38,6 @@ class FileService {
     );
 
     return downloadResponse[0];
-  }
-
-  async getAllFiles(adminId: number): Promise<FileEntity[]> {
-    const files = await this.fileRepository.find({
-      where: { admin: { id: adminId } },
-    });
-
-    return files;
   }
 
   async searchFilesByName(
@@ -84,6 +84,7 @@ class FileService {
 
     /* Soft Deletion in Object Storage */
     await this.storageService.delete(file.uuid, StorageType.FILE);
+
     const uuid = uuidv4();
     await this.storageService.upload(uuid, StorageType.FILE, content);
     file.uuid = uuid;

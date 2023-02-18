@@ -15,7 +15,7 @@ class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async login(payload: Payload) {
+  async tokenize(payload: Payload) {
     return this.jwtService.sign(payload);
   }
 }
