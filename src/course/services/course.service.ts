@@ -7,7 +7,6 @@ import CategoryEntity from '@category/models/category.model';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import AdminEntity from '@user/models/admin.model';
-import ResponsePagination from '@response/class/response-pagination';
 
 @Injectable()
 class CourseService {
@@ -30,8 +29,13 @@ class CourseService {
     limit: number,
     page: number,
     adminId: number,
-  ): Promise<ResponsePagination<CourseEntity>> {
-    const [list, totalList] = await Promise.all([
+  ): Promise<{
+    courses: CourseEntity[];
+    count: number;
+    currentPage: number;
+    totalPage: number;
+  }> {
+    const [courses, total] = await Promise.all([
       this.courseRepository.find({
         relations: {
           categories: true,
@@ -55,11 +59,11 @@ class CourseService {
       this.courseRepository.count(),
     ]);
 
-    const count = list.length;
+    const count = courses.length;
     const currentPage = page ? page : 1;
-    const totalPage = limit ? Math.ceil(totalList / limit) : 1;
+    const totalPage = limit ? Math.ceil(total / limit) : 1;
 
-    return { list, count, currentPage, totalPage };
+    return { courses, count, currentPage, totalPage };
   }
 
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {

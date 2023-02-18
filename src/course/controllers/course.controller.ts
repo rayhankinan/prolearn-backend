@@ -6,17 +6,16 @@ import {
   Body,
   Query,
   Param,
-  Res,
   Controller,
   HttpException,
   UseGuards,
   Request,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import CourseService from '@course/services/course.service';
-import ResponseService from '@response/services/response.service';
+import ResponseObject from '@response/class/response-object';
+import ResponsePagination from '@response/class/response-pagination';
 import CreateCourseDto from '@course/dto/create-course';
 import DeleteCourseDto from '@course/dto/delete-course';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
@@ -28,15 +27,11 @@ import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
-import ResponsePagination from '@response/class/response-pagination';
 import RolesGuard from '@user/guard/roles.guard';
 
 @Controller('course')
 export default class CourseController {
-  constructor(
-    private readonly courseService: CourseService,
-    private readonly responseService: ResponseService,
-  ) {}
+  constructor(private readonly courseService: CourseService) {}
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
@@ -45,7 +40,6 @@ export default class CourseController {
   async fetchCourse(
     @Request() req: AuthRequest,
     @Query() query: FetchCourseDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -53,20 +47,22 @@ export default class CourseController {
       const courseName = title ? title : '';
       const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
 
-      const courseList = await this.courseService.fetchCourse(
-        categoryId,
-        courseName,
-        difficulty,
-        limit,
-        page,
-        adminId,
-      );
+      const { courses, count, currentPage, totalPage } =
+        await this.courseService.fetchCourse(
+          categoryId,
+          courseName,
+          difficulty,
+          limit,
+          page,
+          adminId,
+        );
 
-      this.responseService.json<ResponsePagination<CourseEntity>>(
-        res,
-        StatusCodes.OK,
+      return new ResponsePagination<CourseEntity>(
         'Courses fetched successfully',
-        courseList,
+        courses,
+        count,
+        currentPage,
+        totalPage,
       );
     } catch (error) {
       throw new HttpException(
@@ -83,7 +79,6 @@ export default class CourseController {
   async fetchCourseById(
     @Request() req: AuthRequest,
     @Param() params: ReadCourseIDDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -92,9 +87,7 @@ export default class CourseController {
 
       const course = await this.courseService.getCourseById(id, adminId);
 
-      this.responseService.json<CourseEntity>(
-        res,
-        StatusCodes.OK,
+      return new ResponseObject<CourseEntity>(
         'Course fetched successfully',
         course,
       );
@@ -113,7 +106,6 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -130,9 +122,7 @@ export default class CourseController {
         adminId,
       );
 
-      this.responseService.json<CourseEntity>(
-        res,
-        StatusCodes.CREATED,
+      return new ResponseObject<CourseEntity>(
         'Course created successfully',
         course,
       );
@@ -152,7 +142,6 @@ export default class CourseController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -171,9 +160,7 @@ export default class CourseController {
         adminId,
       );
 
-      this.responseService.json<CourseEntity>(
-        res,
-        StatusCodes.OK,
+      return new ResponseObject<CourseEntity>(
         'Course updated successfully',
         course,
       );
@@ -192,7 +179,6 @@ export default class CourseController {
   async deleteCourse(
     @Request() req: AuthRequest,
     @Param() params: DeleteCourseDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -201,9 +187,7 @@ export default class CourseController {
 
       const course = await this.courseService.delete(id, adminId);
 
-      this.responseService.json<CourseEntity>(
-        res,
-        StatusCodes.OK,
+      return new ResponseObject<CourseEntity>(
         'Course deleted successfully',
         course,
       );

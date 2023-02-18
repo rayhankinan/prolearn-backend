@@ -2,13 +2,19 @@ import { ApiProperty } from '@nestjs/swagger';
 
 class ResponseObject<T> {
   @ApiProperty({ description: 'Response Message' })
-  message?: string;
+  readonly message: string;
 
   @ApiProperty({ description: 'Response Data' })
-  data?: T;
+  readonly data: Record<string, T> | Array<Record<string, T>> | T;
 
   @ApiProperty({ description: 'Response Meta' })
-  meta?: any;
+  readonly meta?: object;
+
+  constructor(message: string, data: T, meta?: object) {
+    this.message = message;
+    this.data = data;
+    this.meta = meta;
+  }
 }
 
 export default ResponseObject;

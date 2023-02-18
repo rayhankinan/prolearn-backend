@@ -7,44 +7,39 @@ import {
   Request,
   Query,
   Param,
-  Res,
   Controller,
   HttpException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import CategoryEntity from '@category/models/category.model';
 import CategoryService from '@category/services/category.service';
-import ResponseService from '@response/services/response.service';
+import ResponseObject from '@response/class/response-object';
+import ResponseList from '@response/class/response-list';
 import CreateCategoryDto from '@category/dto/create-category';
 import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
 import UpdateCategoryTitleDto from '@category/dto/update-category-content';
-import CategoryEntity from '@category/models/category.model';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
+import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
-import RolesGuard from '@user/guard/roles.guard';
 
 @Controller('category')
 class CategoryController {
-  constructor(
-    private readonly categoryService: CategoryService,
-    private readonly responseService: ResponseService,
-  ) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
   @ApiProperty({ description: 'Get All Categories' })
   @Get('list')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async getAllCategories(@Res() res: Response) {
+  async getAllCategories() {
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.responseService.json<CategoryEntity[]>(
-        res,
-        StatusCodes.OK,
+
+      return new ResponseList<CategoryEntity>(
         'Categories fetched successfully',
         categories,
       );
@@ -60,17 +55,13 @@ class CategoryController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async getCategoriesByTitle(
-    @Query('title') title: string,
-    @Res() res: Response,
-  ) {
+  async getCategoriesByTitle(@Query('title') title: string) {
     try {
       const categories = await this.categoryService.searchCategoriesByTitle(
         title,
       );
-      this.responseService.json<CategoryEntity[]>(
-        res,
-        StatusCodes.OK,
+
+      return new ResponseList<CategoryEntity>(
         'Search result fetched successfully',
         categories,
       );
@@ -89,7 +80,6 @@ class CategoryController {
   async createCategory(
     @Request() req: AuthRequest,
     @Body() body: CreateCategoryDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -98,9 +88,7 @@ class CategoryController {
 
       const category = await this.categoryService.create(title, adminId);
 
-      this.responseService.json<CategoryEntity>(
-        res,
-        StatusCodes.CREATED,
+      return new ResponseObject<CategoryEntity>(
         'Category created successfully',
         category,
       );
@@ -120,7 +108,6 @@ class CategoryController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() body: UpdateCategoryTitleDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -130,9 +117,7 @@ class CategoryController {
 
       const category = await this.categoryService.update(id, title, adminId);
 
-      this.responseService.json<CategoryEntity>(
-        res,
-        StatusCodes.OK,
+      return new ResponseObject<CategoryEntity>(
         'Category updated successfully',
         category,
       );
@@ -151,7 +136,6 @@ class CategoryController {
   async deleteCategory(
     @Request() req: AuthRequest,
     @Param() params: DeleteCategoryDto,
-    @Res() res: Response,
   ) {
     try {
       const { user } = req;
@@ -160,12 +144,7 @@ class CategoryController {
 
       const category = await this.categoryService.delete(id, adminId);
 
-      this.responseService.json<CategoryEntity>(
-        res,
-        StatusCodes.OK,
-        'Category deleted successfully',
-        category,
-      );
+      return new ResponseObject('Category deleted successfully', category);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,

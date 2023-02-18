@@ -1,4 +1,9 @@
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
+import {
+  CacheInterceptor,
+  CacheModule,
+  ClassSerializerInterceptor,
+  Module,
+} from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -25,14 +30,18 @@ import SectionModule from '@section/section.module';
     UserModule,
     CategoryModule,
     CourseModule,
-    FileModule,
     SectionModule,
+    FileModule,
   ],
   controllers: [],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
     },
   ],
 })
