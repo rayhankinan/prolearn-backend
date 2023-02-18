@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 class CreateMaterialDto {
   @ApiProperty({
-    description: 'Section title',
+    description: 'Section Title',
     required: true,
   })
   @IsString()
@@ -12,7 +12,7 @@ class CreateMaterialDto {
   title: string;
 
   @ApiProperty({
-    description: 'Section objective',
+    description: 'Section Objective',
     required: false,
   })
   @IsString()
@@ -21,7 +21,7 @@ class CreateMaterialDto {
   objective?: string;
 
   @ApiProperty({
-    description: 'Section duration',
+    description: 'Section Duration',
     required: true,
   })
   @IsNumber()
@@ -29,7 +29,7 @@ class CreateMaterialDto {
   duration: number;
 
   @ApiProperty({
-    description: 'Section parent',
+    description: 'Section Parent',
     required: false,
   })
   @IsNumber()

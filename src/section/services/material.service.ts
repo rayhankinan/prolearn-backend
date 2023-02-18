@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import CloudLogger from '@logger/class/cloud-logger';
 import MaterialEntity from '@section/models/material.model';
-import CreateMaterialDto from '@section/dto/material/create-material';
 import SectionService from '@section/services/section.service';
 import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
@@ -19,21 +18,26 @@ class MaterialService {
     private readonly materialRepository: Repository<MaterialEntity>,
   ) {}
 
-  async render(uuid: string): Promise<Buffer> {
+  async render(materialId: number): Promise<Buffer> {
+    const material = await this.materialRepository.findOne({
+      where: { id: materialId },
+    });
+
     const downloadResponse = await this.storageService.download(
-      uuid,
+      material.uuid,
       StorageType.MARKDOWN,
     );
 
-    return downloadResponse[0];
+    return downloadResponse[0]; /* Render menggunakan StreamableFile */
   }
 
   async create(
-    createMaterialDto: CreateMaterialDto,
+    title: string,
+    objective: string,
+    duration: number,
+    parentId: number,
     file: Express.Multer.File,
   ): Promise<MaterialEntity> {
-    const { title, objective, duration, parentId } = createMaterialDto;
-
     const material = new MaterialEntity();
     material.title = title;
     material.objective = objective;
@@ -48,6 +52,10 @@ class MaterialService {
 
     return await this.materialRepository.save(material);
   }
+
+  async update() {}
+
+  async delete() {}
 }
 
 export default MaterialService;

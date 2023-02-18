@@ -1,5 +1,5 @@
 import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
@@ -12,8 +12,8 @@ import AuthModule from '@auth/auth.module';
 import CategoryModule from '@category/category.module';
 import CourseModule from '@course/course.module';
 import UserModule from '@user/user.module';
-import RolesGuard from './user/guard/roles.guard';
 import FileModule from '@file/file.module';
+import SectionModule from '@section/section.module';
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import FileModule from '@file/file.module';
     CategoryModule,
     CourseModule,
     FileModule,
+    SectionModule,
   ],
   controllers: [],
   providers: [
