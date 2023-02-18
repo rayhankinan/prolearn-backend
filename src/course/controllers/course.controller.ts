@@ -9,13 +9,13 @@ import {
   Res,
   Controller,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import CourseService from '@course/services/course.service';
 import ResponseService from '@response/services/response.service';
-import CategoryService from '@category/services/category.service';
 import CreateCourseDto from '@course/dto/create-course';
 import DeleteCourseDto from '@course/dto/delete-course';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
@@ -24,6 +24,9 @@ import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
 import CourseEntity from '@course/models/course.model';
 import CourseRO from '@course/interface/fetch-course.interface';
+import JwtAuthGuard from '@auth/guard/jwt.guard';
+import Roles from '@user/guard/roles.decorator';
+import UserRole from '@user/enum/user-role';
 
 @Controller('course')
 export default class CourseController {
@@ -34,6 +37,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourse(@Query() query: FetchCourseDto, @Res() res: Response) {
     try {
       const { categoryId, title, difficulty, limit, page } = query;
@@ -61,6 +66,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourseById(
     @Param() params: ReadCourseIDDto,
     @Res() res: Response,
@@ -85,6 +92,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Create A Course' })
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   async createCourse(
     @Body() createCourseDto: CreateCourseDto,
     @Res() res: Response,
@@ -116,6 +125,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Update Course' })
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   async updateCourse(
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
@@ -150,6 +161,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Delete Course' })
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   async deleteCourse(@Param() params: DeleteCourseDto, @Res() res: Response) {
     try {
       const { id } = params;

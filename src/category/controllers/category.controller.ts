@@ -9,6 +9,7 @@ import {
   Res,
   Controller,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -20,6 +21,9 @@ import DeleteCategoryDto from '@category/dto/delete-category';
 import UpdateCategoryIDDto from '@category/dto/update-category-id';
 import UpdateCategoryTitleDto from '@category/dto/update-category-content';
 import CategoryEntity from '@category/models/category.model';
+import JwtAuthGuard from '@auth/guard/jwt.guard';
+import Roles from '@user/guard/roles.decorator';
+import UserRole from '@user/enum/user-role';
 
 @Controller('category')
 class CategoryController {
@@ -28,8 +32,10 @@ class CategoryController {
     private readonly responseService: ResponseService,
   ) {}
 
-  @ApiProperty({ description: 'Get all categories' })
+  @ApiProperty({ description: 'Get All Categories' })
   @Get('list')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getAllCategories(@Res() res: Response) {
     try {
       const categories = await this.categoryService.getAllCategories();
@@ -49,6 +55,8 @@ class CategoryController {
 
   @ApiProperty({ description: 'Search Categories using Query' })
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getCategoriesByTitle(
     @Query('title') title: string,
     @Res() res: Response,
@@ -73,6 +81,8 @@ class CategoryController {
 
   @ApiProperty({ description: 'Create Category' })
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
     try {
       const { title } = body;
@@ -92,32 +102,10 @@ class CategoryController {
     }
   }
 
-  @ApiProperty({ description: 'Delete Category' })
-  @Delete(':id')
-  async deleteCategory(
-    @Param() params: DeleteCategoryDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const { id } = params;
-      const category = await this.categoryService.delete(id);
-
-      this.responseService.json<CategoryEntity>(
-        res,
-        StatusCodes.OK,
-        'Category deleted successfully',
-        category,
-      );
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
-
   @ApiProperty({ description: 'Update Category' })
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
   async updateCategory(
     @Param() params: UpdateCategoryIDDto,
     @Body() body: UpdateCategoryTitleDto,
@@ -132,6 +120,32 @@ class CategoryController {
         res,
         StatusCodes.OK,
         'Category updated successfully',
+        category,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Delete Category' })
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteCategory(
+    @Param() params: DeleteCategoryDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const { id } = params;
+      const category = await this.categoryService.delete(id);
+
+      this.responseService.json<CategoryEntity>(
+        res,
+        StatusCodes.OK,
+        'Category deleted successfully',
         category,
       );
     } catch (error) {
