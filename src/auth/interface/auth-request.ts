@@ -1,5 +1,5 @@
-import UserEntity from '@user/models/user.model';
+import Payload from '@auth/type/payload';
 
-type AuthRequest = Request & { user: UserEntity };
+type AuthRequest = Request & { payload: Payload };
 
 export default AuthRequest;

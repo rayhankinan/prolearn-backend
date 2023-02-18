@@ -10,6 +10,7 @@ import {
   Controller,
   HttpException,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -27,6 +28,7 @@ import CourseRO from '@course/interface/fetch-course.interface';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
+import AuthRequest from '@auth/interface/auth-request';
 
 @Controller('course')
 export default class CourseController {
@@ -95,18 +97,21 @@ export default class CourseController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
   async createCourse(
+    @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
     @Res() res: Response,
   ) {
     try {
-      const { title, description, difficulty, categoryIDs, status } =
+      const { payload } = req;
+      const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
       const course = await this.courseService.create(
         title,
         description,
         difficulty,
-        categoryIDs,
         status,
+        categoryIDs,
+        payload.userId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -128,21 +133,24 @@ export default class CourseController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
   async updateCourse(
+    @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
     @Res() res: Response,
   ) {
     try {
+      const { payload } = req;
       const { id } = params;
-      const { title, description, difficulty, categoryIDs, status } =
+      const { title, description, difficulty, status, categoryIDs } =
         updateCourseDto;
       const course = await this.courseService.update(
         id,
         title,
         description,
         difficulty,
-        categoryIDs,
         status,
+        categoryIDs,
+        payload.userId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -163,10 +171,15 @@ export default class CourseController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
-  async deleteCourse(@Param() params: DeleteCourseDto, @Res() res: Response) {
+  async deleteCourse(
+    @Request() req: AuthRequest,
+    @Param() params: DeleteCourseDto,
+    @Res() res: Response,
+  ) {
     try {
+      const { payload } = req;
       const { id } = params;
-      const course = await this.courseService.delete(id);
+      const course = await this.courseService.delete(id, payload.userId);
 
       this.responseService.json<CourseEntity>(
         res,

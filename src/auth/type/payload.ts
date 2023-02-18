@@ -1,7 +1,8 @@
 import UserRole from '@user/enum/user-role';
 
 interface Payload {
-  id: number;
+  userId: number;
+  role: UserRole;
 }
 
 export default Payload;

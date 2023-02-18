@@ -4,16 +4,17 @@ import { ILike, In, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CourseEntity from '@course/models/course.model';
 import CourseRO from '@course/interface/fetch-course.interface';
-import CreateCourseDto from '@course/dto/create-course';
-import UpdateCourseContentDto from '@course/dto/update-course-content';
 import CategoryEntity from '@category/models/category.model';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
+import AdminEntity from '@user/models/admin.model';
 
 @Injectable()
 class CourseService {
   constructor(
     private readonly cloudLogger: CloudLogger,
+    @InjectRepository(AdminEntity)
+    private readonly adminRepository: Repository<AdminEntity>,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(CategoryEntity)
@@ -65,20 +66,13 @@ class CourseService {
     return course;
   }
 
-  async delete(id: number): Promise<CourseEntity> {
-    const category = await this.courseRepository.findOne({
-      where: { id },
-    });
-
-    return await this.courseRepository.softRemove(category);
-  }
-
   async create(
     title: string,
     description: string,
     difficulty: CourseLevel,
-    categoryIDs: number[],
     status: CourseStatus,
+    categoryIds: number[],
+    adminId: number,
   ): Promise<CourseEntity> {
     const course = new CourseEntity();
     course.title = title;
@@ -87,9 +81,14 @@ class CourseService {
     course.status = status;
 
     const categories = await this.categoryRepository.find({
-      where: { id: In(categoryIDs) },
+      where: { id: In(categoryIds) },
     });
     course.categories = Promise.resolve(categories);
+
+    const admin = await this.adminRepository.findOne({
+      where: { id: adminId },
+    });
+    course.admin = Promise.resolve(admin);
 
     return await this.courseRepository.save(course);
   }
@@ -99,11 +98,12 @@ class CourseService {
     title: string,
     description: string,
     difficulty: CourseLevel,
-    categoryIDs: number[],
     status: CourseStatus,
+    categoryIDs: number[],
+    adminId: number,
   ): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
-      where: { id },
+      where: { id, admin: { id: adminId } },
     });
 
     course.title = title;
@@ -117,6 +117,14 @@ class CourseService {
     course.categories = Promise.resolve(categories);
 
     return await this.courseRepository.save(course);
+  }
+
+  async delete(id: number, adminId: number): Promise<CourseEntity> {
+    const category = await this.courseRepository.findOne({
+      where: { id, admin: { id: adminId } },
+    });
+
+    return await this.courseRepository.softRemove(category);
   }
 }
 

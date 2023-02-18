@@ -15,8 +15,7 @@ class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async login(user: UserEntity) {
-    const payload: Payload = { id: user.id };
+  async login(payload: Payload) {
     return this.jwtService.sign(payload);
   }
 }

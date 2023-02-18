@@ -7,10 +7,11 @@ import LoggerModule from '@logger/logger.module';
 import ResponseModule from '@response/response.module';
 import CategoryModule from '@category/category.module';
 import CategoryEntity from '@category/models/category.model';
+import AdminEntity from '@user/models/admin.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CourseEntity, CategoryEntity]),
+    TypeOrmModule.forFeature([CourseEntity, CategoryEntity, AdminEntity]),
     LoggerModule,
     ResponseModule,
     CategoryModule,
