@@ -21,10 +21,6 @@ class CategoryService {
     return categories;
   }
 
-  async getCategoryByIds(IDs: Array<number>): Promise<CategoryEntity[]> {
-    return await this.categoryRepository.find({ where: { id: In(IDs) } });
-  }
-
   async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find({
       where: { title: ILike(`%${title}%`) },

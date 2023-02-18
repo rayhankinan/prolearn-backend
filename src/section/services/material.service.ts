@@ -36,7 +36,7 @@ class MaterialService {
     objective: string,
     duration: number,
     parentId: number,
-    file: Express.Multer.File,
+    content: Express.Multer.File,
   ): Promise<MaterialEntity> {
     const material = new MaterialEntity();
     material.title = title;
@@ -44,7 +44,7 @@ class MaterialService {
     material.duration = duration;
 
     const uuid = uuidv4();
-    this.storageService.upload(uuid, StorageType.MARKDOWN, file);
+    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
     material.uuid = uuid;
 
     const parent = await this.sectionService.getSectionById(parentId);

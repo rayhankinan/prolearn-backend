@@ -23,11 +23,11 @@ class StorageService {
   async upload(
     filename: string,
     filetype: StorageType,
-    file: Express.Multer.File,
+    content: Express.Multer.File,
   ): Promise<void> {
     await this.bucket
       .file(`${AvailableType.AVAILABLE}/${filetype}/${filename}`)
-      .save(file.buffer);
+      .save(content.buffer);
   }
 
   async download(

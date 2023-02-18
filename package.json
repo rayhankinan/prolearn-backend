@@ -32,7 +32,6 @@
     "@nestjs/typeorm": "^9.0.1",
     "@types/bull": "^4.10.0",
     "@types/compression": "^1.7.2",
-    "@types/faker": "^6.6.9",
     "@types/multer": "^1.4.7",
     "@types/passport-jwt": "^3.0.8",
     "@types/passport-local": "^1.0.35",
@@ -43,7 +42,6 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",
-    "faker": "^6.6.6",
     "helmet": "^6.0.1",
     "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
@@ -55,7 +53,6 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "typeorm": "^0.3.12",
-    "typeorm-seeding": "^1.6.1",
     "uuid": "^9.0.0",
     "webpack": "^5.75.0"
   },
