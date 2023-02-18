@@ -9,8 +9,8 @@ class FetchCourseDto {
     description: 'Category ID',
     required: false,
   })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @Type(() => Number)
   categoryId?: number;
 
@@ -18,8 +18,8 @@ class FetchCourseDto {
     description: 'Course Title',
     required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   @Type(() => String)
   title?: string;
 
@@ -27,8 +27,8 @@ class FetchCourseDto {
     description: 'Course Difficulty',
     required: false,
   })
-  @IsCourseLevel()
   @IsOptional()
+  @IsCourseLevel()
   @Type(() => String)
   difficulty?: CourseLevel;
 
@@ -36,8 +36,8 @@ class FetchCourseDto {
     description: 'Page Limit',
     required: false,
   })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @Type(() => Number)
   limit?: number;
 
@@ -45,8 +45,8 @@ class FetchCourseDto {
     description: 'Page Number',
     required: false,
   })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @Type(() => Number)
   page?: number;
 }

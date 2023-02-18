@@ -20,8 +20,8 @@ class CreateCourseDto {
     description: 'Course Description',
     required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   @Type(() => String)
   description?: string;
 
@@ -38,8 +38,8 @@ class CreateCourseDto {
     isArray: true,
     required: false,
   })
-  @IsNumber({}, { each: true })
   @IsOptional()
+  @IsNumber({}, { each: true })
   @Type(() => Number)
   categoryIDs?: number[];
 

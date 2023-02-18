@@ -15,8 +15,8 @@ class CreateMaterialDto {
     description: 'Section objective',
     required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   @Type(() => String)
   objective?: string;
 
@@ -32,8 +32,8 @@ class CreateMaterialDto {
     description: 'Section parent',
     required: false,
   })
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   @Type(() => Number)
   parentId?: number;
 }
