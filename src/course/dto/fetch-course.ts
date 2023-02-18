@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
@@ -18,7 +18,7 @@ class FetchCourseDto {
     description: 'Course Title',
     required: false,
   })
-  @IsNumber()
+  @IsString()
   @IsOptional()
   @Type(() => String)
   title?: string;
