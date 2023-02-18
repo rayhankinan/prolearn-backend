@@ -18,7 +18,6 @@ class StorageService {
     const storage = new Storage();
 
     this.bucket = storage.bucket(storageConfig.bucketName);
-    this.cloudLogger = new CloudLogger(StorageService.name);
   }
 
   async upload(

@@ -2,8 +2,6 @@ import {
   Column,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   OneToOne,
   TableInheritance,
   Tree,

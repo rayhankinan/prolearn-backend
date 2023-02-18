@@ -10,6 +10,7 @@ import AdminEntity from '@user/models/admin.model';
 import StudentEntity from '@user/models/student.model';
 import FileEntity from '@file/models/file.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
+import AdminSeeding from '@database/migrations/admin-migration';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -42,7 +43,7 @@ const dataSourceOptions: DataSourceOptions = {
     FileEntity,
   ],
   subscribers: [UserSubscriber],
-  migrations: [],
+  migrations: [AdminSeeding],
 };
 
 export default dataSourceOptions;
