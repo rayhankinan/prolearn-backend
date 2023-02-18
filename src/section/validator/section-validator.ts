@@ -4,7 +4,7 @@ import ValidatorComposer from '@validator/common.validator';
 function IsSectionType(
   { required }: { required: boolean } = { required: false },
 ): PropertyDecorator {
-  return ValidatorComposer([IsString(), Matches(/QUIZ|MATERIAL|PROJECT/)])({
+  return ValidatorComposer([IsString(), Matches(/quiz|material|project/)])({
     required,
   });
 }

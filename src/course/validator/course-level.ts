@@ -6,7 +6,7 @@ function IsCourseLevel(
 ): PropertyDecorator {
   return ValidatorComposer([
     IsString(),
-    Matches(/BEGINNER|INTERMEDIATE|ADVANCED/),
+    Matches(/beginner|intermediate|advanced/)
   ])({ required });
 }
 

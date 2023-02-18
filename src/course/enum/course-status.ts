@@ -1,6 +1,6 @@
 export enum CourseStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
 }
 
 export default CourseStatus;
