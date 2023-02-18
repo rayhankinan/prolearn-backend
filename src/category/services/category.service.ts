@@ -3,15 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, In, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
-import CreateCategoryDto from '@category/dto/create-category';
-import DeleteCategoryDto from '@category/dto/delete-category';
-import UpdateCategoryIDDto from '@category/dto/update-category-id';
-import UpdateCategoryContentDto from '@category/dto/update-category-content';
+import AdminEntity from '@user/models/admin.model';
 
 @Injectable()
 class CategoryService {
   constructor(
     private readonly cloudLogger: CloudLogger,
+    @InjectRepository(AdminEntity)
+    private readonly adminRepository: Repository<AdminEntity>,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
@@ -34,28 +33,37 @@ class CategoryService {
     return categories;
   }
 
-  async create(title: string): Promise<CategoryEntity> {
+  async create(title: string, adminId: number): Promise<CategoryEntity> {
     const category = new CategoryEntity();
     category.title = title;
 
+    const admin = await this.adminRepository.findOne({
+      where: { id: adminId },
+    });
+    category.admin = Promise.resolve(admin);
+
     return await this.categoryRepository.save(category);
   }
 
-  async delete(id: number): Promise<CategoryEntity> {
+  async update(
+    id: number,
+    title: string,
+    adminId: number,
+  ): Promise<CategoryEntity> {
     const category = await this.categoryRepository.findOne({
-      where: { id },
-    });
-
-    return await this.categoryRepository.softRemove(category);
-  }
-
-  async update(id: number, title: string): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
-      where: { id },
+      where: { id, admin: { id: adminId } },
     });
     category.title = title;
 
     return await this.categoryRepository.save(category);
+  }
+
+  async delete(id: number, adminId: number): Promise<CategoryEntity> {
+    const category = await this.categoryRepository.findOne({
+      where: { id, admin: { id: adminId } },
+    });
+
+    return await this.categoryRepository.softRemove(category);
   }
 }
 

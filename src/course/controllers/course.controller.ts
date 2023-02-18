@@ -117,13 +117,15 @@ export default class CourseController {
       const { user } = req;
       const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
+      const adminId = user.id;
+
       const course = await this.courseService.create(
         title,
         description,
         difficulty,
         status,
         categoryIDs,
-        user.id,
+        adminId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -155,6 +157,8 @@ export default class CourseController {
       const { id } = params;
       const { title, description, difficulty, status, categoryIDs } =
         updateCourseDto;
+      const adminId = user.id;
+
       const course = await this.courseService.update(
         id,
         title,
@@ -162,7 +166,7 @@ export default class CourseController {
         difficulty,
         status,
         categoryIDs,
-        user.id,
+        adminId,
       );
 
       this.responseService.json<CourseEntity>(
@@ -191,7 +195,9 @@ export default class CourseController {
     try {
       const { user } = req;
       const { id } = params;
-      const course = await this.courseService.delete(id, user.id);
+      const adminId = user.id;
+
+      const course = await this.courseService.delete(id, adminId);
 
       this.responseService.json<CourseEntity>(
         res,

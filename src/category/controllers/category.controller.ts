@@ -4,6 +4,7 @@ import {
   Put,
   Delete,
   Body,
+  Request,
   Query,
   Param,
   Res,
@@ -24,6 +25,7 @@ import CategoryEntity from '@category/models/category.model';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
+import AuthRequest from '@auth/interface/auth-request';
 
 @Controller('category')
 class CategoryController {
@@ -83,10 +85,17 @@ class CategoryController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
-  async createCategory(@Body() body: CreateCategoryDto, @Res() res: Response) {
+  async createCategory(
+    @Request() req: AuthRequest,
+    @Body() body: CreateCategoryDto,
+    @Res() res: Response,
+  ) {
     try {
+      const { user } = req;
       const { title } = body;
-      const category = await this.categoryService.create(title);
+      const adminId = user.id;
+
+      const category = await this.categoryService.create(title, adminId);
 
       this.responseService.json<CategoryEntity>(
         res,
@@ -107,14 +116,18 @@ class CategoryController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
   async updateCategory(
+    @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() body: UpdateCategoryTitleDto,
     @Res() res: Response,
   ) {
     try {
+      const { user } = req;
       const { id } = params;
       const { title } = body;
-      const category = await this.categoryService.update(id, title);
+      const adminId = user.id;
+
+      const category = await this.categoryService.update(id, title, adminId);
 
       this.responseService.json<CategoryEntity>(
         res,
@@ -135,12 +148,16 @@ class CategoryController {
   @UseGuards(JwtAuthGuard)
   @Roles(UserRole.ADMIN)
   async deleteCategory(
+    @Request() req: AuthRequest,
     @Param() params: DeleteCategoryDto,
     @Res() res: Response,
   ) {
     try {
+      const { user } = req;
       const { id } = params;
-      const category = await this.categoryService.delete(id);
+      const adminId = user.id;
+
+      const category = await this.categoryService.delete(id, adminId);
 
       this.responseService.json<CategoryEntity>(
         res,
