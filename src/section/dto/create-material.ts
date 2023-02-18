@@ -4,8 +4,8 @@ import { Type } from 'class-transformer';
 import SectionType from '@section/enum/section-type';
 import IsSectionType from '@section/validator/section-validator';
 
-/* Create class Create Section DTO based on the model */
-class CreateSectionDto {
+/* Create class Create Material DTO based on the model */
+class CreateMaterialDto {
   @ApiProperty({
     description: 'Section title',
     required: true,
@@ -32,14 +32,6 @@ class CreateSectionDto {
   duration: number;
 
   @ApiProperty({
-    description: 'Section type',
-    required: true,
-  })
-  @IsSectionType()
-  @Type(() => String)
-  type: SectionType;
-
-  @ApiProperty({
     description: 'Section content',
     required: true,
   })
@@ -54,7 +46,7 @@ class CreateSectionDto {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  parent?: number;
+  parentId?: number;
 }
 
-export default CreateSectionDto;
+export default CreateMaterialDto;

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import CreateSectionDto from './create-section';
+import CreateSectionDto from './create-material';
 
 class UpdateSectionDto extends PartialType(CreateSectionDto) {}
 
