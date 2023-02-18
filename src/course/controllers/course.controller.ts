@@ -29,6 +29,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import ResponsePagination from '@response/class/response-pagination';
+import RolesGuard from '@user/guard/roles.guard';
 
 @Controller('course')
 export default class CourseController {
@@ -39,7 +40,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourse(
     @Request() req: AuthRequest,
@@ -76,7 +77,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourseById(
     @Request() req: AuthRequest,
@@ -106,7 +107,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Create A Course' })
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createCourse(
     @Request() req: AuthRequest,
@@ -144,7 +145,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Update Course' })
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async updateCourse(
     @Request() req: AuthRequest,
@@ -185,7 +186,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Delete Course' })
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async deleteCourse(
     @Request() req: AuthRequest,

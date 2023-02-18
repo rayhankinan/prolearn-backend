@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import UserRole from '@user/enum/user-role';
 import UserEntity from '@user/models/user.model';
 import ROLES_KEY from '@user/guard/roles.key';
+import Payload from '@auth/type/payload';
 
 @Injectable()
 class RolesGuard implements CanActivate {
@@ -16,8 +17,7 @@ class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-
-    const { user }: { user: UserEntity } = context.switchToHttp().getRequest();
+    const { user }: { user: Payload } = context.switchToHttp().getRequest();
     return requiredRoles.some((role) => user.role?.includes(role));
   }
 }

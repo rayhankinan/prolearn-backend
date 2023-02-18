@@ -26,6 +26,7 @@ import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
+import RolesGuard from '@user/guard/roles.guard';
 
 @Controller('category')
 class CategoryController {
@@ -36,7 +37,7 @@ class CategoryController {
 
   @ApiProperty({ description: 'Get All Categories' })
   @Get('list')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getAllCategories(@Res() res: Response) {
     try {
@@ -57,7 +58,7 @@ class CategoryController {
 
   @ApiProperty({ description: 'Search Categories using Query' })
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getCategoriesByTitle(
     @Query('title') title: string,
@@ -83,7 +84,7 @@ class CategoryController {
 
   @ApiProperty({ description: 'Create Category' })
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async createCategory(
     @Request() req: AuthRequest,
@@ -113,7 +114,7 @@ class CategoryController {
 
   @ApiProperty({ description: 'Update Category' })
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async updateCategory(
     @Request() req: AuthRequest,
@@ -145,7 +146,7 @@ class CategoryController {
 
   @ApiProperty({ description: 'Delete Category' })
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async deleteCategory(
     @Request() req: AuthRequest,

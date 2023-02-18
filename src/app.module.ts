@@ -33,10 +33,6 @@ import FileModule from '@file/file.module';
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
     },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
   ],
 })
 class AppModule {}
