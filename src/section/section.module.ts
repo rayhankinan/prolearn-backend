@@ -9,8 +9,7 @@ import StorageModule from '@storage/storage.module';
 import CourseEntity from '@course/models/course.model';
 import AdminEntity from '@user/models/admin.model';
 import SectionController from './controllers/section.controller';
-
-/* TODO: ADD CONTROLLERS  */
+import MaterialController from './controllers/material.controller';
 
 @Module({
   imports: [
@@ -24,7 +23,7 @@ import SectionController from './controllers/section.controller';
     StorageModule,
   ],
   providers: [SectionService, MaterialService],
-  controllers: [SectionController],
+  controllers: [SectionController, MaterialController],
 })
 class SectionModule {}
 

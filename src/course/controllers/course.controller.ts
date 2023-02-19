@@ -12,6 +12,8 @@ import {
   Request,
   UploadedFile,
   UseInterceptors,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -31,6 +33,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
+import imageOnlyPipe from '@file/pipe/image-only';
 
 @Controller('course')
 export default class CourseController {
@@ -105,7 +108,7 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
-    @UploadedFile() content: Express.Multer.File,
+    @UploadedFile(imageOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -144,7 +147,7 @@ export default class CourseController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
-    @UploadedFile() content: Express.Multer.File,
+    @UploadedFile(imageOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;

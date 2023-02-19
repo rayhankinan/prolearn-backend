@@ -38,13 +38,13 @@ class CreateMaterialDto {
   readonly parentId?: number;
 
   @ApiProperty({
-    description: 'Section Adjoined Course',
+    description: 'Section Course ID',
     required: false,
   })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  readonly adjoinedCourseId?: number;
+  readonly courseId?: number;
 }
 
 export default CreateMaterialDto;

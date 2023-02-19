@@ -40,7 +40,8 @@ class MaterialService {
     objective: string,
     duration: number,
     parentId: number,
-    adjoiningCourseId: number,
+    courseId: number,
+    adminId: number,
     content: Express.Multer.File,
   ): Promise<MaterialEntity> {
     const material = new MaterialEntity();
@@ -57,10 +58,10 @@ class MaterialService {
     });
     material.parent = Promise.resolve(parent);
 
-    const adjoinedCourse = await this.courseRepository.findOne({
-      where: { id: adjoiningCourseId },
+    const course = await this.courseRepository.findOne({
+      where: { id: courseId, admin: { id: adminId } },
     });
-    material.adjoiningCourse = Promise.resolve(adjoinedCourse);
+    material.course = Promise.resolve(course);
 
     return await this.materialRepository.save(material);
   }
@@ -71,7 +72,8 @@ class MaterialService {
     objective: string,
     duration: number,
     parentId: number,
-    adjoiningCourseId: number,
+    courseId: number,
+    adminId: number,
     content: Express.Multer.File,
   ): Promise<MaterialEntity> {
     const material = await this.materialRepository.findOne({
@@ -93,17 +95,17 @@ class MaterialService {
     });
     material.parent = Promise.resolve(parent);
 
-    const adjoinedCourse = await this.courseRepository.findOne({
-      where: { id: adjoiningCourseId },
+    const course = await this.courseRepository.findOne({
+      where: { id: courseId, admin: { id: adminId } },
     });
-    material.adjoiningCourse = Promise.resolve(adjoinedCourse);
+    material.course = Promise.resolve(course);
 
     return await this.materialRepository.save(material);
   }
 
-  async delete(id: number): Promise<MaterialEntity> {
+  async delete(id: number, adminId: number): Promise<MaterialEntity> {
     const material = await this.materialRepository.findOne({
-      where: { id },
+      where: { id, course: { admin: { id: adminId } } },
     });
 
     /* Soft Deletion in Object Storage */
