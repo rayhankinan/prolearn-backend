@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { Response } from 'express';
+import { lookup } from 'mime-types';
 import MaterialEntity from '@section/models/material.model';
 import MaterialService from '@section/services/material.service';
 import ResponseObject from '@response/class/response-object';
@@ -49,8 +50,9 @@ class MaterialController {
       const { id } = param;
 
       const buffer = await this.materialService.render(id);
+      const contentType = lookup('.md') as string;
       res.set({
-        'Content-Type': 'text/x-markdown',
+        'Content-Type': contentType,
       });
 
       return new StreamableFile(buffer);

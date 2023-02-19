@@ -33,7 +33,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
-import imageOnlyPipe from '@file/pipe/image-only';
+import pngOnlyPipe from '@file/pipe/png-only';
 
 @Controller('course')
 export default class CourseController {
@@ -108,7 +108,7 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
-    @UploadedFile(imageOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -147,7 +147,7 @@ export default class CourseController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
-    @UploadedFile(imageOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
