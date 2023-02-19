@@ -6,13 +6,13 @@ import {
   Request,
   Res,
   Param,
+  Body,
   Controller,
   HttpException,
   UseGuards,
   StreamableFile,
   UseInterceptors,
   UploadedFile,
-  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';

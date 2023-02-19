@@ -1,29 +1,33 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import SectionEntity from '@section/models/section.model';
-import MaterialEntity from '@section/models/material.model';
-import SectionService from '@section/services/section.service';
-import MaterialService from '@section/services/material.service';
 import LoggerModule from '@logger/logger.module';
 import StorageModule from '@storage/storage.module';
 import CourseEntity from '@course/models/course.model';
 import AdminEntity from '@user/models/admin.model';
-import SectionController from './controllers/section.controller';
-import MaterialController from './controllers/material.controller';
+import SectionEntity from '@section/models/section.model';
+import MaterialEntity from '@section/models/material.model';
+import VideoEntity from '@section/models/video.model';
+import SectionService from '@section/services/section.service';
+import MaterialService from '@section/services/material.service';
+import VideoService from '@section/services/video.service';
+import SectionController from '@section/controllers/section.controller';
+import MaterialController from '@section/controllers/material.controller';
+import VideoController from './controllers/video.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       SectionEntity,
       MaterialEntity,
+      VideoEntity,
       CourseEntity,
       AdminEntity,
     ]),
     LoggerModule,
     StorageModule,
   ],
-  providers: [SectionService, MaterialService],
-  controllers: [SectionController, MaterialController],
+  providers: [SectionService, MaterialService, VideoService],
+  controllers: [SectionController, MaterialController, VideoController],
 })
 class SectionModule {}
 
