@@ -26,28 +26,31 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Difficulty',
-    required: true,
+    required: false,
   })
+  @IsOptional()
   @IsCourseLevel()
   @Type(() => String)
-  readonly difficulty: CourseLevel;
+  readonly difficulty?: CourseLevel;
 
   @ApiProperty({
     description: 'Course Category',
     isArray: true,
-    required: true,
+    required: false,
   })
+  @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
-  readonly categoryIDs: number[];
+  readonly categoryIDs?: number[];
 
   @ApiProperty({
     description: 'Course Status',
-    required: true,
+    required: false,
   })
+  @IsOptional()
   @IsCourseStatus()
   @Type(() => String)
-  readonly status: CourseStatus;
+  readonly status?: CourseStatus;
 }
 
 export default CreateCourseDto;
