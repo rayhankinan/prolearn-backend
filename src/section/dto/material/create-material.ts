@@ -39,12 +39,20 @@ class CreateMaterialDto {
 
   @ApiProperty({
     description: 'Section Course ID',
-    required: false,
+    required: true,
+  })
+  @IsNumber()
+  @Type(() => Number)
+  readonly courseId: number;
+
+  @ApiProperty({
+    description: 'Section Ancestor',
+    required: true,
   })
   @IsOptional()
   @IsNumber()
-  @Type(() => Number)
-  readonly courseId?: number;
+  @Type(() => Boolean)
+  readonly isAncestor: boolean;
 }
 
 export default CreateMaterialDto;

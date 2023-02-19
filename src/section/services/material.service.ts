@@ -42,16 +42,13 @@ class MaterialService {
     parentId: number,
     courseId: number,
     adminId: number,
+    isAncestor: boolean,
     content: Express.Multer.File,
   ): Promise<MaterialEntity> {
     const material = new MaterialEntity();
     material.title = title;
     material.objective = objective;
     material.duration = duration;
-
-    const uuid = uuidv4();
-    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
-    material.uuid = uuid;
 
     const parent = await this.sectionRepository.findOne({
       where: { id: parentId },
@@ -62,6 +59,11 @@ class MaterialService {
       where: { id: courseId, admin: { id: adminId } },
     });
     material.course = Promise.resolve(course);
+    material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
+
+    const uuid = uuidv4();
+    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
+    material.uuid = uuid;
 
     return await this.materialRepository.save(material);
   }
@@ -74,6 +76,7 @@ class MaterialService {
     parentId: number,
     courseId: number,
     adminId: number,
+    isAncestor: boolean,
     content: Express.Multer.File,
   ): Promise<MaterialEntity> {
     const material = await this.materialRepository.findOne({
@@ -82,13 +85,6 @@ class MaterialService {
     material.title = title;
     material.objective = objective;
     material.duration = duration;
-
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(material.uuid, StorageType.MARKDOWN);
-
-    const uuid = uuidv4();
-    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
-    material.uuid = uuid;
 
     const parent = await this.sectionRepository.findOne({
       where: { id: parentId },
@@ -99,6 +95,14 @@ class MaterialService {
       where: { id: courseId, admin: { id: adminId } },
     });
     material.course = Promise.resolve(course);
+    material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
+
+    /* Soft Deletion in Object Storage */
+    await this.storageService.delete(material.uuid, StorageType.MARKDOWN);
+
+    const uuid = uuidv4();
+    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
+    material.uuid = uuid;
 
     return await this.materialRepository.save(material);
   }

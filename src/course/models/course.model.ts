@@ -35,6 +35,9 @@ class CourseEntity extends Base {
   @OneToMany(() => SectionEntity, (section) => section.course)
   sections: Promise<SectionEntity[]>;
 
+  @OneToOne(() => SectionEntity, (section) => section.adjoinedCourse)
+  parentSection: Promise<SectionEntity>;
+
   @OneToOne(() => FileEntity, (file) => file.course)
   thumbnail: Promise<FileEntity>;
 

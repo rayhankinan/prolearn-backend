@@ -74,7 +74,8 @@ class MaterialController {
   ) {
     try {
       const { user } = req;
-      const { title, objective, duration, parentId, courseId } = body;
+      const { title, objective, duration, parentId, courseId, isAncestor } =
+        body;
       const adminId = user.id;
 
       const material = await this.materialService.create(
@@ -84,6 +85,7 @@ class MaterialController {
         parentId,
         courseId,
         adminId,
+        isAncestor,
         content,
       );
 
@@ -113,7 +115,8 @@ class MaterialController {
     try {
       const { user } = req;
       const { id } = param;
-      const { title, objective, duration, parentId, courseId } = body;
+      const { title, objective, duration, parentId, courseId, isAncestor } =
+        body;
       const adminId = user.id;
 
       const material = await this.materialService.edit(
@@ -124,6 +127,7 @@ class MaterialController {
         parentId,
         courseId,
         adminId,
+        isAncestor,
         content,
       );
 
