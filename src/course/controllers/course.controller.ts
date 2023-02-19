@@ -49,8 +49,6 @@ export default class CourseController {
       const { categoryId, title, difficulty, limit, page } = query;
       const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
 
-      console.log(typeof page);
-
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
           categoryId,
@@ -118,7 +116,6 @@ export default class CourseController {
       const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
       const adminId = user.id;
-      content = content ? content : null;
 
       const course = await this.courseService.create(
         title,
@@ -159,7 +156,6 @@ export default class CourseController {
       const { title, description, difficulty, status, categoryIDs } =
         updateCourseDto;
       const adminId = user.id;
-      content = content ? content : null;
 
       const course = await this.courseService.update(
         id,

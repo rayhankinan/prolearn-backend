@@ -1,3 +1,5 @@
+import { PassThrough } from 'stream';
+import { Response } from 'express';
 import { Injectable } from '@nestjs/common';
 import {
   Bucket,
@@ -25,36 +27,76 @@ class StorageService {
     filetype: StorageType,
     content: Express.Multer.File,
   ): Promise<void> {
-    await this.bucket
-      .file(`${AvailableType.AVAILABLE}/${filetype}/${filename}`)
-      .save(content.buffer, { contentType: content.mimetype });
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    await file.save(content.buffer, { contentType: content.mimetype });
+  }
+
+  async streamingUpload(
+    filename: string,
+    filetype: StorageType,
+    content: Express.Multer.File,
+  ) {
+    const passThrough = new PassThrough();
+    passThrough.write(content);
+    passThrough.end;
+
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    passThrough.pipe(file.createWriteStream({ contentType: content.mimetype }));
   }
 
   async download(
     filename: string,
     filetype: StorageType,
   ): Promise<DownloadResponse> {
-    const file = await this.bucket
-      .file(`${AvailableType.AVAILABLE}/${filetype}/${filename}`)
-      .download();
-    return file;
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    const downloadResponse = await file.download();
+    return downloadResponse;
+  }
+
+  async streamingDownload(
+    filename: string,
+    filetype: StorageType,
+    res: Response,
+  ) {
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    file.createReadStream().pipe(res);
   }
 
   async delete(filename: string, filetype: StorageType): Promise<MoveResponse> {
-    const file = await this.bucket
-      .file(`${AvailableType.AVAILABLE}/${filetype}/${filename}`)
-      .move(`${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`);
-    return file;
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    const moveResponse = await file.move(
+      `${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`,
+    );
+    return moveResponse;
   }
 
   async restore(
     filename: string,
     filetype: StorageType,
   ): Promise<MoveResponse> {
-    const file = await this.bucket
-      .file(`${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`)
-      .move(`${AvailableType.AVAILABLE}/${filetype}/${filename}`);
-    return file;
+    const deletedFile = this.bucket.file(
+      `${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    const moveResponse = await deletedFile.move(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+    return moveResponse;
   }
 }
 

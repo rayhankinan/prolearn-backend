@@ -76,7 +76,7 @@ class FileService {
     id: number,
     name: string,
     adminId: number,
-    content: Express.Multer.File,
+    content?: Express.Multer.File,
   ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
       where: { id, admin: { id: adminId } },
@@ -84,14 +84,16 @@ class FileService {
     file.name = name;
     file.mimetype = content.mimetype;
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(file.uuid, StorageType.FILE);
+    if (content) {
+      /* Soft Deletion in Object Storage */
+      await this.storageService.delete(file.uuid, StorageType.FILE);
 
-    const uuid = uuidv4();
-    await this.storageService.upload(uuid, StorageType.FILE, content);
-    file.uuid = uuid;
+      const uuid = uuidv4();
+      await this.storageService.upload(uuid, StorageType.FILE, content);
+      file.uuid = uuid;
 
-    return await this.fileRepository.save(file);
+      return await this.fileRepository.save(file);
+    }
   }
 
   async delete(id: number, adminId: number): Promise<FileEntity> {

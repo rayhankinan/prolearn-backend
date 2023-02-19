@@ -33,7 +33,7 @@ class CourseEntity extends Base {
 
   @Column({ nullable: true, type: 'uuid' })
   @Exclude()
-  thumbnail: string;
+  thumbnail?: string;
 
   @OneToOne(() => SectionEntity, (section) => section.adjoiningCourse)
   parentSection: Promise<SectionEntity>;

@@ -73,6 +73,7 @@ class CourseService {
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
+      relations: { categories: true },
     });
 
     return course;
@@ -85,7 +86,7 @@ class CourseService {
     status: CourseStatus,
     categoryIds: number[],
     adminId: number,
-    content?: Express.Multer.File
+    content?: Express.Multer.File,
   ): Promise<CourseEntity> {
     const course = new CourseEntity();
     course.title = title;
@@ -139,7 +140,7 @@ class CourseService {
       await this.storageService.upload(uuid, StorageType.IMAGE, content);
       course.thumbnail = uuid;
     }
-  
+
     const categories = await this.categoryRepository.find({
       where: { id: In(categoryIDs) },
     });
@@ -152,7 +153,6 @@ class CourseService {
     const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
     });
-    console.log(course);
     if (course.thumbnail) {
       await this.storageService.delete(course.thumbnail, StorageType.IMAGE);
     }
