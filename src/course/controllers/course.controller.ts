@@ -13,12 +13,10 @@ import {
   Request,
   UploadedFile,
   UseInterceptors,
-  StreamableFile,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
 import CourseService from '@course/services/course.service';
 import ResponseObject from '@response/class/response-object';
 import ResponsePagination from '@response/class/response-pagination';
@@ -28,7 +26,6 @@ import UpdateCategoryIDDto from '@category/dto/update-category-id';
 import UpdateCourseContentDto from '@course/dto/update-course-content';
 import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
-import RenderCourseDto from '@course/dto/render-course-thumbnail';
 import CourseEntity from '@course/models/course.model';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import Roles from '@user/guard/roles.decorator';
@@ -39,31 +36,6 @@ import RolesGuard from '@user/guard/roles.guard';
 @Controller('course')
 export default class CourseController {
   constructor(private readonly courseService: CourseService) {}
-
-  @ApiProperty({ description: 'Render Thumbnail' })
-  @Get('render/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async renderFile(
-    @Param() param: RenderCourseDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    try {
-      const { id } = param;
-
-      const [buffer, mimetype] = await this.courseService.renderThumbnail(id);
-      res.set({
-        'Content-Type': mimetype,
-      });
-
-      return new StreamableFile(buffer);
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()

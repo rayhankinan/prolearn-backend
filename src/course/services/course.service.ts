@@ -29,24 +29,6 @@ class CourseService {
     this.cloudLogger = new CloudLogger(CourseEntity.name);
   }
 
-  async renderThumbnail(courseId: number): Promise<[Buffer, string]> {
-    const course = await this.courseRepository.findOne({
-      where: { id: courseId },
-    });
-    const thumbnail = await course.thumbnail;
-
-    const file = await this.fileRepository.findOne({
-      where: { id: thumbnail.id },
-    });
-
-    const downloadResponse = await this.storageService.download(
-      file.uuid,
-      StorageType.FILE,
-    );
-
-    return [downloadResponse[0], file.mimetype];
-  }
-
   async fetchCourse(
     categoryId: number,
     title: string,
@@ -64,6 +46,7 @@ class CourseService {
       this.courseRepository.find({
         relations: {
           categories: true,
+          thumbnail: true,
         },
         where: {
           categories: {
@@ -94,7 +77,7 @@ class CourseService {
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
-      relations: { categories: true },
+      relations: { categories: true, thumbnail: true },
     });
 
     return course;
