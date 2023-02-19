@@ -3,7 +3,6 @@ import {
   Post,
   Put,
   Delete,
-  Body,
   Request,
   Res,
   Query,
@@ -25,10 +24,8 @@ import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
 import RenderFileDto from '@file/dto/render-file';
 import ReadFileNameDto from '@file/dto/read-file-name';
-import CreateFileDto from '@file/dto/create-file';
 import DeleteFileDto from '@file/dto/delete-file';
 import UpdateFileIDDto from '@file/dto/update-file-id';
-import UpdateFileContentDto from '@file/dto/update-file-content';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
@@ -115,15 +112,13 @@ class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async createFile(
     @Request() req: AuthRequest,
-    @Body() body: CreateFileDto,
     @UploadedFile() content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
-      const { name } = body;
       const adminId = user.id;
 
-      const file = await this.fileService.create(name, adminId, content);
+      const file = await this.fileService.create(adminId, content);
 
       return new ResponseObject<FileEntity>('File created successfully', file);
     } catch (error) {
@@ -142,16 +137,14 @@ class FileController {
   async updateFile(
     @Request() req: AuthRequest,
     @Param() param: UpdateFileIDDto,
-    @Body() body: UpdateFileContentDto,
     @UploadedFile() content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
       const { id } = param;
-      const { name } = body;
       const adminId = user.id;
 
-      const file = await this.fileService.edit(id, name, adminId, content);
+      const file = await this.fileService.edit(id, adminId, content);
 
       return new ResponseObject<FileEntity>('File edited successfully', file);
     } catch (error) {
