@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -29,6 +30,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('course')
 export default class CourseController {
@@ -105,6 +107,7 @@ export default class CourseController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
@@ -143,6 +146,7 @@ export default class CourseController {
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   async updateCourse(
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
