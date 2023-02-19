@@ -12,7 +12,7 @@ import MaterialService from '@section/services/material.service';
 import VideoService from '@section/services/video.service';
 import SectionController from '@section/controllers/section.controller';
 import MaterialController from '@section/controllers/material.controller';
-import VideoController from './controllers/video.controller';
+import VideoController from '@section/controllers/video.controller';
 
 @Module({
   imports: [

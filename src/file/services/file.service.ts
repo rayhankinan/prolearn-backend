@@ -56,7 +56,7 @@ class FileService {
     content: Express.Multer.File,
   ): Promise<FileEntity> {
     const file = new FileEntity();
-    file.name = content.filename;
+    file.name = content.originalname;
     file.mimetype = content.mimetype;
 
     const uuid = uuidv4();
@@ -84,7 +84,7 @@ class FileService {
       where: { id, admin: { id: adminId } },
     });
 
-    file.name = content.filename;
+    file.name = content.originalname;
     file.mimetype = content.mimetype;
 
     /* Soft Deletion in Object Storage */

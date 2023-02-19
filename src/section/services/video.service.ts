@@ -59,7 +59,6 @@ class VideoService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    video.course = Promise.resolve(course);
     video.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     const uuid = uuidv4();
@@ -99,7 +98,6 @@ class VideoService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    video.course = Promise.resolve(course);
     video.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     /* Soft Deletion in Object Storage */
@@ -120,8 +118,9 @@ class VideoService {
   }
 
   async delete(id: number, adminId: number): Promise<VideoEntity> {
+    /* TO DO: Cek adminId */
     const video = await this.videoRepository.findOne({
-      where: { id, course: { admin: { id: adminId } } },
+      where: { id },
     });
 
     /* Soft Deletion in Object Storage */

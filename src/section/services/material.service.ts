@@ -58,7 +58,6 @@ class MaterialService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    material.course = Promise.resolve(course);
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     const uuid = uuidv4();
@@ -98,7 +97,6 @@ class MaterialService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    material.course = Promise.resolve(course);
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     /* Soft Deletion in Object Storage */
@@ -120,7 +118,9 @@ class MaterialService {
 
   async delete(id: number, adminId: number): Promise<MaterialEntity> {
     const material = await this.materialRepository.findOne({
-      where: { id, course: { admin: { id: adminId } } },
+      /* TO DO: Cek adminId */
+
+      where: { id },
     });
 
     /* Soft Deletion in Object Storage */

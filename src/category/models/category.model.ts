@@ -19,7 +19,7 @@ class CategoryEntity extends Base {
   @ManyToMany(() => CourseEntity, (course) => course.categories)
   courses: Promise<CourseEntity[]>;
 
-  @ManyToOne(() => AdminEntity, (admin) => admin.courses)
+  @ManyToOne(() => AdminEntity, (admin) => admin.categories)
   @JoinColumn({ name: 'admin_id' })
   admin: Promise<AdminEntity>;
 }

@@ -110,7 +110,7 @@ class CourseService {
 
     if (content) {
       const file = new FileEntity();
-      file.name = content.filename;
+      file.name = content.originalname;
       file.mimetype = content.mimetype;
 
       const uuid = uuidv4();
@@ -161,7 +161,7 @@ class CourseService {
       const file = await this.fileRepository.findOne({
         where: { id, admin: { id: adminId } },
       });
-      file.name = content.filename;
+      file.name = content.originalname;
       file.mimetype = content.mimetype;
 
       /* Soft Deletion in Object Storage */

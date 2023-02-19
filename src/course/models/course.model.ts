@@ -32,9 +32,6 @@ class CourseEntity extends Base {
   @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
 
-  @OneToMany(() => SectionEntity, (section) => section.course)
-  sections: Promise<SectionEntity[]>;
-
   @OneToOne(() => SectionEntity, (section) => section.adjoinedCourse)
   parentSection: Promise<SectionEntity>;
 

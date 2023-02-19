@@ -41,6 +41,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourse(
     @Request() req: AuthRequest,
     @Query() query: FetchCourseDto,
@@ -77,6 +79,8 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourseById(
     @Request() req: AuthRequest,
     @Param() params: ReadCourseIDDto,
@@ -115,6 +119,9 @@ export default class CourseController {
       const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
       const adminId = user.id;
+
+      console.log(adminId);
+      console.log(createCourseDto);
 
       const course = await this.courseService.create(
         title,

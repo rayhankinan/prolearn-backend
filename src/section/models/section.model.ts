@@ -13,7 +13,6 @@ import {
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
 import SectionType from '@section/enum/section-type';
-import { count } from 'console';
 
 @Entity('section')
 @Tree('closure-table', { closureTableName: 'section_closure' })
@@ -31,10 +30,6 @@ class SectionEntity extends Base {
 
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
-
-  @ManyToOne(() => CourseEntity, (course) => course.sections)
-  @JoinColumn({ name: 'course_id' })
-  course: Promise<CourseEntity>;
 
   @OneToOne(() => CourseEntity, (course) => course.parentSection)
   adjoinedCourse: Promise<CourseEntity>;
