@@ -114,7 +114,11 @@ class CourseService {
       file.mimetype = content.mimetype;
 
       const uuid = uuidv4();
-      await this.storageService.upload(uuid, StorageType.FILE, content);
+      await this.storageService.upload(
+        uuid,
+        StorageType.FILE,
+        content,
+      ); /* TO DO: Masukkan ini ke queue */
       file.uuid = uuid;
 
       const admin = await this.adminRepository.findOne({
@@ -161,10 +165,17 @@ class CourseService {
       file.mimetype = content.mimetype;
 
       /* Soft Deletion in Object Storage */
-      await this.storageService.delete(file.uuid, StorageType.FILE);
+      await this.storageService.delete(
+        file.uuid,
+        StorageType.FILE,
+      ); /* TO DO: Masukkan ini ke queue */
 
       const uuid = uuidv4();
-      await this.storageService.upload(uuid, StorageType.FILE, content);
+      await this.storageService.upload(
+        uuid,
+        StorageType.FILE,
+        content,
+      ); /* TO DO: Masukkan ini ke queue */
       file.uuid = uuid;
 
       const admin = await this.adminRepository.findOne({
@@ -187,7 +198,10 @@ class CourseService {
 
     if (thumbnail) {
       /* Soft Deletion in Object Storage */
-      await this.storageService.delete(thumbnail.uuid, StorageType.FILE);
+      await this.storageService.delete(
+        thumbnail.uuid,
+        StorageType.FILE,
+      ); /* TO DO: Masukkan ini ke queue */
     }
 
     return await this.courseRepository.softRemove(course);

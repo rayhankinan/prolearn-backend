@@ -1,5 +1,4 @@
 import { PassThrough } from 'stream';
-import { Response } from 'express';
 import { Injectable } from '@nestjs/common';
 import {
   Bucket,
@@ -38,7 +37,7 @@ class StorageService {
     filename: string,
     filetype: StorageType,
     content: Express.Multer.File,
-  ) {
+  ): Promise<void> {
     const passThrough = new PassThrough();
     passThrough.write(content);
     passThrough.end;
@@ -65,13 +64,15 @@ class StorageService {
   async streamingDownload(
     filename: string,
     filetype: StorageType,
-    res: Response,
-  ) {
+  ): Promise<PassThrough> {
     const file = this.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
-    file.createReadStream().pipe(res);
+    const passThrough = new PassThrough();
+    file.createReadStream().pipe(passThrough);
+
+    return passThrough;
   }
 
   async delete(filename: string, filetype: StorageType): Promise<MoveResponse> {

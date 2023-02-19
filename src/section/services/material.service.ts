@@ -4,10 +4,10 @@ import { Repository, TreeRepository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import CloudLogger from '@logger/class/cloud-logger';
 import MaterialEntity from '@section/models/material.model';
-import StorageService from '@storage/services/storage.service';
-import StorageType from '@storage/enum/storage-type';
 import CourseEntity from '@course/models/course.model';
 import SectionEntity from '@section/models/section.model';
+import StorageService from '@storage/services/storage.service';
+import StorageType from '@storage/enum/storage-type';
 
 @Injectable()
 class MaterialService {
@@ -62,7 +62,11 @@ class MaterialService {
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     const uuid = uuidv4();
-    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
+    await this.storageService.upload(
+      uuid,
+      StorageType.MARKDOWN,
+      content,
+    ); /* TO DO: Masukkan ini ke queue */
     material.uuid = uuid;
 
     return await this.materialRepository.save(material);
@@ -98,10 +102,17 @@ class MaterialService {
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
     /* Soft Deletion in Object Storage */
-    await this.storageService.delete(material.uuid, StorageType.MARKDOWN);
+    await this.storageService.delete(
+      material.uuid,
+      StorageType.MARKDOWN,
+    ); /* TO DO: Masukkan ini ke queue */
 
     const uuid = uuidv4();
-    await this.storageService.upload(uuid, StorageType.MARKDOWN, content);
+    await this.storageService.upload(
+      uuid,
+      StorageType.MARKDOWN,
+      content,
+    ); /* TO DO: Masukkan ini ke queue */
     material.uuid = uuid;
 
     return await this.materialRepository.save(material);
@@ -113,7 +124,10 @@ class MaterialService {
     });
 
     /* Soft Deletion in Object Storage */
-    await this.storageService.delete(material.uuid, StorageType.MARKDOWN);
+    await this.storageService.delete(
+      material.uuid,
+      StorageType.MARKDOWN,
+    ); /* TO DO: Masukkan ini ke queue */
 
     return await this.materialRepository.remove(material);
   }
