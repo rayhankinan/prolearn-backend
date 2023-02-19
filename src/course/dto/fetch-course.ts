@@ -34,21 +34,19 @@ class FetchCourseDto {
 
   @ApiProperty({
     description: 'Page Limit',
-    required: false,
+    required: true,
   })
-  @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  readonly limit?: number;
+  readonly limit: number;
 
   @ApiProperty({
     description: 'Page Number',
-    required: false,
+    required: true,
   })
-  @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  readonly page?: number;
+  readonly page: number;
 }
 
 export default FetchCourseDto;

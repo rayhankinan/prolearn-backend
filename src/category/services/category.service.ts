@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, In, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
 import AdminEntity from '@user/models/admin.model';
@@ -23,7 +23,7 @@ class CategoryService {
 
   async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find({
-      where: { title: ILike(`%${title}%`) },
+      where: { title: ILike(`%${title ? title : ''}%`) },
     });
 
     return categories;

@@ -45,7 +45,7 @@ class FileService {
     adminId: number,
   ): Promise<FileEntity[]> {
     const files = await this.fileRepository.find({
-      where: { admin: { id: adminId }, name: ILike(`%${name}%`) },
+      where: { admin: { id: adminId }, name: ILike(`%${name ? name : ''}%`) },
     });
 
     return files;
