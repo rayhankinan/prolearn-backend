@@ -2,7 +2,7 @@ import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class CreateMaterialDto {
+class CreateSectionDto {
   @ApiProperty({
     description: 'Section Title',
     required: true,
@@ -55,4 +55,4 @@ class CreateMaterialDto {
   readonly isAncestor: boolean;
 }
 
-export default CreateMaterialDto;
+export default CreateSectionDto;

@@ -22,10 +22,10 @@ import { lookup } from 'mime-types';
 import MaterialEntity from '@section/models/material.model';
 import MaterialService from '@section/services/material.service';
 import ResponseObject from '@response/class/response-object';
-import RenderMaterialDto from '@section/dto/material/render-material';
-import CreateMaterialDto from '@section/dto/material/create-material';
+import RenderSectionDto from '@section/dto/render-section';
+import CreateSectionDto from '@section/dto/create-section';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
-import UpdateMaterialContentDto from '@section/dto/material/update-material-content';
+import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
@@ -43,7 +43,7 @@ class MaterialController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async renderMaterial(
-    @Param() param: RenderMaterialDto,
+    @Param() param: RenderSectionDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
@@ -71,7 +71,7 @@ class MaterialController {
   @UseInterceptors(FileInterceptor('file'))
   async createMaterial(
     @Request() req: AuthRequest,
-    @Body() body: CreateMaterialDto,
+    @Body() body: CreateSectionDto,
     @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
   ) {
     try {
@@ -111,7 +111,7 @@ class MaterialController {
   async editMaterial(
     @Request() req: AuthRequest,
     @Param() param: UpdateSectionIDDto,
-    @Body() body: UpdateMaterialContentDto,
+    @Body() body: UpdateSectionContentDto,
     @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
   ) {
     try {
