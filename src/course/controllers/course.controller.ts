@@ -10,6 +10,7 @@ import {
   HttpException,
   UseGuards,
   Request,
+  UploadedFile,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -106,12 +107,14 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
+    @UploadedFile() content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
       const { title, description, difficulty, status, categoryIDs } =
         createCourseDto;
       const adminId = user.id;
+      content = content ? content : null;
 
       const course = await this.courseService.create(
         title,
@@ -120,6 +123,7 @@ export default class CourseController {
         status,
         categoryIDs,
         adminId,
+        content,
       );
 
       return new ResponseObject<CourseEntity>(
@@ -142,6 +146,7 @@ export default class CourseController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
+    @UploadedFile() content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -149,6 +154,7 @@ export default class CourseController {
       const { title, description, difficulty, status, categoryIDs } =
         updateCourseDto;
       const adminId = user.id;
+      content = content ? content : null;
 
       const course = await this.courseService.update(
         id,
@@ -158,6 +164,7 @@ export default class CourseController {
         status,
         categoryIDs,
         adminId,
+        content,
       );
 
       return new ResponseObject<CourseEntity>(
