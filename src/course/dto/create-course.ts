@@ -5,7 +5,6 @@ import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import IsCourseLevel from '@course/validator/course-level';
 import IsCourseStatus from '@course/validator/course-status';
-import CreateSectionDto from '@section/dto/material/create-material';
 
 class CreateCourseDto {
   @ApiProperty({
@@ -36,12 +35,11 @@ class CreateCourseDto {
   @ApiProperty({
     description: 'Course Category',
     isArray: true,
-    required: false,
+    required: true,
   })
-  @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
-  readonly categoryIDs?: number[];
+  readonly categoryIDs: number[];
 
   @ApiProperty({
     description: 'Course Status',

@@ -51,7 +51,7 @@ class CourseService {
           admin: {
             id: adminId,
           },
-          title: ILike(`%${title}%`),
+          title: ILike(`%${title ? title : ''}%`),
           difficulty,
         },
         order: {
@@ -64,8 +64,8 @@ class CourseService {
     ]);
 
     const count = courses.length;
-    const currentPage = page ? page : 1;
-    const totalPage = limit ? Math.ceil(total / limit) : 1;
+    const currentPage = page;
+    const totalPage = Math.ceil(total / limit);
 
     return { courses, count, currentPage, totalPage };
   }
