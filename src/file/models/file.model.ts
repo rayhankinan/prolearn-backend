@@ -29,7 +29,9 @@ class FileEntity extends Base {
   @JoinColumn({ name: 'admin_id' })
   admin: Promise<AdminEntity>;
 
-  @OneToOne(() => CourseEntity, (course) => course.thumbnail)
+  @OneToOne(() => CourseEntity, (course) => course.thumbnail, {
+    nullable: true,
+  })
   course: Promise<CourseEntity>;
 }
 

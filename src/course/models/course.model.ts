@@ -32,10 +32,16 @@ class CourseEntity extends Base {
   @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
 
-  @OneToOne(() => SectionEntity, (section) => section.adjoinedCourse)
+  @OneToOne(() => SectionEntity, (section) => section.adjoinedCourse, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'section_id' })
   parentSection: Promise<SectionEntity>;
 
-  @OneToOne(() => FileEntity, (file) => file.course)
+  @OneToOne(() => FileEntity, (file) => file.course, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'file_id' })
   thumbnail: Promise<FileEntity>;
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)

@@ -31,7 +31,9 @@ class SectionEntity extends Base {
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
 
-  @OneToOne(() => CourseEntity, (course) => course.parentSection)
+  @OneToOne(() => CourseEntity, (course) => course.parentSection, {
+    nullable: true,
+  })
   adjoinedCourse: Promise<CourseEntity>;
 
   @TreeChildren()
