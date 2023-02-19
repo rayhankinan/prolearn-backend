@@ -4,7 +4,6 @@ import {
   Put,
   Delete,
   Body,
-  Res,
   Query,
   Param,
   Controller,
@@ -39,8 +38,6 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourse(
     @Request() req: AuthRequest,
     @Query() query: FetchCourseDto,
@@ -77,8 +74,6 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourseById(
     @Request() req: AuthRequest,
     @Param() params: ReadCourseIDDto,

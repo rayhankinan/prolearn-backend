@@ -58,8 +58,6 @@ class FileController {
 
   @ApiProperty({ description: 'Render File' })
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async renderFile(
     @Param() param: RenderFileDto,
     @Res({ passthrough: true }) res: Response,

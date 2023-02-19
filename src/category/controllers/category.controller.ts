@@ -34,8 +34,6 @@ class CategoryController {
 
   @ApiProperty({ description: 'Get All Categories' })
   @Get('all')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getAllCategories() {
     try {
       const categories = await this.categoryService.getAllCategories();
@@ -54,8 +52,6 @@ class CategoryController {
 
   @ApiProperty({ description: 'Search Categories using Query' })
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getCategoriesByTitle(@Query() query: ReadCategoryTitleDto) {
     try {
       const { title } = query;
