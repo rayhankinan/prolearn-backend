@@ -65,7 +65,9 @@ class CourseService {
         take: limit,
         skip: (page - 1) * limit,
       }),
-      this.courseRepository.count(condition),
+      this.courseRepository.count({
+        where: condition,
+      }),
     ]);
 
     const count = courses.length;
