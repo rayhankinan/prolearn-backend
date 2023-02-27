@@ -42,29 +42,30 @@ class CourseService {
     currentPage: number;
     totalPage: number;
   }> {
+    var condition = {
+      categories: {
+        id: categoryId,
+      },
+      admin: {
+        id: adminId,
+      },
+      title: ILike(`%${title ? title : ''}%`),
+      difficulty,
+    }
     const [courses, total] = await Promise.all([
       this.courseRepository.find({
         relations: {
           categories: true,
           thumbnail: true,
         },
-        where: {
-          categories: {
-            id: categoryId,
-          },
-          admin: {
-            id: adminId,
-          },
-          title: ILike(`%${title ? title : ''}%`),
-          difficulty,
-        },
+        where: condition,
         order: {
           createdAt: 'DESC',
         },
         take: limit,
         skip: (page - 1) * limit,
       }),
-      this.courseRepository.count(),
+      this.courseRepository.count(condition),
     ]);
 
     const count = courses.length;
