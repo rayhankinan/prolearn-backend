@@ -30,7 +30,7 @@ class CourseService {
   }
 
   async fetchCourse(
-    categoryId: number,
+    categoryIDs: number[],
     title: string,
     difficulty: CourseLevel,
     limit: number,
@@ -42,16 +42,16 @@ class CourseService {
     currentPage: number;
     totalPage: number;
   }> {
-    var condition = {
+    const condition = {
       categories: {
-        id: categoryId,
+        id: In(categoryIDs),
       },
       admin: {
         id: adminId,
       },
       title: ILike(`%${title ? title : ''}%`),
       difficulty,
-    }
+    };
     const [courses, total] = await Promise.all([
       this.courseRepository.find({
         relations: {

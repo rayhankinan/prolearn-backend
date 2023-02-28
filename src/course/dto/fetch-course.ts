@@ -7,12 +7,13 @@ import IsCourseLevel from '@course/validator/course-level';
 class FetchCourseDto {
   @ApiProperty({
     description: 'Category ID',
+    isArray: true,
     required: false,
   })
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { each: true })
   @Type(() => Number)
-  readonly categoryId?: number;
+  readonly categoryIDs?: number[];
 
   @ApiProperty({
     description: 'Course Title',

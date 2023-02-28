@@ -49,12 +49,12 @@ export default class CourseController {
   ) {
     try {
       const { user } = req;
-      const { categoryId, title, difficulty, limit, page } = query;
+      const { categoryIDs, title, difficulty, limit, page } = query;
       const adminId = user.role === UserRole.ADMIN ? user.id : undefined;
 
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
-          categoryId,
+          categoryIDs,
           title,
           difficulty,
           limit,
