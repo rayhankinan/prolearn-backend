@@ -48,12 +48,7 @@ class CourseService {
       },
       title: ILike(`%${title ? title : ''}%`),
       difficulty,
-    }
-
-    if (categoryId != undefined) {
-      condition['categories'] = {
-      id: In(categoryId),
-      };
+      categories: categoryId? { id: In(categoryId) } : undefined,
     }
 
     const [courses, total] = await Promise.all([

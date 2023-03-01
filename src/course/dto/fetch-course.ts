@@ -13,7 +13,7 @@ class FetchCourseDto {
   @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
-  readonly categoryIDs?: number[];
+  readonly categoryId?: number[];
 
   @ApiProperty({
     description: 'Course Title',
