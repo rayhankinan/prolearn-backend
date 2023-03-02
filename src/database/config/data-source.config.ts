@@ -19,15 +19,6 @@ const dataSourceOptions: DataSourceOptions = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  cache: {
-    type: 'redis',
-    options: {
-      socket: {
-        host: process.env.DATABASE_CACHE_HOSTNAME || 'localhost',
-        port: +process.env.DATABASE_CACHE_PORT || 6379,
-      },
-    },
-  },
   synchronize: true,
   logging: true,
   entities: [
