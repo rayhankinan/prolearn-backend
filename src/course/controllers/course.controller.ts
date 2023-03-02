@@ -41,8 +41,6 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses' })
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async fetchCourse(
     @Request() req: AuthRequest,
     @Query() query: FetchCourseDto,
