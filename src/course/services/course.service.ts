@@ -42,14 +42,14 @@ class CourseService {
     currentPage: number;
     totalPage: number;
   }> {
-    var condition = {
+    const condition = {
       admin: {
         id: adminId,
       },
       title: ILike(`%${title ? title : ''}%`),
       difficulty,
-      categories: categoryId? { id: In(categoryId) } : undefined,
-    }
+      categories: categoryId ? { id: In(categoryId) } : undefined,
+    };
 
     const [courses, total] = await Promise.all([
       this.courseRepository.find({
