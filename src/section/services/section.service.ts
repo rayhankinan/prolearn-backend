@@ -43,7 +43,8 @@ class SectionService {
         'section_closure',
         parentSection,
       )
-      .andWhere({ title: ILike(`%${title ? title : ''}%`) })
+      .andWhere({ title: title ? ILike(`%${title}%`) : undefined })
+      .cache(true)
       .getMany();
 
     return childrenSections;

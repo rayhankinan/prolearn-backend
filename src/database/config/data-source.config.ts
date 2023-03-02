@@ -19,6 +19,9 @@ const dataSourceOptions: DataSourceOptions = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
+  cache: {
+    duration: +process.env.DATABASE_CACHE_DURATION || 1000,
+  },
   synchronize: true,
   logging: true,
   entities: [

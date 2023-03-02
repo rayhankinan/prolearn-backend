@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, In, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import CategoryEntity from '@category/models/category.model';
 import CourseEntity from '@course/models/course.model';
@@ -42,13 +42,13 @@ class CourseService {
     currentPage: number;
     totalPage: number;
   }> {
-    const condition = {
+    const condition: FindOptionsWhere<CourseEntity> = {
       admin: {
         id: adminId,
       },
-      title: ILike(`%${title ? title : ''}%`),
+      title: title ? ILike(`%${title}%`) : undefined,
       difficulty,
-      categories: categoryId ? { id: In(categoryId) } : undefined,
+      categories: { id: categoryId ? In(categoryId) : undefined },
     };
 
     const [courses, total] = await Promise.all([
@@ -63,9 +63,11 @@ class CourseService {
         },
         take: limit,
         skip: (page - 1) * limit,
+        cache: true,
       }),
       this.courseRepository.count({
         where: condition,
+        cache: true,
       }),
     ]);
 

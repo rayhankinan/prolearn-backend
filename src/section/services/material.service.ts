@@ -117,9 +117,8 @@ class MaterialService {
   }
 
   async delete(id: number, adminId: number): Promise<MaterialEntity> {
+    /* TO DO: Cek adminId */
     const material = await this.materialRepository.findOne({
-      /* TO DO: Cek adminId */
-
       where: { id },
     });
 

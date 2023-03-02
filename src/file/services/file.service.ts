@@ -22,19 +22,20 @@ class FileService {
   async getAllFiles(adminId: number): Promise<FileEntity[]> {
     const files = await this.fileRepository.find({
       where: { admin: { id: adminId } },
+      cache: true,
     });
 
     return files;
   }
 
-  async render(fileId: number): Promise<[Buffer, string]> {
+  async render(fileId: number, type: StorageType): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
       where: { id: fileId },
     });
 
     const downloadResponse = await this.storageService.download(
       file.uuid,
-      StorageType.FILE,
+      type,
     );
 
     return [downloadResponse[0], file.mimetype];
@@ -42,10 +43,16 @@ class FileService {
 
   async searchFilesByName(
     name: string,
+    type: StorageType,
     adminId: number,
   ): Promise<FileEntity[]> {
     const files = await this.fileRepository.find({
-      where: { admin: { id: adminId }, name: ILike(`%${name ? name : ''}%`) },
+      where: {
+        admin: { id: adminId },
+        name: name ? ILike(`%${name}%`) : undefined,
+        storageType: type,
+      },
+      cache: true,
     });
 
     return files;
@@ -53,16 +60,18 @@ class FileService {
 
   async create(
     adminId: number,
+    type: StorageType,
     content: Express.Multer.File,
   ): Promise<FileEntity> {
     const file = new FileEntity();
     file.name = content.originalname;
     file.mimetype = content.mimetype;
+    file.storageType = type;
 
     const uuid = uuidv4();
     await this.storageService.upload(
       uuid,
-      StorageType.FILE,
+      type,
       content,
     ); /* TO DO: Masukkan ini ke queue */
     file.uuid = uuid;
@@ -78,6 +87,7 @@ class FileService {
   async edit(
     id: number,
     adminId: number,
+    type: StorageType,
     content: Express.Multer.File,
   ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
@@ -86,17 +96,18 @@ class FileService {
 
     file.name = content.originalname;
     file.mimetype = content.mimetype;
+    file.storageType = type;
 
     /* Soft Deletion in Object Storage */
     await this.storageService.delete(
       file.uuid,
-      StorageType.FILE,
+      type,
     ); /* TO DO: Masukkan ini ke queue */
 
     const uuid = uuidv4();
     await this.storageService.upload(
       uuid,
-      StorageType.FILE,
+      type,
       content,
     ); /* TO DO: Masukkan ini ke queue */
     file.uuid = uuid;
@@ -104,7 +115,11 @@ class FileService {
     return await this.fileRepository.save(file);
   }
 
-  async delete(id: number, adminId: number): Promise<FileEntity> {
+  async delete(
+    id: number,
+    type: StorageType,
+    adminId: number,
+  ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
       where: { id, admin: { id: adminId } },
     });
@@ -112,7 +127,7 @@ class FileService {
     /* Soft Deletion in Object Storage */
     await this.storageService.delete(
       file.uuid,
-      StorageType.FILE,
+      type,
     ); /* TO DO: Masukkan ini ke queue */
 
     return await this.fileRepository.remove(file);

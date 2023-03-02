@@ -31,6 +31,7 @@ import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
+import StorageType from '@storage/enum/storage-type';
 
 @Controller('file')
 class FileController {
@@ -65,7 +66,10 @@ class FileController {
     try {
       const { id } = param;
 
-      const [buffer, mimetype] = await this.fileService.render(id);
+      const [buffer, mimetype] = await this.fileService.render(
+        id,
+        StorageType.FILE,
+      );
       res.set({
         'Content-Type': mimetype,
       });
@@ -92,7 +96,11 @@ class FileController {
       const { name } = query;
       const adminId = user.id;
 
-      const files = await this.fileService.searchFilesByName(name, adminId);
+      const files = await this.fileService.searchFilesByName(
+        name,
+        StorageType.FILE,
+        adminId,
+      );
 
       return new ResponseList<FileEntity>('Files searched successfully', files);
     } catch (error) {
@@ -116,7 +124,11 @@ class FileController {
       const { user } = req;
       const adminId = user.id;
 
-      const file = await this.fileService.create(adminId, content);
+      const file = await this.fileService.create(
+        adminId,
+        StorageType.FILE,
+        content,
+      );
 
       return new ResponseObject<FileEntity>('File created successfully', file);
     } catch (error) {
@@ -142,7 +154,12 @@ class FileController {
       const { id } = param;
       const adminId = user.id;
 
-      const file = await this.fileService.edit(id, adminId, content);
+      const file = await this.fileService.edit(
+        id,
+        adminId,
+        StorageType.FILE,
+        content,
+      );
 
       return new ResponseObject<FileEntity>('File edited successfully', file);
     } catch (error) {
@@ -166,7 +183,7 @@ class FileController {
       const { id } = param;
       const adminId = user.id;
 
-      const file = await this.fileService.delete(id, adminId);
+      const file = await this.fileService.delete(id, StorageType.FILE, adminId);
 
       return new ResponseObject<FileEntity>('File deleted successfully', file);
     } catch (error) {

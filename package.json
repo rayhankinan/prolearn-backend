@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^3.3.0",
     "@google-cloud/storage": "^6.9.2",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.3.7",
@@ -30,7 +31,6 @@
     "@nestjs/platform-express": "^9.3.7",
     "@nestjs/swagger": "^6.2.1",
     "@nestjs/typeorm": "^9.0.1",
-    "@types/bull": "^4.10.0",
     "@types/compression": "^1.7.2",
     "@types/mime-types": "^2.1.1",
     "@types/multer": "^1.4.7",
@@ -38,7 +38,6 @@
     "@types/passport-local": "^1.0.35",
     "@types/uuid": "^9.0.0",
     "argon2": "^0.30.3",
-    "bull": "^4.10.4",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "compression": "^1.7.4",

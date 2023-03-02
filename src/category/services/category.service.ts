@@ -16,14 +16,17 @@ class CategoryService {
   ) {}
 
   async getAllCategories(): Promise<CategoryEntity[]> {
-    const categories = await this.categoryRepository.find();
+    const categories = await this.categoryRepository.find({
+      cache: true,
+    });
 
     return categories;
   }
 
   async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find({
-      where: { title: ILike(`%${title ? title : ''}%`) },
+      where: { title: title ? ILike(`%${title}%`) : undefined },
+      cache: true,
     });
 
     return categories;
