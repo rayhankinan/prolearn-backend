@@ -13,6 +13,7 @@ import VideoService from '@section/services/video.service';
 import SectionController from '@section/controllers/section.controller';
 import MaterialController from '@section/controllers/material.controller';
 import VideoController from '@section/controllers/video.controller';
+import FileModule from '@file/file.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import VideoController from '@section/controllers/video.controller';
       CourseEntity,
       AdminEntity,
     ]),
+    FileModule,
     LoggerModule,
     StorageModule,
   ],

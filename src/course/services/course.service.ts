@@ -10,21 +10,20 @@ import CloudLogger from '@logger/class/cloud-logger';
 import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
 import AdminEntity from '@user/models/admin.model';
-import FileEntity from '@file/models/file.model';
+import FileService from '@file/services/file.service';
 
 @Injectable()
 class CourseService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     private readonly storageService: StorageService,
+    private readonly fileService: FileService,
     @InjectRepository(AdminEntity)
     private readonly adminRepository: Repository<AdminEntity>,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
   ) {
     this.cloudLogger = new CloudLogger(CourseEntity.name);
   }
@@ -113,24 +112,12 @@ class CourseService {
     course.admin = Promise.resolve(admin);
 
     if (content) {
-      const file = new FileEntity();
-      file.name = content.originalname;
-      file.mimetype = content.mimetype;
-
-      const uuid = uuidv4();
-      await this.storageService.upload(
-        uuid,
+      const savedFile = await this.fileService.create(
+        adminId,
         StorageType.FILE,
         content,
-      ); /* TO DO: Masukkan ini ke queue */
-      file.uuid = uuid;
+      );
 
-      const admin = await this.adminRepository.findOne({
-        where: { id: adminId },
-      });
-      file.admin = Promise.resolve(admin);
-
-      const savedFile = await this.fileRepository.save(file);
       course.thumbnail = Promise.resolve(savedFile);
     }
 
@@ -162,33 +149,24 @@ class CourseService {
     course.categories = Promise.resolve(categories);
 
     if (content) {
-      const file = await this.fileRepository.findOne({
-        where: { id, admin: { id: adminId } },
-      });
-      file.name = content.originalname;
-      file.mimetype = content.mimetype;
+      const thumbnail = await course.thumbnail;
 
-      /* Soft Deletion in Object Storage */
-      await this.storageService.delete(
-        file.uuid,
-        StorageType.FILE,
-      ); /* TO DO: Masukkan ini ke queue */
-
-      const uuid = uuidv4();
-      await this.storageService.upload(
-        uuid,
-        StorageType.FILE,
-        content,
-      ); /* TO DO: Masukkan ini ke queue */
-      file.uuid = uuid;
-
-      const admin = await this.adminRepository.findOne({
-        where: { id: adminId },
-      });
-      file.admin = Promise.resolve(admin);
-
-      const savedFile = await this.fileRepository.save(file);
-      course.thumbnail = Promise.resolve(savedFile);
+      if (thumbnail) {
+        const editedFile = await this.fileService.edit(
+          thumbnail.id,
+          adminId,
+          StorageType.FILE,
+          content,
+        );
+        course.thumbnail = Promise.resolve(editedFile);
+      } else {
+        const newFile = await this.fileService.create(
+          adminId,
+          StorageType.FILE,
+          content,
+        );
+        course.thumbnail = Promise.resolve(newFile);
+      }
     }
 
     return await this.courseRepository.save(course);
@@ -201,11 +179,7 @@ class CourseService {
     const thumbnail = await course.thumbnail;
 
     if (thumbnail) {
-      /* Soft Deletion in Object Storage */
-      await this.storageService.delete(
-        thumbnail.uuid,
-        StorageType.FILE,
-      ); /* TO DO: Masukkan ini ke queue */
+      await this.fileService.delete(thumbnail.id, StorageType.FILE, adminId);
     }
 
     return await this.courseRepository.softRemove(course);

@@ -15,6 +15,7 @@ import FileController from '@file/controller/file.controller';
   ],
   providers: [FileService],
   controllers: [FileController],
+  exports: [FileService],
 })
 class FileModule {}
 

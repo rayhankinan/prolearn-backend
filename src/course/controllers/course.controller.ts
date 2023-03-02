@@ -12,8 +12,6 @@ import {
   Request,
   UploadedFile,
   UseInterceptors,
-  ParseFilePipe,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';

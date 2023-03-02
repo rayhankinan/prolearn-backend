@@ -6,7 +6,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   OneToOne,
 } from 'typeorm';
 import Base from '@database/models/base';
@@ -16,6 +15,8 @@ import SectionEntity from '@section/models/section.model';
 import CategoryEntity from '@category/models/category.model';
 import AdminEntity from '@user/models/admin.model';
 import FileEntity from '@file/models/file.model';
+import UserEntity from '@user/models/user.model';
+import StudentEntity from '@user/models/student.model';
 
 @Entity('course')
 class CourseEntity extends Base {
@@ -51,6 +52,9 @@ class CourseEntity extends Base {
   @ManyToOne(() => AdminEntity, (admin) => admin.courses)
   @JoinColumn({ name: 'admin_id' })
   admin: Promise<AdminEntity>;
+
+  @ManyToMany(() => StudentEntity, (student) => student.courses)
+  subscribers: Promise<StudentEntity[]>;
 }
 
 export default CourseEntity;

@@ -7,16 +7,12 @@ import LoggerModule from '@logger/logger.module';
 import CategoryEntity from '@category/models/category.model';
 import AdminEntity from '@user/models/admin.model';
 import StorageModule from '@storage/storage.module';
-import FileEntity from '@file/models/file.model';
+import FileModule from '@file/file.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CourseEntity,
-      CategoryEntity,
-      AdminEntity,
-      FileEntity,
-    ]),
+    TypeOrmModule.forFeature([CourseEntity, CategoryEntity, AdminEntity]),
+    FileModule,
     LoggerModule,
     StorageModule,
   ],
