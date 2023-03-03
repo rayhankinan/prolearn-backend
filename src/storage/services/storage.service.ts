@@ -6,11 +6,13 @@ import {
   MoveResponse,
   Storage,
 } from '@google-cloud/storage';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import CloudLogger from '@logger/class/cloud-logger';
 import StorageType from '@storage/enum/storage-type';
 import AvailableType from '@storage/enum/available-type';
 import storageConfig from '@storage/config/storage.config';
+import UploadPayload from '@storage/payload/upload-payload';
+import DeletePayload from '@storage/payload/delete-payload';
 
 @Injectable()
 class StorageService {
@@ -30,27 +32,11 @@ class StorageService {
     filetype: StorageType,
     content: Express.Multer.File,
   ): Promise<void> {
-    const file = this.bucket.file(
-      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
-    );
-
-    await file.save(content.buffer, { contentType: content.mimetype });
-  }
-
-  async streamingUpload(
-    filename: string,
-    filetype: StorageType,
-    content: Express.Multer.File,
-  ): Promise<void> {
-    const passThrough = new PassThrough();
-    passThrough.write(content.buffer);
-    passThrough.end;
-
-    const file = this.bucket.file(
-      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
-    );
-
-    passThrough.pipe(file.createWriteStream({ contentType: content.mimetype }));
+    await this.eventEmitter.emitAsync('file.uploaded', {
+      filename,
+      filetype,
+      content,
+    });
   }
 
   async download(
@@ -65,43 +51,45 @@ class StorageService {
     return downloadResponse;
   }
 
-  async streamingDownload(
-    filename: string,
-    filetype: StorageType,
-  ): Promise<PassThrough> {
+  async delete(filename: string, filetype: StorageType): Promise<void> {
+    await this.eventEmitter.emitAsync('file.deleted', { filename, filetype });
+  }
+
+  async restore(filename: string, filetype: StorageType): Promise<void> {
+    await this.eventEmitter.emitAsync('file.restored', { filename, filetype });
+  }
+
+  @OnEvent('file.uploaded', { async: true })
+  async uploadHandler(payload: UploadPayload) {
+    const { filename, filetype, content } = payload;
+
     const file = this.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
-    const passThrough = new PassThrough();
-    file.createReadStream().pipe(passThrough);
-
-    return passThrough;
+    await file.save(content.buffer, { contentType: content.mimetype });
   }
 
-  async delete(filename: string, filetype: StorageType): Promise<MoveResponse> {
+  @OnEvent('file.deleted', { async: true })
+  async deleteHandler(payload: DeletePayload) {
+    const { filename, filetype } = payload;
+
     const file = this.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
-    const moveResponse = await file.move(
-      `${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`,
-    );
-    return moveResponse;
+    await file.move(`${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`);
   }
 
-  async restore(
-    filename: string,
-    filetype: StorageType,
-  ): Promise<MoveResponse> {
-    const deletedFile = this.bucket.file(
+  @OnEvent('file.restored', { async: true })
+  async restoreHandler(payload: DeletePayload) {
+    const { filename, filetype } = payload;
+
+    const file = this.bucket.file(
       `${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`,
     );
 
-    const moveResponse = await deletedFile.move(
-      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
-    );
-    return moveResponse;
+    await file.move(`${AvailableType.AVAILABLE}/${filetype}/${filename}`);
   }
 }
 
