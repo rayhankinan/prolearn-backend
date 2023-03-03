@@ -1,4 +1,4 @@
-import { ChildEntity, Column, JoinTable, ManyToMany } from 'typeorm';
+import { ChildEntity, Column, Index, JoinTable, ManyToMany } from 'typeorm';
 import UserEntity from '@user/models/user.model';
 import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';

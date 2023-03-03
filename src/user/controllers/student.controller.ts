@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Param,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -44,16 +45,16 @@ class StudentController {
   }
 
   @ApiProperty({ description: 'Subscription' })
-  @Post('subscription')
+  @Post('subscribe/:courseId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   async subscribe(
     @Request() req: AuthRequest,
-    @Body() body: SubscriptionUserDTO,
+    @Param() param: SubscriptionUserDTO,
   ) {
     try {
       const { user } = req;
-      const { courseId } = body;
+      const { courseId } = param;
       const userId = user.id;
 
       const student = await this.studentService.subscribe(userId, courseId);
