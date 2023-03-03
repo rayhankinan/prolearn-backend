@@ -128,7 +128,7 @@ class MaterialService {
       StorageType.MARKDOWN,
     ); /* TO DO: Masukkan ini ke queue */
 
-    return await this.materialRepository.remove(material);
+    return await this.materialRepository.softRemove(material);
   }
 }
 

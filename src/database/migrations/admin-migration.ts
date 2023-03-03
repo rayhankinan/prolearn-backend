@@ -18,7 +18,7 @@ class AdminSeeding implements MigrationInterface {
       password: initialAdminOptions.password,
     });
 
-    await queryRunner.manager.remove(admin);
+    await queryRunner.manager.softRemove(admin);
   }
 }
 

@@ -7,6 +7,8 @@ import UserService from '@user/services/user.service';
 import jwtOptions from '@auth/config/jwt-config';
 import LoggerModule from '@logger/logger.module';
 import CourseEntity from '@course/models/course.model';
+import StudentService from './services/student.service';
+import StudentController from './controllers/student.controller';
 
 @Module({
   imports: [
@@ -14,8 +16,8 @@ import CourseEntity from '@course/models/course.model';
     JwtModule.register(jwtOptions),
     LoggerModule,
   ],
-  controllers: [UserController],
-  providers: [UserService],
+  controllers: [UserController, StudentController],
+  providers: [UserService, StudentService],
 })
 class UserModule {}
 

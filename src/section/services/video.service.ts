@@ -129,7 +129,7 @@ class VideoService {
       StorageType.VIDEO,
     ); /* TO DO: Masukkan ini ke queue */
 
-    return await this.videoRepository.remove(video);
+    return await this.videoRepository.softRemove(video);
   }
 }
 
