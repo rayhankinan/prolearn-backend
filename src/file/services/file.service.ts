@@ -130,7 +130,7 @@ class FileService {
       type,
     ); /* TO DO: Masukkan ini ke queue */
 
-    return await this.fileRepository.remove(file);
+    return await this.fileRepository.softRemove(file);
   }
 }
 
