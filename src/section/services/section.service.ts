@@ -15,9 +15,12 @@ class SectionService {
     private readonly sectionRepository: TreeRepository<SectionEntity>,
   ) {}
 
-  async getSectionByCourse(courseId: number): Promise<SectionEntity> {
+  async getSectionByCourse(
+    courseId: number,
+    studentId: number,
+  ): Promise<SectionEntity> {
     const course = await this.courseRepository.findOne({
-      where: { id: courseId },
+      where: { id: courseId, subscribers: { id: studentId } },
     });
 
     const parentSection = await course.parentSection;
@@ -31,9 +34,10 @@ class SectionService {
   async searchSectionsByTitle(
     courseId: number,
     title: string,
+    studentId: number,
   ): Promise<SectionEntity[]> {
     const course = await this.courseRepository.findOne({
-      where: { id: courseId },
+      where: { id: courseId, subscribers: { id: studentId } },
     });
 
     const parentSection = await course.parentSection;
