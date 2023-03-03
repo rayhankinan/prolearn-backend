@@ -1,25 +1,19 @@
 import { PassThrough } from 'stream';
 import { Injectable } from '@nestjs/common';
-import {
-  Bucket,
-  DownloadResponse,
-  MoveResponse,
-  Storage,
-} from '@google-cloud/storage';
-import storageConfig from '@storage/config/storage.config';
+import { Bucket, DownloadResponse, MoveResponse } from '@google-cloud/storage';
 import CloudLogger from '@logger/class/cloud-logger';
 import StorageType from '@storage/enum/storage-type';
 import AvailableType from '@storage/enum/available-type';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 class StorageService {
   private readonly bucket: Bucket;
 
-  constructor(private readonly cloudLogger: CloudLogger) {
-    const storage = new Storage();
-
-    this.bucket = storage.bucket(storageConfig.bucketName);
-  }
+  constructor(
+    private readonly cloudLogger: CloudLogger,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async upload(
     filename: string,

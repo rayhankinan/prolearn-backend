@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import CategoryEntity from '@category/models/category.model';
 import CourseEntity from '@course/models/course.model';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import CloudLogger from '@logger/class/cloud-logger';
-import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
 import AdminEntity from '@user/models/admin.model';
 import FileService from '@file/services/file.service';
@@ -16,7 +14,6 @@ import FileService from '@file/services/file.service';
 class CourseService {
   constructor(
     private readonly cloudLogger: CloudLogger,
-    private readonly storageService: StorageService,
     private readonly fileService: FileService,
     @InjectRepository(AdminEntity)
     private readonly adminRepository: Repository<AdminEntity>,
@@ -179,7 +176,7 @@ class CourseService {
     const thumbnail = await course.thumbnail;
 
     if (thumbnail) {
-      await this.fileService.delete(thumbnail.id, StorageType.FILE, adminId);
+      await this.fileService.delete(thumbnail.id, adminId, StorageType.FILE);
     }
 
     return await this.courseRepository.softRemove(course);

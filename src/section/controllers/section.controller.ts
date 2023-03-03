@@ -56,7 +56,7 @@ class SectionController {
   }
 
   @ApiProperty({ description: 'Search Sections by Title' })
-  @Get('search/:courseId')
+  @Get(':courseId/search')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async getSectionsByTitle(

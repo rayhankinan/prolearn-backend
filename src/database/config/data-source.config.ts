@@ -11,6 +11,7 @@ import StudentEntity from '@user/models/student.model';
 import FileEntity from '@file/models/file.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
+import VideoEntity from '@section/models/video.model';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -29,6 +30,7 @@ const dataSourceOptions: DataSourceOptions = {
     CourseEntity,
     SectionEntity,
     MaterialEntity,
+    VideoEntity,
     ProjectEntity,
     QuizEntity,
     UserEntity,

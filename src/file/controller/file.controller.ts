@@ -183,7 +183,7 @@ class FileController {
       const { id } = param;
       const adminId = user.id;
 
-      const file = await this.fileService.delete(id, StorageType.FILE, adminId);
+      const file = await this.fileService.delete(id, adminId, StorageType.FILE);
 
       return new ResponseObject<FileEntity>('File deleted successfully', file);
     } catch (error) {

@@ -117,8 +117,8 @@ class FileService {
 
   async delete(
     id: number,
-    type: StorageType,
     adminId: number,
+    type: StorageType,
   ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
       where: { id, admin: { id: adminId } },

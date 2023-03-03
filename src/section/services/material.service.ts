@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TreeRepository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import CloudLogger from '@logger/class/cloud-logger';
 import MaterialEntity from '@section/models/material.model';
 import CourseEntity from '@course/models/course.model';
 import SectionEntity from '@section/models/section.model';
-import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
+import FileService from '@file/services/file.service';
 
 @Injectable()
 class MaterialService {
   constructor(
     private readonly cloudLogger: CloudLogger,
-    private readonly storageService: StorageService,
+    private readonly fileService: FileService,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(SectionEntity)
@@ -27,12 +26,13 @@ class MaterialService {
       where: { id: materialId },
     });
 
-    const downloadResponse = await this.storageService.download(
-      material.uuid,
+    const file = await material.file;
+    const [buffer] = await this.fileService.render(
+      file.id,
       StorageType.MARKDOWN,
     );
 
-    return downloadResponse[0];
+    return buffer;
   }
 
   async create(
@@ -60,13 +60,12 @@ class MaterialService {
     });
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
-    const uuid = uuidv4();
-    await this.storageService.upload(
-      uuid,
+    const file = await this.fileService.create(
+      adminId,
       StorageType.MARKDOWN,
       content,
-    ); /* TO DO: Masukkan ini ke queue */
-    material.uuid = uuid;
+    );
+    material.file = Promise.resolve(file);
 
     return await this.materialRepository.save(material);
   }
@@ -99,34 +98,39 @@ class MaterialService {
     });
     material.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      material.uuid,
-      StorageType.MARKDOWN,
-    ); /* TO DO: Masukkan ini ke queue */
+    if (content) {
+      const file = await material.file;
 
-    const uuid = uuidv4();
-    await this.storageService.upload(
-      uuid,
-      StorageType.MARKDOWN,
-      content,
-    ); /* TO DO: Masukkan ini ke queue */
-    material.uuid = uuid;
+      if (file) {
+        const editedFile = await this.fileService.edit(
+          file.id,
+          adminId,
+          StorageType.MARKDOWN,
+          content,
+        );
+        material.file = Promise.resolve(editedFile);
+      } else {
+        const newFile = await this.fileService.create(
+          adminId,
+          StorageType.MARKDOWN,
+          content,
+        );
+        material.file = Promise.resolve(newFile);
+      }
+    }
 
     return await this.materialRepository.save(material);
   }
 
   async delete(id: number, adminId: number): Promise<MaterialEntity> {
-    /* TO DO: Cek adminId */
     const material = await this.materialRepository.findOne({
       where: { id },
     });
+    const file = await material.file;
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      material.uuid,
-      StorageType.MARKDOWN,
-    ); /* TO DO: Masukkan ini ke queue */
+    if (file) {
+      await this.fileService.delete(file.id, adminId, StorageType.MARKDOWN);
+    }
 
     return await this.materialRepository.softRemove(material);
   }

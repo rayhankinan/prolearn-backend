@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TreeRepository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
-import { PassThrough } from 'stream';
 import CloudLogger from '@logger/class/cloud-logger';
 import VideoEntity from '@section/models/video.model';
 import CourseEntity from '@course/models/course.model';
 import SectionEntity from '@section/models/section.model';
-import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
+import FileService from '@file/services/file.service';
 
 @Injectable()
 class VideoService {
   constructor(
     private readonly cloudLogger: CloudLogger,
-    private readonly storageService: StorageService,
+    private readonly fileService: FileService,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
     @InjectRepository(SectionEntity)
@@ -23,17 +21,15 @@ class VideoService {
     private readonly videoRepository: Repository<VideoEntity>,
   ) {}
 
-  async render(videoId: number): Promise<PassThrough> {
+  async render(videoId: number): Promise<Buffer> {
     const video = await this.videoRepository.findOne({
       where: { id: videoId },
     });
 
-    const passThrough = await this.storageService.streamingDownload(
-      video.uuid,
-      StorageType.VIDEO,
-    );
+    const file = await video.file;
+    const [buffer] = await this.fileService.render(file.id, StorageType.VIDEO);
 
-    return passThrough;
+    return buffer;
   }
 
   async create(
@@ -61,13 +57,12 @@ class VideoService {
     });
     video.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
-    const uuid = uuidv4();
-    await this.storageService.streamingUpload(
-      uuid,
+    const file = await this.fileService.create(
+      adminId,
       StorageType.VIDEO,
       content,
-    ); /* TO DO: Masukkan ini ke queue */
-    video.uuid = uuid;
+    );
+    video.file = Promise.resolve(file);
 
     return await this.videoRepository.save(video);
   }
@@ -100,34 +95,39 @@ class VideoService {
     });
     video.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      video.uuid,
-      StorageType.VIDEO,
-    ); /* TO DO: Masukkan ini ke queue */
+    if (content) {
+      const file = await video.file;
 
-    const uuid = uuidv4();
-    await this.storageService.streamingUpload(
-      uuid,
-      StorageType.VIDEO,
-      content,
-    ); /* TO DO: Masukkan ini ke queue */
-    video.uuid = uuid;
+      if (file) {
+        const editedFile = await this.fileService.edit(
+          file.id,
+          adminId,
+          StorageType.VIDEO,
+          content,
+        );
+        video.file = Promise.resolve(editedFile);
+      } else {
+        const newFile = await this.fileService.create(
+          adminId,
+          StorageType.VIDEO,
+          content,
+        );
+        video.file = Promise.resolve(newFile);
+      }
+    }
 
     return await this.videoRepository.save(video);
   }
 
   async delete(id: number, adminId: number): Promise<VideoEntity> {
-    /* TO DO: Cek adminId */
     const video = await this.videoRepository.findOne({
       where: { id },
     });
+    const file = await video.file;
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      video.uuid,
-      StorageType.VIDEO,
-    ); /* TO DO: Masukkan ini ke queue */
+    if (file) {
+      await this.fileService.delete(file.id, adminId, StorageType.VIDEO);
+    }
 
     return await this.videoRepository.softRemove(video);
   }

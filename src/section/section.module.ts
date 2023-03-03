@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import LoggerModule from '@logger/logger.module';
-import StorageModule from '@storage/storage.module';
 import CourseEntity from '@course/models/course.model';
 import AdminEntity from '@user/models/admin.model';
 import SectionEntity from '@section/models/section.model';
@@ -26,7 +25,6 @@ import FileModule from '@file/file.module';
     ]),
     FileModule,
     LoggerModule,
-    StorageModule,
   ],
   providers: [SectionService, MaterialService, VideoService],
   controllers: [SectionController, MaterialController, VideoController],
