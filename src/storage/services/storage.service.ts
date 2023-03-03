@@ -1,10 +1,16 @@
 import { PassThrough } from 'stream';
 import { Injectable } from '@nestjs/common';
-import { Bucket, DownloadResponse, MoveResponse } from '@google-cloud/storage';
+import {
+  Bucket,
+  DownloadResponse,
+  MoveResponse,
+  Storage,
+} from '@google-cloud/storage';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import CloudLogger from '@logger/class/cloud-logger';
 import StorageType from '@storage/enum/storage-type';
 import AvailableType from '@storage/enum/available-type';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import storageConfig from '@storage/config/storage.config';
 
 @Injectable()
 class StorageService {
@@ -13,7 +19,11 @@ class StorageService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     private readonly eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    const storage = new Storage();
+
+    this.bucket = storage.bucket(storageConfig.bucketName);
+  }
 
   async upload(
     filename: string,
@@ -33,7 +43,7 @@ class StorageService {
     content: Express.Multer.File,
   ): Promise<void> {
     const passThrough = new PassThrough();
-    passThrough.write(content);
+    passThrough.write(content.buffer);
     passThrough.end;
 
     const file = this.bucket.file(

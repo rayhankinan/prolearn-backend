@@ -69,11 +69,7 @@ class FileService {
     file.storageType = type;
 
     const uuid = uuidv4();
-    await this.storageService.upload(
-      uuid,
-      type,
-      content,
-    ); /* TO DO: Masukkan ini ke queue */
+    await this.storageService.upload(uuid, type, content);
     file.uuid = uuid;
 
     const admin = await this.adminRepository.findOne({
@@ -99,17 +95,10 @@ class FileService {
     file.storageType = type;
 
     /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      file.uuid,
-      type,
-    ); /* TO DO: Masukkan ini ke queue */
+    await this.storageService.delete(file.uuid, type);
 
     const uuid = uuidv4();
-    await this.storageService.upload(
-      uuid,
-      type,
-      content,
-    ); /* TO DO: Masukkan ini ke queue */
+    await this.storageService.upload(uuid, type, content);
     file.uuid = uuid;
 
     return await this.fileRepository.save(file);
@@ -125,10 +114,7 @@ class FileService {
     });
 
     /* Soft Deletion in Object Storage */
-    await this.storageService.delete(
-      file.uuid,
-      type,
-    ); /* TO DO: Masukkan ini ke queue */
+    await this.storageService.delete(file.uuid, type);
 
     return await this.fileRepository.softRemove(file);
   }
