@@ -5,7 +5,6 @@ import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import IsCourseLevel from '@course/validator/course-level';
 import IsCourseStatus from '@course/validator/course-status';
-import CreateSectionDto from '@section/dto/create-section';
 
 class UpdateCourseDto {
   @ApiProperty({

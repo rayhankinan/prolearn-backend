@@ -1,10 +1,23 @@
-import { Body, Controller, HttpException, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  Post,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import RegisterUserDTO from '@user/dto/register-user';
 import ResponseObject from '@response/class/response-object';
 import StudentEntity from '@user/models/student.model';
 import StudentService from '@user/services/student.service';
+import JwtAuthGuard from '@auth/guard/jwt.guard';
+import Roles from '@user/guard/roles.decorator';
+import UserRole from '@user/enum/user-role';
+import AuthRequest from '@auth/interface/auth-request';
+import RolesGuard from '@user/guard/roles.guard';
+import SubscriptionUserDTO from '@user/dto/subscription-user';
 
 @Controller('student')
 class StudentController {
@@ -20,6 +33,33 @@ class StudentController {
 
       return new ResponseObject<StudentEntity>(
         'Registered successfully',
+        student,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Subscription' })
+  @Post('subscription')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.STUDENT)
+  async subscribe(
+    @Request() req: AuthRequest,
+    @Body() body: SubscriptionUserDTO,
+  ) {
+    try {
+      const { user } = req;
+      const { courseId } = body;
+      const userId = user.id;
+
+      const student = await this.studentService.subscribe(userId, courseId);
+
+      return new ResponseObject<StudentEntity>(
+        'Subscribed successfully',
         student,
       );
     } catch (error) {
