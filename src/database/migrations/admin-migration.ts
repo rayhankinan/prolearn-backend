@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 import initialAdminOptions from '@database/config/initial-admin.config';
 
 class AdminSeeding implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
-    const admin = queryRunner.manager.create<AdminEntity>(AdminEntity, {
+    const admin = queryRunner.manager.create<UserEntity>(UserEntity, {
       username: initialAdminOptions.username,
       password: initialAdminOptions.password,
     });
@@ -13,7 +13,7 @@ class AdminSeeding implements MigrationInterface {
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    const admin = queryRunner.manager.create<AdminEntity>(AdminEntity, {
+    const admin = queryRunner.manager.create<UserEntity>(UserEntity, {
       username: initialAdminOptions.username,
       password: initialAdminOptions.password,
     });

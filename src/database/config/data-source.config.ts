@@ -6,8 +6,6 @@ import MaterialEntity from '@section/models/material.model';
 import ProjectEntity from '@section/models/project.model';
 import QuizEntity from '@section/models/quiz.model';
 import UserEntity from '@user/models/user.model';
-import AdminEntity from '@user/models/admin.model';
-import StudentEntity from '@user/models/student.model';
 import FileEntity from '@file/models/file.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
@@ -34,8 +32,6 @@ const dataSourceOptions: DataSourceOptions = {
     ProjectEntity,
     QuizEntity,
     UserEntity,
-    AdminEntity,
-    StudentEntity,
     FileEntity,
   ],
   subscribers: [UserSubscriber],

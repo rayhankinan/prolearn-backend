@@ -6,15 +6,15 @@ import CloudLogger from '@logger/class/cloud-logger';
 import FileEntity from '@file/models/file.model';
 import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 
 @Injectable()
 class FileService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     private readonly storageService: StorageService,
-    @InjectRepository(AdminEntity)
-    private readonly adminRepository: Repository<AdminEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
@@ -72,7 +72,7 @@ class FileService {
     await this.storageService.upload(uuid, type, content);
     file.uuid = uuid;
 
-    const admin = await this.adminRepository.findOne({
+    const admin = await this.userRepository.findOne({
       where: { id: adminId },
     });
     file.admin = Promise.resolve(admin);

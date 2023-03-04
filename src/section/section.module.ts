@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import LoggerModule from '@logger/logger.module';
 import CourseEntity from '@course/models/course.model';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 import SectionEntity from '@section/models/section.model';
 import MaterialEntity from '@section/models/material.model';
 import VideoEntity from '@section/models/video.model';
@@ -21,7 +21,7 @@ import FileModule from '@file/file.module';
       MaterialEntity,
       VideoEntity,
       CourseEntity,
-      AdminEntity,
+      UserEntity,
     ]),
     FileModule,
     LoggerModule,

@@ -7,7 +7,7 @@ import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import CloudLogger from '@logger/class/cloud-logger';
 import StorageType from '@storage/enum/storage-type';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 import FileService from '@file/services/file.service';
 
 @Injectable()
@@ -15,8 +15,8 @@ class CourseService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     private readonly fileService: FileService,
-    @InjectRepository(AdminEntity)
-    private readonly adminRepository: Repository<AdminEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
     @InjectRepository(CourseEntity)
@@ -107,7 +107,7 @@ class CourseService {
     });
     course.categories = Promise.resolve(categories);
 
-    const admin = await this.adminRepository.findOne({
+    const admin = await this.userRepository.findOne({
       where: { id: adminId },
     });
     course.admin = Promise.resolve(admin);

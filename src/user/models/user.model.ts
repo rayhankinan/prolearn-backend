@@ -1,10 +1,12 @@
-import { Column, Entity, TableInheritance } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
 import UserRole from '@user/enum/user-role';
+import CourseEntity from '@course/models/course.model';
+import FileEntity from '@file/models/file.model';
+import CategoryEntity from '@category/models/category.model';
 
 @Entity('user')
-@TableInheritance({ column: 'role' })
 class UserEntity extends Base {
   @Column({ type: 'varchar', length: 255, unique: true })
   username: string;
@@ -13,8 +15,21 @@ class UserEntity extends Base {
   @Exclude()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT})
   readonly role: UserRole;
+
+  @OneToMany(() => CourseEntity, (course) => course.admin)
+  courses: Promise<CourseEntity[]>;
+
+  @OneToMany(() => CategoryEntity, (category) => category.admin)
+  categories: Promise<CategoryEntity[]>;
+
+  @OneToMany(() => FileEntity, (file) => file.admin)
+  files: Promise<FileEntity[]>;
+
+  @ManyToMany(() => CourseEntity, (course) => course.subscribers)
+  @JoinTable({ name: 'course_user' })
+  courses_subscribed: Promise<CourseEntity[]>;
 }
 
 export default UserEntity;

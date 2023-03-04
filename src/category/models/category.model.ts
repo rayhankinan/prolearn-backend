@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 
 @Entity('category')
 class CategoryEntity extends Base {
@@ -19,9 +19,9 @@ class CategoryEntity extends Base {
   @ManyToMany(() => CourseEntity, (course) => course.categories)
   courses: Promise<CourseEntity[]>;
 
-  @ManyToOne(() => AdminEntity, (admin) => admin.categories)
+  @ManyToOne(() => UserEntity, (admin) => admin.categories)
   @JoinColumn({ name: 'admin_id' })
-  admin: Promise<AdminEntity>;
+  admin: Promise<UserEntity>;
 }
 
 export default CategoryEntity;

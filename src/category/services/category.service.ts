@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import CategoryEntity from '@category/models/category.model';
-import AdminEntity from '@user/models/admin.model';
+import UserEntity from '@user/models/user.model';
 
 @Injectable()
 class CategoryService {
   constructor(
     private readonly cloudLogger: CloudLogger,
-    @InjectRepository(AdminEntity)
-    private readonly adminRepository: Repository<AdminEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
@@ -36,7 +36,7 @@ class CategoryService {
     const category = new CategoryEntity();
     category.title = title;
 
-    const admin = await this.adminRepository.findOne({
+    const admin = await this.userRepository.findOne({
       where: { id: adminId },
     });
     category.admin = Promise.resolve(admin);

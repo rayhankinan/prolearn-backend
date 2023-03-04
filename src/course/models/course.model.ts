@@ -13,10 +13,8 @@ import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import SectionEntity from '@section/models/section.model';
 import CategoryEntity from '@category/models/category.model';
-import AdminEntity from '@user/models/admin.model';
 import FileEntity from '@file/models/file.model';
 import UserEntity from '@user/models/user.model';
-import StudentEntity from '@user/models/student.model';
 
 @Entity('course')
 class CourseEntity extends Base {
@@ -49,12 +47,12 @@ class CourseEntity extends Base {
   @JoinTable({ name: 'course_category' })
   categories: Promise<CategoryEntity[]>;
 
-  @ManyToOne(() => AdminEntity, (admin) => admin.courses)
+  @ManyToOne(() => UserEntity, (admin) => admin.courses)
   @JoinColumn({ name: 'admin_id' })
-  admin: Promise<AdminEntity>;
+  admin: Promise<UserEntity>;
 
-  @ManyToMany(() => StudentEntity, (student) => student.courses)
-  subscribers: Promise<StudentEntity[]>;
+  @ManyToMany(() => UserEntity, (student) => student.courses_subscribed)
+  subscribers: Promise<UserEntity[]>;
 }
 
 export default CourseEntity;

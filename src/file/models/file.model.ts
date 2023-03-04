@@ -8,11 +8,11 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
-import AdminEntity from '@user/models/admin.model';
 import CourseEntity from '@course/models/course.model';
 import StorageType from '@storage/enum/storage-type';
 import MaterialEntity from '@section/models/material.model';
 import VideoEntity from '@section/models/video.model';
+import UserEntity from '@user/models/user.model';
 
 @Entity('file')
 class FileEntity extends Base {
@@ -32,9 +32,9 @@ class FileEntity extends Base {
   @Exclude()
   storageType: StorageType;
 
-  @ManyToOne(() => AdminEntity, (admin) => admin.files)
+  @ManyToOne(() => UserEntity, (admin) => admin.files)
   @JoinColumn({ name: 'admin_id' })
-  admin: Promise<AdminEntity>;
+  admin: Promise<UserEntity>;
 
   @OneToOne(() => CourseEntity, (course) => course.thumbnail, {
     nullable: true,
