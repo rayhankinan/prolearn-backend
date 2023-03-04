@@ -45,10 +45,16 @@ export default class CourseController {
   ) {
     try {
       const { user } = req;
-      const { categoryId, title, difficulty, limit, page } = query;
+      const { categoryId, title, difficulty, limit, page, subscribed } = query;
       const adminId =
         user !== undefined
           ? user.role === UserRole.ADMIN
+            ? user.id
+            : undefined
+          : undefined;
+      const studentId =
+        user !== undefined
+          ? user.role === UserRole.STUDENT
             ? user.id
             : undefined
           : undefined;
@@ -60,7 +66,9 @@ export default class CourseController {
           difficulty,
           limit,
           page,
+          subscribed,
           adminId,
+          studentId,
         );
 
       return new ResponsePagination<CourseEntity>(

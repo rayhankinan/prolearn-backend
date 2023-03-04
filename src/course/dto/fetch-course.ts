@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
@@ -48,6 +48,15 @@ class FetchCourseDto {
   @IsNumber()
   @Type(() => Number)
   readonly page: number;
+
+  @ApiProperty({
+    description: 'subscribed',
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  readonly subscribed?: boolean;
 }
 
 export default FetchCourseDto;

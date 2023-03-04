@@ -31,7 +31,9 @@ class CourseService {
     difficulty: CourseLevel,
     limit: number,
     page: number,
+    subscribed: boolean,
     adminId: number,
+    studentId: number,
   ): Promise<{
     courses: CourseEntity[];
     count: number;
@@ -45,6 +47,7 @@ class CourseService {
       title: title ? ILike(`%${title}%`) : undefined,
       difficulty,
       categories: { id: categoryId ? In(categoryId) : undefined },
+      students: subscribed ? { id: studentId } : undefined,
     };
 
     const [courses, total] = await Promise.all([
@@ -52,6 +55,7 @@ class CourseService {
         relations: {
           categories: true,
           thumbnail: true,
+          students: subscribed,
         },
         where: condition,
         order: {
