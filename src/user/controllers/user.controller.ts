@@ -32,7 +32,7 @@ class UserController {
     try {
       const token = await this.userService.tokenize(req.user);
 
-      return new ResponseObject<string>('Login is successful', token);
+      return new ResponseObject<string>('Login is successful', token, null, req.user.role);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,

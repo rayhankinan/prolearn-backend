@@ -10,10 +10,14 @@ class ResponseObject<T> {
   @ApiProperty({ description: 'Response Meta' })
   readonly meta?: object;
 
-  constructor(message: string, data: T, meta?: object) {
+  @ApiProperty({ description: 'Response Role' })
+  readonly role?: string;
+
+  constructor(message: string, data: T, meta?: object, role?: string) {
     this.message = message;
     this.data = data;
     this.meta = meta;
+    this.role = role;
   }
 }
 
