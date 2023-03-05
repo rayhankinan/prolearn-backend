@@ -87,6 +87,41 @@ export default class CourseController {
     }
   }
 
+  @ApiProperty({ description: 'Fetch Courses for Visitor' })
+  @Get('visitor')
+  async fetchCourseVisitor(
+    @Query() query: FetchCourseDto,
+  ) {
+    try {
+      const { categoryId, title, difficulty, limit, page } = query;
+
+      const { courses, count, currentPage, totalPage } =
+        await this.courseService.fetchCourse(
+          categoryId,
+          title,
+          difficulty,
+          limit,
+          page,
+          false,
+          undefined,
+          undefined,
+        );
+
+      return new ResponsePagination<CourseEntity>(
+        'Courses fetched successfully',
+        courses,
+        count,
+        currentPage,
+        totalPage,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
   @ApiProperty({ description: 'Get One Course' })
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
