@@ -4,25 +4,20 @@ import {
   Put,
   Delete,
   Request,
-  Res,
   Param,
   Body,
   Controller,
   HttpException,
   UseGuards,
-  StreamableFile,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
-import { Response } from 'express';
-import { lookup } from 'mime-types';
 import MaterialEntity from '@section/models/material.model';
 import MaterialService from '@section/services/material.service';
 import ResponseObject from '@response/class/response-object';
-import RenderSectionDto from '@section/dto/render-section';
 import CreateSectionDto from '@section/dto/create-section';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
@@ -37,32 +32,6 @@ import markdownOnlyPipe from '@file/pipe/markdown-only';
 @Controller('material')
 class MaterialController {
   constructor(private readonly materialService: MaterialService) {}
-
-  @ApiProperty({ description: 'Render Material' })
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async renderMaterial(
-    @Param() param: RenderSectionDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    try {
-      const { id } = param;
-
-      const buffer = await this.materialService.render(id);
-      const contentType = lookup('.md') as string;
-      res.set({
-        'Content-Type': contentType,
-      });
-
-      return new StreamableFile(buffer);
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
 
   @ApiProperty({ description: 'Create Material' })
   @Post()

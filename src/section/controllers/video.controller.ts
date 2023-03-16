@@ -1,28 +1,22 @@
 import {
-  Get,
   Post,
   Put,
   Delete,
   Request,
-  Res,
   Param,
   Body,
   Controller,
   HttpException,
   UseGuards,
-  StreamableFile,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
-import { Response } from 'express';
-import { lookup } from 'mime-types';
 import VideoService from '@section/services/video.service';
 import VideoEntity from '@section/models/video.model';
 import ResponseObject from '@response/class/response-object';
-import RenderSectionDto from '@section/dto/render-section';
 import CreateSectionDto from '@section/dto/create-section';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
@@ -37,32 +31,6 @@ import mp4OnlyPipe from '@file/pipe/mp4-only';
 @Controller('video')
 class VideoController {
   constructor(private readonly videoService: VideoService) {}
-
-  @ApiProperty({ description: 'Render Video' })
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.STUDENT)
-  async renderVideo(
-    @Param() param: RenderSectionDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    try {
-      const { id } = param;
-
-      const passThrough = await this.videoService.render(id);
-      const contentType = lookup('.mp4') as string;
-      res.set({
-        'Content-Type': contentType,
-      });
-
-      return new StreamableFile(passThrough);
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
 
   @ApiProperty({ description: 'Create Video' })
   @Post()

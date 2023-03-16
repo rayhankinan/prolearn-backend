@@ -8,20 +8,19 @@ import storageConfig from '@storage/config/storage.config';
 
 @Injectable()
 class StorageService {
-  private readonly bucket: Bucket;
+  private static readonly storage: Storage = new Storage();
+  private static readonly bucket: Bucket = StorageService.storage.bucket(
+    storageConfig.bucketName,
+  );
 
-  constructor(private readonly cloudLogger: CloudLogger) {
-    const storage = new Storage();
-
-    this.bucket = storage.bucket(storageConfig.bucketName);
-  }
+  constructor(private readonly cloudLogger: CloudLogger) {}
 
   async upload(
     filename: string,
     filetype: StorageType,
     content: Express.Multer.File,
   ): Promise<void> {
-    const file = this.bucket.file(
+    const file = StorageService.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
@@ -32,7 +31,7 @@ class StorageService {
     filename: string,
     filetype: StorageType,
   ): Promise<DownloadResponse> {
-    const file = this.bucket.file(
+    const file = StorageService.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
     const downloadResponse = await file.download();
@@ -41,7 +40,7 @@ class StorageService {
   }
 
   async stream(filename: string, filetype: StorageType): Promise<PassThrough> {
-    const file = this.bucket.file(
+    const file = StorageService.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
@@ -52,7 +51,7 @@ class StorageService {
   }
 
   async delete(filename: string, filetype: StorageType): Promise<void> {
-    const file = this.bucket.file(
+    const file = StorageService.bucket.file(
       `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
     );
 
@@ -60,7 +59,7 @@ class StorageService {
   }
 
   async restore(filename: string, filetype: StorageType): Promise<void> {
-    const file = this.bucket.file(
+    const file = StorageService.bucket.file(
       `${AvailableType.NOT_AVAILABLE}/${filetype}/${filename}`,
     );
 

@@ -21,20 +21,6 @@ class MaterialService {
     private readonly materialRepository: Repository<MaterialEntity>,
   ) {}
 
-  async render(materialId: number): Promise<Buffer> {
-    const material = await this.materialRepository.findOne({
-      where: { id: materialId },
-    });
-
-    const file = await material.file;
-    const [buffer] = await this.fileService.render(
-      file.id,
-      StorageType.MARKDOWN,
-    );
-
-    return buffer;
-  }
-
   async create(
     title: string,
     objective: string,

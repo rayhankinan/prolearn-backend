@@ -21,17 +21,6 @@ class VideoService {
     private readonly videoRepository: Repository<VideoEntity>,
   ) {}
 
-  async render(videoId: number): Promise<Buffer> {
-    const video = await this.videoRepository.findOne({
-      where: { id: videoId },
-    });
-
-    const file = await video.file;
-    const [buffer] = await this.fileService.render(file.id, StorageType.VIDEO);
-
-    return buffer;
-  }
-
   async create(
     title: string,
     objective: string,
