@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +13,7 @@ import UserEntity from '@user/models/user.model';
 class FileService {
   constructor(
     private readonly cloudLogger: CloudLogger,
+    private readonly eventEmitter: EventEmitter2,
     private readonly storageService: StorageService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -30,7 +32,7 @@ class FileService {
 
   async render(fileId: number, type: StorageType): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId },
+      where: { id: fileId, isAvailable: true },
     });
 
     const downloadResponse = await this.storageService.download(
@@ -43,7 +45,7 @@ class FileService {
 
   async stream(fileId: number, type: StorageType): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId },
+      where: { id: fileId, isAvailable: true },
     });
 
     const downloadStream = await this.storageService.stream(file.uuid, type);
@@ -77,15 +79,15 @@ class FileService {
     file.name = content.originalname;
     file.mimetype = content.mimetype;
     file.storageType = type;
-
-    const uuid = uuidv4();
-    await this.storageService.upload(uuid, type, content);
-    file.uuid = uuid;
+    file.isAvailable = false;
+    file.uuid = uuidv4();
 
     const admin = await this.userRepository.findOne({
       where: { id: adminId },
     });
     file.admin = Promise.resolve(admin);
+
+    await this.eventEmitter.emitAsync('file.created', file, type, content);
 
     return await this.fileRepository.save(file);
   }
@@ -99,17 +101,13 @@ class FileService {
     const file = await this.fileRepository.findOne({
       where: { id, admin: { id: adminId } },
     });
-
     file.name = content.originalname;
     file.mimetype = content.mimetype;
     file.storageType = type;
+    file.isAvailable = false;
+    file.uuid = uuidv4();
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(file.uuid, type);
-
-    const uuid = uuidv4();
-    await this.storageService.upload(uuid, type, content);
-    file.uuid = uuid;
+    await this.eventEmitter.emitAsync('file.updated', file);
 
     return await this.fileRepository.save(file);
   }
@@ -123,10 +121,39 @@ class FileService {
       where: { id, admin: { id: adminId } },
     });
 
-    /* Soft Deletion in Object Storage */
-    await this.storageService.delete(file.uuid, type);
+    await this.eventEmitter.emitAsync('file.deleted', file);
 
     return await this.fileRepository.softRemove(file);
+  }
+
+  @OnEvent('file.uploaded', { async: true })
+  async onFileUploaded(
+    file: FileEntity,
+    type: StorageType,
+    content: Express.Multer.File,
+  ) {
+    await this.storageService.upload(file.uuid, type, content);
+
+    file.isAvailable = true;
+    await this.fileRepository.save(file);
+  }
+
+  @OnEvent('file.updated', { async: true })
+  async onFileUpdated(
+    file: FileEntity,
+    type: StorageType,
+    content: Express.Multer.File,
+  ) {
+    await this.storageService.delete(file.uuid, type);
+    await this.storageService.upload(file.uuid, type, content);
+
+    file.isAvailable = true;
+    await this.fileRepository.save(file);
+  }
+
+  @OnEvent('file.deleted', { async: true })
+  async onFileDeleted(file: FileEntity, type: StorageType) {
+    await this.storageService.delete(file.uuid, type);
   }
 }
 

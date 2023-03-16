@@ -32,6 +32,10 @@ class FileEntity extends Base {
   @Exclude()
   storageType: StorageType;
 
+  @Column({ type: 'boolean' })
+  @Exclude()
+  isAvailable: boolean;
+
   @ManyToOne(() => UserEntity, (admin) => admin.files)
   @JoinColumn({ name: 'admin_id' })
   admin: Promise<UserEntity>;
