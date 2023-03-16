@@ -28,7 +28,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import CreateSectionDto from '@section/dto/create-section';
-import markdownOnlyPipe from '@file/pipe/markdown-only';
+import htmlOnlyPipe from '@file/pipe/html-only';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
@@ -108,7 +108,7 @@ class SectionController {
   async createSection(
     @Request() req: AuthRequest,
     @Body() body: CreateSectionDto,
-    @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(htmlOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -148,7 +148,7 @@ class SectionController {
     @Request() req: AuthRequest,
     @Param() param: UpdateSectionIDDto,
     @Body() body: UpdateSectionContentDto,
-    @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(htmlOnlyPipe) content: Express.Multer.File,
   ) {
     try {
       const { user } = req;

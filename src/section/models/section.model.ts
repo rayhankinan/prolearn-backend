@@ -4,7 +4,6 @@ import {
   Index,
   JoinColumn,
   OneToOne,
-  TableInheritance,
   Tree,
   TreeChildren,
   TreeParent,

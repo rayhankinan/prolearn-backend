@@ -118,7 +118,7 @@ class FileController {
 
       const files = await this.fileService.searchFilesByName(
         name,
-        StorageType.FILE,
+        StorageType.IMAGE,
         adminId,
       );
 
@@ -146,7 +146,7 @@ class FileController {
 
       const file = await this.fileService.create(
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -177,7 +177,7 @@ class FileController {
       const file = await this.fileService.edit(
         id,
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -203,7 +203,11 @@ class FileController {
       const { id } = param;
       const adminId = user.id;
 
-      const file = await this.fileService.delete(id, adminId, StorageType.FILE);
+      const file = await this.fileService.delete(
+        id,
+        adminId,
+        StorageType.IMAGE,
+      );
 
       return new ResponseObject<FileEntity>('File deleted successfully', file);
     } catch (error) {

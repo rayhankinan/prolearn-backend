@@ -84,7 +84,7 @@ class SectionService {
 
     const file = await this.fileService.create(
       adminId,
-      StorageType.MARKDOWN,
+      StorageType.HTML,
       content,
     );
     section.file = Promise.resolve(file);
@@ -127,14 +127,14 @@ class SectionService {
         const editedFile = await this.fileService.edit(
           file.id,
           adminId,
-          StorageType.MARKDOWN,
+          StorageType.HTML,
           content,
         );
         section.file = Promise.resolve(editedFile);
       } else {
         const newFile = await this.fileService.create(
           adminId,
-          StorageType.MARKDOWN,
+          StorageType.HTML,
           content,
         );
         section.file = Promise.resolve(newFile);
@@ -151,7 +151,7 @@ class SectionService {
     const file = await section.file;
 
     if (file) {
-      await this.fileService.delete(file.id, adminId, StorageType.MARKDOWN);
+      await this.fileService.delete(file.id, adminId, StorageType.HTML);
     }
 
     return await this.sectionRepository.softRemove(section);

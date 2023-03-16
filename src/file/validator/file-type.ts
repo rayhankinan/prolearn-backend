@@ -6,7 +6,7 @@ function IsFileType(
 ): PropertyDecorator {
   return ValidatorComposer([
     IsString(),
-    Matches(/file|markdown|submission|video/),
+    Matches(/image|html|submission|video/),
   ]);
 }
 

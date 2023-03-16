@@ -115,7 +115,7 @@ class CourseService {
     if (content) {
       const savedFile = await this.fileService.create(
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -156,14 +156,14 @@ class CourseService {
         const editedFile = await this.fileService.edit(
           thumbnail.id,
           adminId,
-          StorageType.FILE,
+          StorageType.IMAGE,
           content,
         );
         course.thumbnail = Promise.resolve(editedFile);
       } else {
         const newFile = await this.fileService.create(
           adminId,
-          StorageType.FILE,
+          StorageType.IMAGE,
           content,
         );
         course.thumbnail = Promise.resolve(newFile);
@@ -180,7 +180,7 @@ class CourseService {
     const thumbnail = await course.thumbnail;
 
     if (thumbnail) {
-      await this.fileService.delete(thumbnail.id, adminId, StorageType.FILE);
+      await this.fileService.delete(thumbnail.id, adminId, StorageType.IMAGE);
     }
 
     return await this.courseRepository.softRemove(course);

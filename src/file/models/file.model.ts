@@ -27,7 +27,7 @@ class FileEntity extends Base {
   @Exclude()
   mimetype: string;
 
-  @Column({ type: 'enum', enum: StorageType, default: StorageType.FILE })
+  @Column({ type: 'enum', enum: StorageType, default: StorageType.IMAGE })
   @Exclude()
   storageType: StorageType;
 

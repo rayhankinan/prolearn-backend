@@ -1,8 +1,7 @@
 enum StorageType {
-  FILE = 'file',
-  MARKDOWN = 'markdown',
+  IMAGE = 'image',
+  HTML = 'html',
   SUBMISSION = 'submission',
-  VIDEO = 'video',
 }
 
 export default StorageType;
