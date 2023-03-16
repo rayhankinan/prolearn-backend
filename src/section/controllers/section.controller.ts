@@ -6,9 +6,16 @@ import {
   HttpException,
   UseGuards,
   Request,
+  Post,
+  UseInterceptors,
+  Body,
+  UploadedFile,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
+import { FileInterceptor } from '@nestjs/platform-express';
 import SectionEntity from '@section/models/section.model';
 import SectionService from '@section/services/section.service';
 import ResponseObject from '@response/class/response-object';
@@ -20,6 +27,11 @@ import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
+import CreateSectionDto from '@section/dto/create-section';
+import markdownOnlyPipe from '@file/pipe/markdown-only';
+import UpdateSectionIDDto from '@section/dto/update-section-id';
+import UpdateSectionContentDto from '@section/dto/update-section-content';
+import DeleteSectionDto from '@section/dto/delete-section';
 
 @Controller('section')
 class SectionController {
@@ -79,6 +91,114 @@ class SectionController {
       return new ResponseList<SectionEntity>(
         'Sections fetched successfully',
         sections,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Create Section' })
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async createSection(
+    @Request() req: AuthRequest,
+    @Body() body: CreateSectionDto,
+    @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
+  ) {
+    try {
+      const { user } = req;
+      const { title, objective, duration, parentId, courseId, isAncestor } =
+        body;
+      const adminId = user.id;
+
+      const section = await this.sectionService.create(
+        title,
+        objective,
+        duration,
+        parentId,
+        courseId,
+        adminId,
+        isAncestor,
+        content,
+      );
+
+      return new ResponseObject<SectionEntity>(
+        'Section created successfully',
+        section,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Edit Section' })
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async editSection(
+    @Request() req: AuthRequest,
+    @Param() param: UpdateSectionIDDto,
+    @Body() body: UpdateSectionContentDto,
+    @UploadedFile(markdownOnlyPipe) content: Express.Multer.File,
+  ) {
+    try {
+      const { user } = req;
+      const { id } = param;
+      const { title, objective, duration, parentId, courseId, isAncestor } =
+        body;
+      const adminId = user.id;
+
+      const section = await this.sectionService.edit(
+        id,
+        title,
+        objective,
+        duration,
+        parentId,
+        courseId,
+        adminId,
+        isAncestor,
+        content,
+      );
+
+      return new ResponseObject<SectionEntity>(
+        'Section edited successfully',
+        section,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Delete Section' })
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteSection(
+    @Request() req: AuthRequest,
+    @Param() param: DeleteSectionDto,
+  ) {
+    try {
+      const { user } = req;
+      const { id } = param;
+      const adminId = user.id;
+
+      const section = await this.sectionService.delete(id, adminId);
+
+      return new ResponseObject<SectionEntity>(
+        'Section deleted successfully',
+        section,
       );
     } catch (error) {
       throw new HttpException(

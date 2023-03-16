@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   OneToOne,
   TableInheritance,
   Tree,
@@ -11,10 +12,10 @@ import {
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
 import SectionType from '@section/enum/section-type';
+import FileEntity from '@file/models/file.model';
 
 @Entity('section')
 @Tree('closure-table', { closureTableName: 'section_closure' })
-@TableInheritance({ column: 'type' })
 class SectionEntity extends Base {
   @Column({ type: 'varchar', length: 255, default: 'No Title' })
   @Index({ fulltext: true })
@@ -28,6 +29,10 @@ class SectionEntity extends Base {
 
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
+
+  @OneToOne(() => FileEntity, (file) => file.section, { nullable: true })
+  @JoinColumn({ name: 'file_id' })
+  file: Promise<FileEntity>;
 
   @OneToOne(() => CourseEntity, (course) => course.parentSection, {
     nullable: true,

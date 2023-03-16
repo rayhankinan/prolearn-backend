@@ -10,9 +10,8 @@ import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
 import CourseEntity from '@course/models/course.model';
 import StorageType from '@storage/enum/storage-type';
-import MaterialEntity from '@section/models/material.model';
-import VideoEntity from '@section/models/video.model';
 import UserEntity from '@user/models/user.model';
+import SectionEntity from '@section/models/section.model';
 
 @Entity('file')
 class FileEntity extends Base {
@@ -45,13 +44,10 @@ class FileEntity extends Base {
   })
   course: Promise<CourseEntity>;
 
-  @OneToOne(() => MaterialEntity, (material) => material.file, {
+  @OneToOne(() => SectionEntity, (section) => section.file, {
     nullable: true,
   })
-  material: Promise<MaterialEntity>;
-
-  @OneToOne(() => VideoEntity, (video) => video.file, { nullable: true })
-  video: Promise<VideoEntity>;
+  section: Promise<SectionEntity>;
 }
 
 export default FileEntity;
