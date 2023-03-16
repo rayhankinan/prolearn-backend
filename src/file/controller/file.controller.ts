@@ -81,7 +81,7 @@ class FileController {
   }
 
   @ApiProperty({ description: 'Stream File' })
-  @Get(':id')
+  @Get(':type/:id')
   async streamFile(
     @Param() param: RenderFileDto,
     @Res({ passthrough: true }) res: Response,

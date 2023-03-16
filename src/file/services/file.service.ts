@@ -32,7 +32,7 @@ class FileService {
 
   async render(fileId: number, type: StorageType): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId, isAvailable: true },
+      where: { id: fileId, storageType: type, isAvailable: true },
     });
 
     const downloadResponse = await this.storageService.download(
@@ -45,7 +45,7 @@ class FileService {
 
   async stream(fileId: number, type: StorageType): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId, isAvailable: true },
+      where: { id: fileId, storageType: type, isAvailable: true },
     });
 
     const downloadStream = await this.storageService.stream(file.uuid, type);
@@ -99,11 +99,10 @@ class FileService {
     content: Express.Multer.File,
   ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
-      where: { id, admin: { id: adminId } },
+      where: { id, storageType: type, admin: { id: adminId } },
     });
     file.name = content.originalname;
     file.mimetype = content.mimetype;
-    file.storageType = type;
     file.isAvailable = false;
     file.uuid = uuidv4();
 
@@ -118,7 +117,7 @@ class FileService {
     type: StorageType,
   ): Promise<FileEntity> {
     const file = await this.fileRepository.findOne({
-      where: { id, admin: { id: adminId } },
+      where: { id, storageType: type, admin: { id: adminId } },
     });
 
     await this.eventEmitter.emitAsync('file.deleted', file);
