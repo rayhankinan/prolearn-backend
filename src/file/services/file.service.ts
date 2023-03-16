@@ -41,6 +41,16 @@ class FileService {
     return [downloadResponse[0], file.mimetype];
   }
 
+  async stream(fileId: number, type: StorageType): Promise<[Buffer, string]> {
+    const file = await this.fileRepository.findOne({
+      where: { id: fileId },
+    });
+
+    const downloadStream = await this.storageService.stream(file.uuid, type);
+
+    return [downloadStream[0], file.mimetype];
+  }
+
   async searchFilesByName(
     name: string,
     type: StorageType,

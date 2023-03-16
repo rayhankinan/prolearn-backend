@@ -8,6 +8,7 @@ import storageConfig from '@storage/config/storage.config';
 import UploadPayload from '@storage/payload/upload-payload';
 import DeletePayload from '@storage/payload/delete-payload';
 import RestorePayload from '@storage/payload/restore-payload';
+import { PassThrough } from 'stream';
 
 @Injectable()
 class StorageService {
@@ -46,6 +47,17 @@ class StorageService {
     const downloadResponse = await file.download();
 
     return downloadResponse;
+  }
+
+  async stream(filename: string, filetype: StorageType): Promise<PassThrough> {
+    const file = this.bucket.file(
+      `${AvailableType.AVAILABLE}/${filetype}/${filename}`,
+    );
+
+    const passThrough = new PassThrough();
+    file.createReadStream().pipe(passThrough);
+
+    return passThrough;
   }
 
   async delete(filename: string, filetype: StorageType): Promise<void> {

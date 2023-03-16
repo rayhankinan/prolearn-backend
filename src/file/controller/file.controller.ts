@@ -83,6 +83,32 @@ class FileController {
     }
   }
 
+  @ApiProperty({ description: 'Stream File' })
+  @Get(':id')
+  async streamFile(
+    @Param() param: RenderFileDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const { id } = param;
+
+      const [buffer, mimetype] = await this.fileService.stream(
+        id,
+        StorageType.FILE,
+      );
+      res.set({
+        'Content-Type': mimetype,
+      });
+
+      return new StreamableFile(buffer);
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
   @ApiProperty({ description: 'Search Files by Query' })
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
