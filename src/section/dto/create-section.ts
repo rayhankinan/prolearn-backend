@@ -1,6 +1,7 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsJSON, IsString, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import QuizType from '@quiz/types/quiz.type';
 
 class CreateSectionDto {
   @ApiProperty({
@@ -53,6 +54,14 @@ class CreateSectionDto {
   @IsNumber()
   @Type(() => Boolean)
   readonly isAncestor: boolean;
+
+  @ApiProperty({
+    description: 'Section Quiz Content',
+    required: false,
+  })
+  @IsOptional()
+  @IsJSON()
+  readonly quizContent?: QuizType;
 }
 
 export default CreateSectionDto;

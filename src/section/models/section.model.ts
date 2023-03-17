@@ -12,6 +12,7 @@ import Base from '@database/models/base';
 import SectionType from '@section/enum/section-type';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
+import QuizEntity from '@quiz/models/quiz.model';
 
 @Entity('section')
 @Tree('closure-table', { closureTableName: 'section_closure' })
@@ -31,12 +32,15 @@ class SectionEntity extends Base {
 
   @OneToOne(() => FileEntity, (file) => file.section, { nullable: true })
   @JoinColumn({ name: 'file_id' })
-  file: Promise<FileEntity>;
+  file?: Promise<FileEntity>;
 
   @OneToOne(() => CourseEntity, (course) => course.parentSection, {
     nullable: true,
   })
-  adjoinedCourse: Promise<CourseEntity>;
+  adjoinedCourse?: Promise<CourseEntity>;
+
+  @OneToOne(() => QuizEntity, (quiz) => quiz.section, { nullable: true })
+  quiz?: Promise<QuizEntity>;
 
   @TreeChildren()
   children: Promise<SectionEntity[]>;

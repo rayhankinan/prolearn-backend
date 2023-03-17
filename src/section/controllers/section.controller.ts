@@ -108,12 +108,19 @@ class SectionController {
   async createSection(
     @Request() req: AuthRequest,
     @Body() body: CreateSectionDto,
-    @UploadedFile(htmlOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(htmlOnlyPipe) fileContent: Express.Multer.File,
   ) {
     try {
       const { user } = req;
-      const { title, objective, duration, parentId, courseId, isAncestor } =
-        body;
+      const {
+        title,
+        objective,
+        duration,
+        parentId,
+        courseId,
+        isAncestor,
+        quizContent,
+      } = body;
       const adminId = user.id;
 
       const section = await this.sectionService.create(
@@ -124,7 +131,8 @@ class SectionController {
         courseId,
         adminId,
         isAncestor,
-        content,
+        fileContent,
+        quizContent,
       );
 
       return new ResponseObject<SectionEntity>(
@@ -148,13 +156,20 @@ class SectionController {
     @Request() req: AuthRequest,
     @Param() param: UpdateSectionIDDto,
     @Body() body: UpdateSectionContentDto,
-    @UploadedFile(htmlOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(htmlOnlyPipe) fileContent: Express.Multer.File,
   ) {
     try {
       const { user } = req;
       const { id } = param;
-      const { title, objective, duration, parentId, courseId, isAncestor } =
-        body;
+      const {
+        title,
+        objective,
+        duration,
+        parentId,
+        courseId,
+        isAncestor,
+        quizContent,
+      } = body;
       const adminId = user.id;
 
       const section = await this.sectionService.edit(
@@ -166,7 +181,8 @@ class SectionController {
         courseId,
         adminId,
         isAncestor,
-        content,
+        fileContent,
+        quizContent,
       );
 
       return new ResponseObject<SectionEntity>(
