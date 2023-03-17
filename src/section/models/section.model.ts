@@ -9,8 +9,8 @@ import {
   TreeParent,
 } from 'typeorm';
 import Base from '@database/models/base';
-import CourseEntity from '@course/models/course.model';
 import SectionType from '@section/enum/section-type';
+import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 
 @Entity('section')

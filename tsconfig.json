@@ -20,12 +20,12 @@
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
+      "@quiz/*": ["src/quiz/*"],
       "@response/*": ["src/response/*"],
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
-      "@validator/*": ["src/validator/*"],
-      "@video/*": ["src/video/*"]
+      "@validator/*": ["src/validator/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

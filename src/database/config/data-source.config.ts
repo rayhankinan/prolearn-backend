@@ -4,6 +4,7 @@ import CourseEntity from '@course/models/course.model';
 import SectionEntity from '@section/models/section.model';
 import UserEntity from '@user/models/user.model';
 import FileEntity from '@file/models/file.model';
+import QuizEntity from '@quiz/models/quiz.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
 
@@ -25,6 +26,7 @@ const dataSourceOptions: DataSourceOptions = {
     SectionEntity,
     UserEntity,
     FileEntity,
+    QuizEntity,
   ],
   subscribers: [UserSubscriber],
   migrations: [AdminSeeding],

@@ -15,6 +15,7 @@ import CourseModule from '@course/course.module';
 import UserModule from '@user/user.module';
 import FileModule from '@file/file.module';
 import SectionModule from '@section/section.module';
+import QuizModule from '@quiz/quiz.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import SectionModule from '@section/section.module';
     CourseModule,
     SectionModule,
     FileModule,
+    QuizModule,
   ],
   controllers: [],
   providers: [
