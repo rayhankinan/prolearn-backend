@@ -6,14 +6,6 @@ import StorageType from '@storage/enum/storage-type';
 
 class RenderFileDto {
   @ApiProperty({
-    description: 'File Type',
-    required: true,
-  })
-  @IsFileType()
-  @Type(() => String)
-  readonly type: StorageType;
-
-  @ApiProperty({
     description: 'File ID',
     required: true,
   })

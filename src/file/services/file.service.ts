@@ -30,25 +30,28 @@ class FileService {
     return files;
   }
 
-  async render(fileId: number, type: StorageType): Promise<[Buffer, string]> {
+  async render(fileId: number): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId, storageType: type, isAvailable: true },
+      where: { id: fileId, isAvailable: true },
     });
 
     const downloadResponse = await this.storageService.download(
       file.uuid,
-      type,
+      file.storageType,
     );
 
     return [downloadResponse[0], file.mimetype];
   }
 
-  async stream(fileId: number, type: StorageType): Promise<[Buffer, string]> {
+  async stream(fileId: number): Promise<[Buffer, string]> {
     const file = await this.fileRepository.findOne({
-      where: { id: fileId, storageType: type, isAvailable: true },
+      where: { id: fileId, isAvailable: true },
     });
 
-    const downloadStream = await this.storageService.stream(file.uuid, type);
+    const downloadStream = await this.storageService.stream(
+      file.uuid,
+      file.storageType,
+    );
 
     return [downloadStream[0], file.mimetype];
   }

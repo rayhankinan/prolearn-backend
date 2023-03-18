@@ -58,15 +58,15 @@ class FileController {
   }
 
   @ApiProperty({ description: 'Render File' })
-  @Get(':type/:id')
+  @Get(':id')
   async renderFile(
     @Param() param: RenderFileDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const { type, id } = param;
+      const { id } = param;
 
-      const [buffer, mimetype] = await this.fileService.render(id, type);
+      const [buffer, mimetype] = await this.fileService.render(id);
       res.set({
         'Content-Type': mimetype,
       });
@@ -81,15 +81,15 @@ class FileController {
   }
 
   @ApiProperty({ description: 'Stream File' })
-  @Get(':type/:id')
+  @Get(':id')
   async streamFile(
     @Param() param: RenderFileDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const { type, id } = param;
+      const { id } = param;
 
-      const [buffer, mimetype] = await this.fileService.stream(id, type);
+      const [buffer, mimetype] = await this.fileService.stream(id);
       res.set({
         'Content-Type': mimetype,
       });
