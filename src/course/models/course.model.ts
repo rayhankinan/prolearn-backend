@@ -38,7 +38,7 @@ class CourseEntity extends Base {
   @JoinColumn({ name: 'file_id' })
   thumbnail: Promise<FileEntity>;
 
-  @OneToMany(() => SectionEntity, (section) => section.courses)
+  @OneToMany(() => SectionEntity, (section) => section.course)
   sections: Promise<SectionEntity[]>;
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)

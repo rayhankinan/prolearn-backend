@@ -30,7 +30,7 @@ class SectionService {
     });
 
     const sections = await this.sectionRepository.find({
-      where: { courses: { id: course.id } },
+      where: { course: { id: course.id } },
     });
 
     return sections;
@@ -46,7 +46,7 @@ class SectionService {
     });
 
     const sections = await this.sectionRepository.find({
-      where: { courses: { id: course.id }, title: ILike(`%${title}%`) },
+      where: { course: { id: course.id }, title: ILike(`%${title}%`) },
     });
 
     return sections;
@@ -69,17 +69,21 @@ class SectionService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    section.courses = Promise.resolve(course);
+    section.course = Promise.resolve(course);
 
-    const file = await this.fileService.create(
-      adminId,
-      StorageType.HTML,
-      fileContent,
-    );
-    section.file = Promise.resolve(file);
+    if (fileContent) {
+      const file = await this.fileService.create(
+        adminId,
+        StorageType.HTML,
+        fileContent,
+      );
+      section.file = Promise.resolve(file);
+    }
 
-    const quiz = await this.quizService.create(quizContent, section.id);
-    section.quiz = Promise.resolve(quiz);
+    if (quizContent) {
+      const quiz = await this.quizService.create(quizContent, section.id);
+      section.quiz = Promise.resolve(quiz);
+    }
 
     return await this.sectionRepository.save(section);
   }
@@ -104,7 +108,7 @@ class SectionService {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    section.courses = Promise.resolve(course);
+    section.course = Promise.resolve(course);
 
     if (fileContent) {
       const file = await section.file;

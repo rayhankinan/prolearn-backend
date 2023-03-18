@@ -7,7 +7,6 @@ import {
   OneToOne,
 } from 'typeorm';
 import Base from '@database/models/base';
-import SectionType from '@section/enum/section-type';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import QuizEntity from '@quiz/models/quiz.model';
@@ -24,11 +23,11 @@ class SectionEntity extends Base {
   @Column()
   duration: number;
 
-  @Column({ type: 'enum', enum: SectionType })
-  type: SectionType;
-
   @Column({ type: 'bigint', default: 1 })
   level: number;
+
+  @ManyToOne(() => CourseEntity, (course) => course.sections)
+  course: Promise<CourseEntity>;
 
   @OneToOne(() => FileEntity, (file) => file.section, { nullable: true })
   @JoinColumn({ name: 'file_id' })
@@ -37,9 +36,6 @@ class SectionEntity extends Base {
   @OneToOne(() => QuizEntity, (quiz) => quiz.section, { nullable: true })
   @JoinColumn({ name: 'quiz_id' })
   quiz?: Promise<QuizEntity>;
-
-  @ManyToOne(() => CourseEntity, (course) => course.sections)
-  courses: Promise<CourseEntity>;
 }
 
 export default SectionEntity;
