@@ -30,30 +30,12 @@ class CreateSectionDto {
   readonly duration: number;
 
   @ApiProperty({
-    description: 'Section Parent',
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  readonly parentId?: number;
-
-  @ApiProperty({
     description: 'Section Course ID',
     required: true,
   })
   @IsNumber()
   @Type(() => Number)
   readonly courseId: number;
-
-  @ApiProperty({
-    description: 'Section Ancestor',
-    required: true,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Boolean)
-  readonly isAncestor: boolean;
 
   @ApiProperty({
     description: 'Section Quiz Content',

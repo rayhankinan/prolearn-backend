@@ -3,10 +3,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToOne,
-  Tree,
-  TreeChildren,
-  TreeParent,
 } from 'typeorm';
 import Base from '@database/models/base';
 import SectionType from '@section/enum/section-type';
@@ -15,7 +13,6 @@ import FileEntity from '@file/models/file.model';
 import QuizEntity from '@quiz/models/quiz.model';
 
 @Entity('section')
-@Tree('closure-table', { closureTableName: 'section_closure' })
 class SectionEntity extends Base {
   @Column({ type: 'varchar', length: 255, default: 'No Title' })
   @Index({ fulltext: true })
@@ -30,23 +27,19 @@ class SectionEntity extends Base {
   @Column({ type: 'enum', enum: SectionType })
   type: SectionType;
 
+  @Column({ type: 'bigint', default: 1 })
+  level: number;
+
   @OneToOne(() => FileEntity, (file) => file.section, { nullable: true })
   @JoinColumn({ name: 'file_id' })
   file?: Promise<FileEntity>;
 
-  @OneToOne(() => CourseEntity, (course) => course.parentSection, {
-    nullable: true,
-  })
-  adjoinedCourse?: Promise<CourseEntity>;
-
   @OneToOne(() => QuizEntity, (quiz) => quiz.section, { nullable: true })
+  @JoinColumn({ name: 'quiz_id' })
   quiz?: Promise<QuizEntity>;
 
-  @TreeChildren()
-  children: Promise<SectionEntity[]>;
-
-  @TreeParent()
-  parent: Promise<SectionEntity>;
+  @ManyToOne(() => CourseEntity, (course) => course.sections)
+  courses: Promise<CourseEntity>;
 }
 
 export default SectionEntity;

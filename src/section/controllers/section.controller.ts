@@ -55,7 +55,7 @@ class SectionController {
         studentId,
       );
 
-      return new ResponseObject<SectionEntity>(
+      return new ResponseObject<SectionEntity[]>(
         'Sections fetched successfully',
         section,
       );
@@ -112,25 +112,15 @@ class SectionController {
   ) {
     try {
       const { user } = req;
-      const {
-        title,
-        objective,
-        duration,
-        parentId,
-        courseId,
-        isAncestor,
-        quizContent,
-      } = body;
+      const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
 
       const section = await this.sectionService.create(
         title,
         objective,
         duration,
-        parentId,
         courseId,
         adminId,
-        isAncestor,
         fileContent,
         quizContent,
       );
@@ -161,15 +151,7 @@ class SectionController {
     try {
       const { user } = req;
       const { id } = param;
-      const {
-        title,
-        objective,
-        duration,
-        parentId,
-        courseId,
-        isAncestor,
-        quizContent,
-      } = body;
+      const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
 
       const section = await this.sectionService.edit(
@@ -177,10 +159,8 @@ class SectionController {
         title,
         objective,
         duration,
-        parentId,
         courseId,
         adminId,
-        isAncestor,
         fileContent,
         quizContent,
       );

@@ -24,17 +24,16 @@ class SectionService {
   async getSectionByCourse(
     courseId: number,
     studentId: number,
-  ): Promise<SectionEntity> {
+  ): Promise<SectionEntity[]> {
     const course = await this.courseRepository.findOne({
       where: { id: courseId, subscribers: { id: studentId } },
     });
 
-    const parentSection = await course.parentSection;
-    const childrenSection = await this.sectionRepository.findDescendantsTree(
-      parentSection,
-    );
+    const sections = await this.sectionRepository.find({
+      where: { courses: { id: course.id } },
+    });
 
-    return childrenSection;
+    return sections;
   }
 
   async searchSectionsByTitle(
@@ -46,28 +45,19 @@ class SectionService {
       where: { id: courseId, subscribers: { id: studentId } },
     });
 
-    const parentSection = await course.parentSection;
-    const childrenSections = await this.sectionRepository
-      .createDescendantsQueryBuilder(
-        'section',
-        'section_closure',
-        parentSection,
-      )
-      .andWhere({ title: title ? ILike(`%${title}%`) : undefined })
-      .cache(true)
-      .getMany();
+    const sections = await this.sectionRepository.find({
+      where: { courses: { id: course.id }, title: ILike(`%${title}%`) },
+    });
 
-    return childrenSections;
+    return sections;
   }
 
   async create(
     title: string,
     objective: string,
     duration: number,
-    parentId: number,
     courseId: number,
     adminId: number,
-    isAncestor: boolean,
     fileContent: Express.Multer.File,
     quizContent: QuizType,
   ): Promise<SectionEntity> {
@@ -76,15 +66,10 @@ class SectionService {
     section.objective = objective;
     section.duration = duration;
 
-    const parent = await this.sectionRepository.findOne({
-      where: { id: parentId },
-    });
-    section.parent = Promise.resolve(parent);
-
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    section.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
+    section.courses = Promise.resolve(course);
 
     const file = await this.fileService.create(
       adminId,
@@ -104,10 +89,8 @@ class SectionService {
     title: string,
     objective: string,
     duration: number,
-    parentId: number,
     courseId: number,
     adminId: number,
-    isAncestor: boolean,
     fileContent: Express.Multer.File,
     quizContent: QuizType,
   ): Promise<SectionEntity> {
@@ -118,15 +101,10 @@ class SectionService {
     section.objective = objective;
     section.duration = duration;
 
-    const parent = await this.sectionRepository.findOne({
-      where: { id: parentId },
-    });
-    section.parent = Promise.resolve(parent);
-
     const course = await this.courseRepository.findOne({
       where: { id: courseId, admin: { id: adminId } },
     });
-    section.adjoinedCourse = isAncestor ? Promise.resolve(course) : undefined;
+    section.courses = Promise.resolve(course);
 
     if (fileContent) {
       const file = await section.file;

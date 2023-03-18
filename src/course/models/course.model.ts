@@ -6,6 +6,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
 } from 'typeorm';
 import Base from '@database/models/base';
@@ -31,17 +32,14 @@ class CourseEntity extends Base {
   @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
 
-  @OneToOne(() => SectionEntity, (section) => section.adjoinedCourse, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'section_id' })
-  parentSection: Promise<SectionEntity>;
-
   @OneToOne(() => FileEntity, (file) => file.course, {
     nullable: true,
   })
   @JoinColumn({ name: 'file_id' })
   thumbnail: Promise<FileEntity>;
+
+  @OneToMany(() => SectionEntity, (section) => section.courses)
+  sections: Promise<SectionEntity[]>;
 
   @ManyToMany(() => CategoryEntity, (category) => category.courses)
   @JoinTable({ name: 'course_category' })
