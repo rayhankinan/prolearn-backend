@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
@@ -12,6 +12,7 @@ class CreateCourseDto {
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly title: string;
 

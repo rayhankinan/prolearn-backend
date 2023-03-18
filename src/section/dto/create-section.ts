@@ -1,4 +1,10 @@
-import { IsJSON, IsString, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import QuizType from '@quiz/types/quiz.type';
@@ -9,6 +15,7 @@ class CreateSectionDto {
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly title: string;
 
@@ -42,7 +49,7 @@ class CreateSectionDto {
     required: false,
   })
   @IsOptional()
-  @IsJSON() /* TODO: Cek skema yang valid */
+  @ValidateNested()
   readonly quizContent?: QuizType;
 }
 

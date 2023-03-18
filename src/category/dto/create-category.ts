@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class CreateCategoryDto {
@@ -8,6 +8,7 @@ class CreateCategoryDto {
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly title: string;
 }

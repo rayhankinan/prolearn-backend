@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
@@ -8,6 +8,7 @@ class RegisterUserDTO {
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly username: string;
 
