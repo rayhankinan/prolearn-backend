@@ -60,7 +60,7 @@ class CreateSectionDto {
     required: false,
   })
   @IsOptional()
-  @IsJSON()
+  @IsJSON() /* TODO: Cek skema yang valid */
   readonly quizContent?: QuizType;
 }
 

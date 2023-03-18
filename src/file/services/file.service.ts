@@ -125,7 +125,7 @@ class FileService {
     return await this.fileRepository.softRemove(file);
   }
 
-  @OnEvent('file.uploaded', { async: true })
+  @OnEvent('file.created', { async: true })
   async onFileUploaded(
     file: FileEntity,
     type: StorageType,
