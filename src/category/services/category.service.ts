@@ -16,9 +16,14 @@ class CategoryService {
   ) {}
 
   async getAllCategories(): Promise<CategoryEntity[]> {
-    const categories = await this.categoryRepository.find({
-      cache: true,
-    });
+    // get categories and total course for each category, no need the name of the course
+    const categories = await this.categoryRepository.createQueryBuilder('category')
+      .leftJoinAndSelect('category.courses', 'course')
+      .select('category.id', 'id')
+      .addSelect('category.title', 'title')
+      .addSelect('COUNT(course.id)', 'total_course')
+      .groupBy('category.id')
+      .getRawMany();
 
     return categories;
   }
