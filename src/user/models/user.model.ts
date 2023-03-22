@@ -1,10 +1,11 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
 import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
+import QuizUserEntity from '@quizuser/models/quizuser.model';
 
 @Entity('user')
 class UserEntity extends Base {
@@ -30,6 +31,9 @@ class UserEntity extends Base {
   @ManyToMany(() => CourseEntity, (course) => course.subscribers)
   @JoinTable({ name: 'course_user' })
   courses_subscribed: Promise<CourseEntity[]>;
+
+  @ManyToOne(() => QuizUserEntity, (quizUser) => quizUser.users)
+  quizzes: Promise<QuizUserEntity[]>;
 }
 
 export default UserEntity;
