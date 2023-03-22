@@ -32,8 +32,8 @@ class UserEntity extends Base {
   @JoinTable({ name: 'course_user' })
   courses_subscribed: Promise<CourseEntity[]>;
 
-  @OneToMany(() => QuizEntity, (quiz) => quiz.users)
-  quizzes: Promise<QuizEntity[]>;
+  @OneToMany(() => QuizUserEntity, (quizUser) => quizUser.users)
+  quizzes: Promise<QuizUserEntity[]>;
 }
 
 export default UserEntity;
