@@ -12,7 +12,7 @@ class QuizUserEntity extends Base {
   users: Promise<UserEntity>;
 
   @Column()
-  score: number;
+  correct_answer: number;
 }
 
 export default QuizUserEntity;
