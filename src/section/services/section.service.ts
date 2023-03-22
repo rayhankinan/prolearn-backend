@@ -30,6 +30,7 @@ class SectionService {
     });
 
     const sections = await this.sectionRepository.find({
+      relations: { file: true, quiz: true },
       where: { course: { id: course.id } },
     });
 
@@ -46,6 +47,7 @@ class SectionService {
     });
 
     const sections = await this.sectionRepository.find({
+      relations: { file: true, quiz: true },
       where: { course: { id: course.id }, title: ILike(`%${title}%`) },
     });
 

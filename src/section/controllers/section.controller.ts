@@ -55,7 +55,7 @@ class SectionController {
         studentId,
       );
 
-      return new ResponseObject<SectionEntity[]>(
+      return new ResponseList<SectionEntity>(
         'Sections fetched successfully',
         section,
       );
