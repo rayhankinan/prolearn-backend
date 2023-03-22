@@ -1,4 +1,8 @@
-import { Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, 
+  Entity, 
+  OneToMany, 
+  OneToOne 
+} from 'typeorm';
 import Base from '@database/models/base';
 import QuizType from '@quiz/types/quiz.type';
 import SectionEntity from '@section/models/section.model';
