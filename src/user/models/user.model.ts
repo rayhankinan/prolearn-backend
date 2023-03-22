@@ -5,6 +5,7 @@ import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
+import QuizEntity from '@quiz/models/quiz.model';
 
 @Entity('user')
 class UserEntity extends Base {
@@ -30,6 +31,9 @@ class UserEntity extends Base {
   @ManyToMany(() => CourseEntity, (course) => course.subscribers)
   @JoinTable({ name: 'course_user' })
   courses_subscribed: Promise<CourseEntity[]>;
+
+  @OneToMany(() => QuizEntity, (quiz) => quiz.users)
+  quizzes: Promise<QuizEntity[]>;
 }
 
 export default UserEntity;

@@ -1,7 +1,12 @@
-import { Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
+import { Column, 
+  Entity, 
+  OneToMany, 
+  OneToOne 
+} from 'typeorm';
 import Base from '@database/models/base';
 import QuizType from '@quiz/types/quiz.type';
 import SectionEntity from '@section/models/section.model';
+import QuizUserEntity from './quiz-user.model';
 
 @Entity('quiz')
 class QuizEntity extends Base {
@@ -10,6 +15,9 @@ class QuizEntity extends Base {
 
   @OneToOne(() => SectionEntity, (section) => section.quiz)
   section: Promise<SectionEntity>;
+
+  @OneToMany(() => QuizUserEntity, (quizUser) => quizUser.quizzes)
+  users: Promise<QuizUserEntity[]>;
 }
 
 export default QuizEntity;
