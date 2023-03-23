@@ -60,7 +60,13 @@ class QuizService {
     quizId: number,
     answer: AnswerType,
   ): Promise<QuizUserEntity> {
-    const quizUser = new QuizUserEntity();
+    var quizUser = await this.quizUserRepository.findOne({
+      where: { quizzes: { id: quizId }, users: { id: userId } },
+    });
+
+    if (!quizUser) {
+      quizUser = new QuizUserEntity();
+    }
 
     const quiz = await this.quizRepository.findOne({
       where: { id: quizId },
@@ -83,7 +89,11 @@ class QuizService {
     }
     quizUser.correct_answer = correct_answer;
 
-    return await this.quizUserRepository.save(quizUser);
+    quizUser = await this.quizUserRepository.save(quizUser);
+
+    return await this.quizUserRepository.findOne({
+      where: { id: quizUser.id },
+    });
   }
 }
 

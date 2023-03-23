@@ -17,7 +17,7 @@ class AnswerType {
     required: true,
   })
   @IsNumber({}, { each: true })
-  @Type(() => String)
+  @Type(() => Number)
   options: number[];
 }
 

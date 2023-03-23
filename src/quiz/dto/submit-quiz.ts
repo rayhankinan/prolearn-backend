@@ -8,7 +8,7 @@ import AnswerType from '@quiz/types/answer.type';
 
 class SubmitQuizDto {
   @ApiProperty({
-    description: 'Section ID',
+    description: 'Quiz ID',
     required: true,
   })
   @IsNumber()
