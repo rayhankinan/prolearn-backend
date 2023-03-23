@@ -124,6 +124,7 @@ class SectionController {
       const { user } = req;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
+      const quizType = quizContent ? JSON.parse(quizContent) : undefined;
 
       const section = await this.sectionService.create(
         title,
@@ -131,7 +132,7 @@ class SectionController {
         duration,
         courseId,
         adminId,
-        quizContent,
+        quizType,
         fileContent,
       );
 
@@ -171,6 +172,7 @@ class SectionController {
       const { id } = param;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
+      const quizType = quizContent ? JSON.parse(quizContent) : undefined;
 
       const section = await this.sectionService.edit(
         id,
@@ -179,7 +181,7 @@ class SectionController {
         duration,
         courseId,
         adminId,
-        quizContent,
+        quizType,
         fileContent,
       );
 

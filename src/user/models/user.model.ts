@@ -1,11 +1,18 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
 import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
-import QuizUserEntity from '@quizuser/models/quizuser.model';
+import QuizUserEntity from '@quizuser/models/quiz-user.model';
 
 @Entity('user')
 class UserEntity extends Base {
@@ -16,7 +23,7 @@ class UserEntity extends Base {
   @Exclude()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT})
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT })
   readonly role: UserRole;
 
   @OneToMany(() => CourseEntity, (course) => course.admin)

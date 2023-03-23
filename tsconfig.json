@@ -21,7 +21,7 @@
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
       "@quiz/*": ["src/quiz/*"],
-      "@quizuser/*": ["src/quizuser/*"],
+      "@quizuser/*": ["src/quiz-user/*"],
       "@response/*": ["src/response/*"],
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],

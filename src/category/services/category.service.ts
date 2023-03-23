@@ -16,8 +16,8 @@ class CategoryService {
   ) {}
 
   async getAllCategories(): Promise<CategoryEntity[]> {
-    // get categories and total course for each category, no need the name of the course
-    const categories = await this.categoryRepository.createQueryBuilder('category')
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
       .leftJoinAndSelect('category.courses', 'course')
       .select('category.id', 'id')
       .addSelect('category.title', 'title')

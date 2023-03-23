@@ -16,7 +16,7 @@ import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import QuizService from '@quiz/services/quiz.service';
 import SubmitQuizDto from '@quiz/dto/submit-quiz';
-import QuizUserEntity from '@quizuser/models/quizuser.model';
+import QuizUserEntity from '@quizuser/models/quiz-user.model';
 
 @Controller('quiz')
 class QuizController {
@@ -25,10 +25,7 @@ class QuizController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
-  async submitQuiz(
-    @Request() req: AuthRequest,
-    @Body() body: SubmitQuizDto
-  ) {
+  async submitQuiz(@Request() req: AuthRequest, @Body() body: SubmitQuizDto) {
     try {
       const { user } = req;
       const { quizId, answer } = body;

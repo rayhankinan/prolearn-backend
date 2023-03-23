@@ -60,7 +60,7 @@ class SectionService {
     duration: number,
     courseId: number,
     adminId: number,
-    quizContent: QuizType,
+    quizType?: QuizType,
     fileContent?: Express.Multer.File,
   ): Promise<SectionEntity> {
     const section = new SectionEntity();
@@ -82,8 +82,8 @@ class SectionService {
       section.file = Promise.resolve(file);
     }
 
-    if (quizContent) {
-      const quiz = await this.quizService.create(quizContent, section.id);
+    if (quizType) {
+      const quiz = await this.quizService.create(quizType);
       section.quiz = Promise.resolve(quiz);
     }
 
@@ -97,7 +97,7 @@ class SectionService {
     duration: number,
     courseId: number,
     adminId: number,
-    quizContent: QuizType,
+    quizType?: QuizType,
     fileContent?: Express.Multer.File,
   ): Promise<SectionEntity> {
     const section = await this.sectionRepository.findOne({
@@ -133,18 +133,14 @@ class SectionService {
       }
     }
 
-    if (quizContent) {
+    if (quizType) {
       const quiz = await section.quiz;
 
       if (quiz) {
-        const editedQuiz = await this.quizService.edit(
-          quiz.id,
-          quizContent,
-          section.id,
-        );
+        const editedQuiz = await this.quizService.edit(quiz.id, quizType);
         section.quiz = Promise.resolve(editedQuiz);
       } else {
-        const newQuiz = await this.quizService.create(quizContent, section.id);
+        const newQuiz = await this.quizService.create(quizType);
         section.quiz = Promise.resolve(newQuiz);
       }
     }

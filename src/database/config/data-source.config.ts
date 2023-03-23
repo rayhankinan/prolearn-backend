@@ -7,7 +7,7 @@ import FileEntity from '@file/models/file.model';
 import QuizEntity from '@quiz/models/quiz.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
-import QuizUserEntity from '@quizuser/models/quizuser.model';
+import QuizUserEntity from '@quizuser/models/quiz-user.model';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -28,7 +28,7 @@ const dataSourceOptions: DataSourceOptions = {
     UserEntity,
     FileEntity,
     QuizEntity,
-    QuizUserEntity
+    QuizUserEntity,
   ],
   subscribers: [UserSubscriber],
   migrations: [AdminSeeding],

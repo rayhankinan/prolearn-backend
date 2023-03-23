@@ -6,7 +6,7 @@ import QuizEntity from '@quiz/models/quiz.model';
 import SectionEntity from '@section/models/section.model';
 import QuizType from '@quiz/types/quiz.type';
 import UserEntity from '@user/models/user.model';
-import QuizUserEntity from '@quizuser/models/quizuser.model';
+import QuizUserEntity from '@quizuser/models/quiz-user.model';
 import AnswerType from '@quiz/types/answer.type';
 
 @Injectable()
@@ -31,32 +31,18 @@ class QuizService {
     return quiz;
   }
 
-  async create(content: QuizType, sectionId: number): Promise<QuizEntity> {
+  async create(content: QuizType): Promise<QuizEntity> {
     const quiz = new QuizEntity();
     quiz.content = content;
-
-    const section = await this.sectionRepository.findOne({
-      where: { id: sectionId },
-    });
-    quiz.section = Promise.resolve(section);
 
     return await this.quizRepository.save(quiz);
   }
 
-  async edit(
-    id: number,
-    content: QuizType,
-    sectionId: number,
-  ): Promise<QuizEntity> {
+  async edit(id: number, content: QuizType): Promise<QuizEntity> {
     const quiz = await this.quizRepository.findOne({
       where: { id },
     });
     quiz.content = content;
-
-    const section = await this.sectionRepository.findOne({
-      where: { id: sectionId },
-    });
-    quiz.section = Promise.resolve(section);
 
     return await this.quizRepository.save(quiz);
   }
@@ -69,7 +55,11 @@ class QuizService {
     return await this.quizRepository.softRemove(quiz);
   }
 
-  async submitQuiz(userId: number, quizId: number, answer: AnswerType): Promise<QuizUserEntity> {
+  async submitQuiz(
+    userId: number,
+    quizId: number,
+    answer: AnswerType,
+  ): Promise<QuizUserEntity> {
     const quizUser = new QuizUserEntity();
 
     const quiz = await this.quizRepository.findOne({
@@ -82,8 +72,7 @@ class QuizService {
     });
     quizUser.users = Promise.resolve(user);
 
-    var length = Math.min(answer.options.length, 
-      quiz.content.questions.length);
+    var length = Math.min(answer.options.length, quiz.content.questions.length);
 
     var correct_answer = 0;
     for (var i = 0; i < length; i++) {

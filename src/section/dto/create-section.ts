@@ -49,8 +49,8 @@ class CreateSectionDto {
     required: false,
   })
   @IsOptional()
-  @ValidateNested()
-  readonly quizContent?: QuizType;
+  @Type(() => String)
+  readonly quizContent?: string;
 }
 
 export default CreateSectionDto;
