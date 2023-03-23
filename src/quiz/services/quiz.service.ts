@@ -7,7 +7,6 @@ import SectionEntity from '@section/models/section.model';
 import QuizType from '@quiz/types/quiz.type';
 import UserEntity from '@user/models/user.model';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
-import AnswerType from '@quiz/types/answer.type';
 
 @Injectable()
 class QuizService {
@@ -58,7 +57,7 @@ class QuizService {
   async submitQuiz(
     userId: number,
     quizId: number,
-    answer: AnswerType,
+    answer: number[],
   ): Promise<QuizUserEntity> {
     var quizUser = await this.quizUserRepository.findOne({
       where: { quizzes: { id: quizId }, users: { id: userId } },
@@ -78,11 +77,11 @@ class QuizService {
     });
     quizUser.users = Promise.resolve(user);
 
-    var length = Math.min(answer.options.length, quiz.content.questions.length);
+    var length = Math.min(answer.length, quiz.content.questions.length);
 
     var correct_answer = 0;
     for (var i = 0; i < length; i++) {
-      var ansQuestion = answer.options[i];
+      var ansQuestion = answer[i];
       if (quiz.content.questions[i].options[ansQuestion].isCorrect) {
         correct_answer++;
       }

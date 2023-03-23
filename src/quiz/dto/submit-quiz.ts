@@ -4,7 +4,6 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import AnswerType from '@quiz/types/answer.type';
 
 class SubmitQuizDto {
   @ApiProperty({
@@ -17,11 +16,12 @@ class SubmitQuizDto {
 
   @ApiProperty({
     description: 'Quiz Answer',
+    isArray: true,
     required: true,
   })
-  @ValidateNested()
-  @Type(() => AnswerType)
-  readonly answer: AnswerType;
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  readonly answer: number[];
 }
 
 export default SubmitQuizDto;
