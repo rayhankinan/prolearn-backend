@@ -90,7 +90,7 @@ class FileService {
     });
     file.admin = Promise.resolve(admin);
 
-    await this.eventEmitter.emitAsync('file.created', file, type, content);
+    await this.eventEmitter.emitAsync('file.created', file, content);
 
     return await this.fileRepository.save(file);
   }
@@ -107,9 +107,8 @@ class FileService {
     file.name = content.originalname;
     file.mimetype = content.mimetype;
     file.isAvailable = false;
-    file.uuid = uuidv4();
 
-    await this.eventEmitter.emitAsync('file.updated', file);
+    await this.eventEmitter.emitAsync('file.updated', file, content);
 
     return await this.fileRepository.save(file);
   }
@@ -129,33 +128,27 @@ class FileService {
   }
 
   @OnEvent('file.created', { async: true })
-  async onFileUploaded(
-    file: FileEntity,
-    type: StorageType,
-    content: Express.Multer.File,
-  ) {
-    await this.storageService.upload(file.uuid, type, content);
-
+  async onFileUploaded(file: FileEntity, content: Express.Multer.File) {
     file.isAvailable = true;
+
+    await this.storageService.upload(file.uuid, file.storageType, content);
     await this.fileRepository.save(file);
   }
 
   @OnEvent('file.updated', { async: true })
-  async onFileUpdated(
-    file: FileEntity,
-    type: StorageType,
-    content: Express.Multer.File,
-  ) {
-    await this.storageService.delete(file.uuid, type);
-    await this.storageService.upload(file.uuid, type, content);
+  async onFileUpdated(file: FileEntity, content: Express.Multer.File) {
+    await this.storageService.delete(file.uuid, file.storageType);
 
+    file.uuid = uuidv4();
     file.isAvailable = true;
+
+    await this.storageService.upload(file.uuid, file.storageType, content);
     await this.fileRepository.save(file);
   }
 
   @OnEvent('file.deleted', { async: true })
-  async onFileDeleted(file: FileEntity, type: StorageType) {
-    await this.storageService.delete(file.uuid, type);
+  async onFileDeleted(file: FileEntity) {
+    await this.storageService.delete(file.uuid, file.storageType);
   }
 }
 
