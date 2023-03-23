@@ -12,6 +12,8 @@ import {
   UploadedFile,
   Put,
   Delete,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -28,10 +30,10 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import CreateSectionDto from '@section/dto/create-section';
-import htmlOnlyPipe from '@file/pipe/html-only';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
+import { lookup } from 'mime-types';
 
 @Controller('section')
 class SectionController {
@@ -108,7 +110,15 @@ class SectionController {
   async createSection(
     @Request() req: AuthRequest,
     @Body() body: CreateSectionDto,
-    @UploadedFile(htmlOnlyPipe) fileContent: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    fileContent?: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -121,8 +131,8 @@ class SectionController {
         duration,
         courseId,
         adminId,
-        fileContent,
         quizContent,
+        fileContent,
       );
 
       return new ResponseObject<SectionEntity>(
@@ -146,7 +156,15 @@ class SectionController {
     @Request() req: AuthRequest,
     @Param() param: UpdateSectionIDDto,
     @Body() body: UpdateSectionContentDto,
-    @UploadedFile(htmlOnlyPipe) fileContent: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    fileContent?: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -161,8 +179,8 @@ class SectionController {
         duration,
         courseId,
         adminId,
-        fileContent,
         quizContent,
+        fileContent,
       );
 
       return new ResponseObject<SectionEntity>(

@@ -13,6 +13,8 @@ import {
   StreamableFile,
   UseInterceptors,
   UploadedFile,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
@@ -32,6 +34,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import StorageType from '@storage/enum/storage-type';
+import { lookup } from 'mime-types';
 
 @Controller('file')
 class FileController {
@@ -138,7 +141,15 @@ class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async createFile(
     @Request() req: AuthRequest,
-    @UploadedFile() content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -167,7 +178,15 @@ class FileController {
   async updateFile(
     @Request() req: AuthRequest,
     @Param() param: UpdateFileIDDto,
-    @UploadedFile() content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    content: Express.Multer.File,
   ) {
     try {
       const { user } = req;

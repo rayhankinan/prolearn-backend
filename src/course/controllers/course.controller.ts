@@ -12,6 +12,8 @@ import {
   Request,
   UploadedFile,
   UseInterceptors,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -31,8 +33,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
-import pngOnlyPipe from '@file/pipe/png-only';
-
+import { lookup } from 'mime-types';
 @Controller('course')
 export default class CourseController {
   constructor(private readonly courseService: CourseService) {}
@@ -89,9 +90,7 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses for Visitor' })
   @Get('visitor')
-  async fetchCourseVisitor(
-    @Query() query: FetchCourseDto,
-  ) {
+  async fetchCourseVisitor(@Query() query: FetchCourseDto) {
     try {
       const { categoryId, title, difficulty, limit, page } = query;
 
@@ -157,7 +156,15 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
-    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    content?: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -196,7 +203,15 @@ export default class CourseController {
     @Request() req: AuthRequest,
     @Param() params: UpdateCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
-    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.html') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    content?: Express.Multer.File,
   ) {
     try {
       const { user } = req;

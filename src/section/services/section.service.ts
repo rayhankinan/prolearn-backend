@@ -60,8 +60,8 @@ class SectionService {
     duration: number,
     courseId: number,
     adminId: number,
-    fileContent: Express.Multer.File,
     quizContent: QuizType,
+    fileContent?: Express.Multer.File,
   ): Promise<SectionEntity> {
     const section = new SectionEntity();
     section.title = title;
@@ -97,8 +97,8 @@ class SectionService {
     duration: number,
     courseId: number,
     adminId: number,
-    fileContent: Express.Multer.File,
     quizContent: QuizType,
+    fileContent?: Express.Multer.File,
   ): Promise<SectionEntity> {
     const section = await this.sectionRepository.findOne({
       where: { id },
