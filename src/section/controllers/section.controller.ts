@@ -34,6 +34,7 @@ import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
 import { lookup } from 'mime-types';
+import QuizType from '@quiz/types/quiz.type';
 
 @Controller('section')
 class SectionController {
@@ -124,7 +125,9 @@ class SectionController {
       const { user } = req;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
-      const quizType = quizContent ? JSON.parse(quizContent) : undefined;
+      const quizType = quizContent
+        ? (JSON.parse(quizContent) as QuizType)
+        : undefined;
 
       const section = await this.sectionService.create(
         title,
@@ -172,7 +175,9 @@ class SectionController {
       const { id } = param;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
-      const quizType = quizContent ? JSON.parse(quizContent) : undefined;
+      const quizType = quizContent
+        ? (JSON.parse(quizContent) as QuizType)
+        : undefined;
 
       const section = await this.sectionService.edit(
         id,
