@@ -206,7 +206,7 @@ export default class CourseController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: lookup('.html') as string }),
+          new FileTypeValidator({ fileType: lookup('.png') as string }),
         ],
         fileIsRequired: false,
       }),
