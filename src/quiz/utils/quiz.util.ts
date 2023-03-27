@@ -8,7 +8,7 @@ const parseQuiz = (quizContent: string) => {
   const quizType = parse(quizContent);
 
   if (quizType === undefined) {
-    throw new Error('Invalid quiz content');
+    throw new Error(`Error at position ${parse.position}: ${parse.message}`);
   }
 
   return quizType;
