@@ -17,6 +17,7 @@ import FileModule from '@file/file.module';
 import SectionModule from '@section/section.module';
 import QuizModule from '@quiz/quiz.module';
 import QuizUserModule from '@quizuser/quiz-user.module';
+import JobsModule from '@jobs/jobs.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import QuizUserModule from '@quizuser/quiz-user.module';
     FileModule,
     QuizModule,
     QuizUserModule,
+    JobsModule,
   ],
   controllers: [],
   providers: [

@@ -26,7 +26,8 @@
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
-      "@validator/*": ["src/validator/*"]
+      "@validator/*": ["src/validator/*"],
+      "@jobs/*": ["src/jobs/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
