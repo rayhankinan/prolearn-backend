@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import QuizEntity from '@quiz/models/quiz.model';
 import UserEntity from '@user/models/user.model';
 import Base from '@database/models/base';

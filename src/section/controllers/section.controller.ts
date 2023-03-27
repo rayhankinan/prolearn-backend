@@ -18,6 +18,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { lookup } from 'mime-types';
 import SectionEntity from '@section/models/section.model';
 import SectionService from '@section/services/section.service';
 import ResponseObject from '@response/class/response-object';
@@ -33,8 +34,7 @@ import CreateSectionDto from '@section/dto/create-section';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
-import { lookup } from 'mime-types';
-import QuizType from '@quiz/types/quiz.type';
+import parseQuiz from '@quiz/utils/quiz.util';
 
 @Controller('section')
 class SectionController {
@@ -125,9 +125,7 @@ class SectionController {
       const { user } = req;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
-      const quizType = quizContent
-        ? (JSON.parse(quizContent) as QuizType)
-        : undefined;
+      const quizType = quizContent ? parseQuiz(quizContent) : undefined;
 
       const section = await this.sectionService.create(
         title,
@@ -175,9 +173,7 @@ class SectionController {
       const { id } = param;
       const { title, objective, duration, courseId, quizContent } = body;
       const adminId = user.id;
-      const quizType = quizContent
-        ? (JSON.parse(quizContent) as QuizType)
-        : undefined;
+      const quizType = quizContent ? parseQuiz(quizContent) : undefined;
 
       const section = await this.sectionService.edit(
         id,
