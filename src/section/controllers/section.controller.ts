@@ -34,7 +34,6 @@ import CreateSectionDto from '@section/dto/create-section';
 import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
 import DeleteSectionDto from '@section/dto/delete-section';
-import QuizType from '@quiz/types/quiz.type';
 import parseQuiz from '@quiz/utils/quiz.util';
 
 @Controller('section')
