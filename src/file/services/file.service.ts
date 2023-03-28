@@ -8,6 +8,7 @@ import FileEntity from '@file/models/file.model';
 import StorageService from '@storage/services/storage.service';
 import StorageType from '@storage/enum/storage-type';
 import UserEntity from '@user/models/user.model';
+import FileEvent from '@file/enum/event';
 
 @Injectable()
 class FileService {
@@ -90,7 +91,7 @@ class FileService {
     });
     file.admin = Promise.resolve(admin);
 
-    await this.eventEmitter.emitAsync('file.created', file, content);
+    await this.eventEmitter.emitAsync(FileEvent.CREATED, file, content);
 
     return await this.fileRepository.save(file);
   }
@@ -108,7 +109,7 @@ class FileService {
     file.mimetype = content.mimetype;
     file.isAvailable = false;
 
-    await this.eventEmitter.emitAsync('file.updated', file, content);
+    await this.eventEmitter.emitAsync(FileEvent.UPDATED, file, content);
 
     return await this.fileRepository.save(file);
   }
@@ -122,21 +123,27 @@ class FileService {
       where: { id, storageType: type, admin: { id: adminId } },
     });
 
-    await this.eventEmitter.emitAsync('file.deleted', file);
+    await this.eventEmitter.emitAsync(FileEvent.DELETED, file);
 
     return await this.fileRepository.softRemove(file);
   }
 
-  @OnEvent('file.created', { async: true })
-  async onFileUploaded(file: FileEntity, content: Express.Multer.File) {
+  @OnEvent(FileEvent.CREATED, { async: true })
+  async onFileUploaded(
+    file: FileEntity,
+    content: Express.Multer.File,
+  ): Promise<void> {
     file.isAvailable = true;
 
     await this.storageService.upload(file.uuid, file.storageType, content);
     await this.fileRepository.save(file);
   }
 
-  @OnEvent('file.updated', { async: true })
-  async onFileUpdated(file: FileEntity, content: Express.Multer.File) {
+  @OnEvent(FileEvent.UPDATED, { async: true })
+  async onFileUpdated(
+    file: FileEntity,
+    content: Express.Multer.File,
+  ): Promise<void> {
     await this.storageService.delete(file.uuid, file.storageType);
 
     file.uuid = uuidv4();
@@ -146,8 +153,8 @@ class FileService {
     await this.fileRepository.save(file);
   }
 
-  @OnEvent('file.deleted', { async: true })
-  async onFileDeleted(file: FileEntity) {
+  @OnEvent(FileEvent.DELETED, { async: true })
+  async onFileDeleted(file: FileEntity): Promise<void> {
     await this.storageService.delete(file.uuid, file.storageType);
   }
 }

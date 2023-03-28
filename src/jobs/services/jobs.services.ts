@@ -1,43 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { exec } from 'child_process';
-import * as util from 'util';
+import { codeDirPath, outputDirPath, inputDirPath } from '@jobs/temp-file/path';
 import JobsEntity from '@jobs/models/jobs.model';
+import JobsEvent from '@jobs/enum/event';
+import execProm from '@jobs/utils/exec-promise';
 import CloudLogger from '@logger/class/cloud-logger';
 import ExtensionType from '@jobs/enum/extension-type';
 import StatusType from '@jobs/enum/status-type';
 
-const execProm = util.promisify(exec);
-
-const codeDirPath = join(__dirname, 'codes');
-const outputDirPath = join(__dirname, 'outputs');
-const inputDirPath = join(__dirname, 'inputs');
-
-if (!existsSync(outputDirPath)) {
-  mkdirSync(outputDirPath, { recursive: true });
-}
-if (!existsSync(codeDirPath)) {
-  mkdirSync(codeDirPath, { recursive: true });
-}
-if (!existsSync(inputDirPath)) {
-  mkdirSync(inputDirPath, { recursive: true });
-}
-
 @Injectable()
-class JobsService {
+class JobsService implements OnModuleInit {
   constructor(
     private readonly cloudLogger: CloudLogger,
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(JobsEntity)
     private readonly jobsRepository: Repository<JobsEntity>,
   ) {
     this.cloudLogger = new CloudLogger(JobsEntity.name);
   }
 
-  async getAllJobs(): Promise<JobsEntity[]> {
-    return await this.jobsRepository.find();
+  onModuleInit() {
+    if (!existsSync(outputDirPath)) {
+      mkdirSync(outputDirPath, { recursive: true });
+    }
+    if (!existsSync(codeDirPath)) {
+      mkdirSync(codeDirPath, { recursive: true });
+    }
+    if (!existsSync(inputDirPath)) {
+      mkdirSync(inputDirPath, { recursive: true });
+    }
   }
 
   async getJobById(id: number): Promise<JobsEntity> {
@@ -52,25 +47,27 @@ class JobsService {
     const job = new JobsEntity();
     job.extension = extension;
 
-    // create code file and save do codeDirPath
     const codeFileName = `${Date.now()}.${extension}`;
     const codeFilePath = join(codeDirPath, codeFileName);
     writeFileSync(codeFilePath, code);
 
-    let inputFilePath = '';
+    job.codePath = codeFilePath;
+
     if (input) {
       const inputFileName = `${Date.now()}.txt`;
-      inputFilePath = join(inputDirPath, inputFileName);
+      const inputFilePath = join(inputDirPath, inputFileName);
       writeFileSync(inputFilePath, input);
+
+      job.inputPath = inputFilePath;
     }
 
-    job.codePath = codeFilePath;
-    job.inputPath = inputFilePath;
+    await this.eventEmitter.emitAsync(JobsEvent.CREATED, job);
 
     return await this.jobsRepository.save(job);
   }
 
-  async startJob(job: JobsEntity): Promise<JobsEntity> {
+  @OnEvent(JobsEvent.CREATED, { async: true })
+  async startJob(job: JobsEntity): Promise<void> {
     job.startAt = new Date();
 
     let output: { result: string; isError: boolean };
@@ -95,9 +92,10 @@ class JobsService {
     job.output = output.result;
     job.status = output.isError ? StatusType.FAILED : StatusType.SUCCESS;
 
-    return await this.jobsRepository.save(job);
+    await this.jobsRepository.save(job);
   }
 
+  /* Execute C++ */
   async executeCpp(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -125,6 +123,7 @@ class JobsService {
     return { result, isError };
   }
 
+  /* Execute C */
   async executeC(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -152,6 +151,7 @@ class JobsService {
     return { result, isError };
   }
 
+  /* Execute Python */
   async executePy(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -173,6 +173,7 @@ class JobsService {
     return { result, isError };
   }
 
+  /* Execute JavaScript */
   async executeJs(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -192,6 +193,11 @@ class JobsService {
       isError = true;
     }
     return { result, isError };
+  }
+
+  @OnEvent(JobsEvent.DELETED, { async: true })
+  async deleteJob(job: JobsEntity): Promise<void> {
+    /* TODO: IMPLEMENTASIKAN INI */
   }
 }
 

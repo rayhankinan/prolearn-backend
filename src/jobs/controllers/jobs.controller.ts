@@ -19,7 +19,7 @@ class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @ApiProperty({ description: 'Run Compiler' })
-  @Post('run')
+  @Post()
   async runJob(@Body() body: RunCompilerDto) {
     try {
       const { extension, code, input } = body;
@@ -29,9 +29,8 @@ class JobsController {
         code,
         input,
       );
-      const startedJob = await this.jobsService.startJob(createdJob);
 
-      return new ResponseObject<JobsEntity>('Job Started', startedJob);
+      return new ResponseObject<JobsEntity>('Job Started', createdJob);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,
@@ -41,7 +40,7 @@ class JobsController {
   }
 
   @ApiProperty({ description: 'Get Job Status' })
-  @Get('status/:id')
+  @Get(':id')
   async getJobStatus(@Param() param: GetJobStatusDto) {
     try {
       const { id } = param;
