@@ -1,8 +1,8 @@
-enum EXTENSION {
+enum ExtensionType {
   CPP = 'cpp',
   C = 'c',
   PYTHON = 'py',
   JAVASCRIPT = 'js',
 }
 
-export default EXTENSION;
+export default ExtensionType;

@@ -7,8 +7,8 @@ import { exec } from 'child_process';
 import * as util from 'util';
 import JobsEntity from '@jobs/models/jobs.model';
 import CloudLogger from '@logger/class/cloud-logger';
-import EXTENSION from '@jobs/enum/extension.enum';
-import STATUS from '@jobs/enum/status.enum';
+import ExtensionType from '@jobs/enum/extension-type';
+import StatusType from '@jobs/enum/status-type';
 
 const execProm = util.promisify(exec);
 
@@ -27,7 +27,7 @@ if (!existsSync(inputDirPath)) {
 }
 
 @Injectable()
-export class JobsService {
+class JobsService {
   constructor(
     private readonly cloudLogger: CloudLogger,
     @InjectRepository(JobsEntity)
@@ -41,15 +41,13 @@ export class JobsService {
   }
 
   async getJobById(id: number): Promise<JobsEntity> {
-    return await this.jobsRepository.findOne(
-      { where: { id } },
-    )
+    return await this.jobsRepository.findOne({ where: { id } });
   }
 
   async createJob(
-    extension: EXTENSION,
+    extension: ExtensionType,
     code: string,
-    input: string,
+    input?: string,
   ): Promise<JobsEntity> {
     const job = new JobsEntity();
     job.extension = extension;
@@ -74,35 +72,40 @@ export class JobsService {
 
   async startJob(job: JobsEntity): Promise<JobsEntity> {
     job.startAt = new Date();
-    let output: { result: string; isError: boolean };
 
-    if (job.extension === 'cpp') {
-      output = await this.executeCpp(job);
-    } else if (job.extension === 'c') {
-      output = await this.executeC(job);
-    } else if (job.extension === 'py') {
-      output = await this.executePy(job);
-    } else if (job.extension === 'js') {
-      output = await this.executeJs(job);
+    let output: { result: string; isError: boolean };
+    switch (job.extension) {
+      case ExtensionType.CPP:
+        output = await this.executeCpp(job);
+        break;
+      case ExtensionType.C:
+        output = await this.executeC(job);
+        break;
+      case ExtensionType.PYTHON:
+        output = await this.executePy(job);
+        break;
+      case ExtensionType.JAVASCRIPT:
+        output = await this.executeJs(job);
+        break;
+      default:
+        throw new Error('Invalid Extension');
     }
 
     job.endAt = new Date();
     job.output = output.result;
-    if (output.isError) job.status = STATUS.FAILED;
-    else job.status = STATUS.SUCCESS;
+    job.status = output.isError ? StatusType.FAILED : StatusType.SUCCESS;
 
-    return await this.updateJob(job);
-  }
-
-  async updateJob(job: JobsEntity): Promise<JobsEntity> {
     return await this.jobsRepository.save(job);
   }
 
-  async executeCpp(job: JobsEntity): Promise<{ result: string; isError: boolean }> {
+  async executeCpp(
+    job: JobsEntity,
+  ): Promise<{ result: string; isError: boolean }> {
     const jobId = job.id;
     const outPath = join(outputDirPath, `${jobId}`);
     let isError = false;
-    let result;
+    let result: string;
+
     try {
       if (job.inputPath) {
         const p = await execProm(
@@ -122,11 +125,14 @@ export class JobsService {
     return { result, isError };
   }
 
-  async executeC(job: JobsEntity): Promise<{ result: string; isError: boolean }> {
+  async executeC(
+    job: JobsEntity,
+  ): Promise<{ result: string; isError: boolean }> {
     const jobId = job.id;
     const outPath = join(outputDirPath, `${jobId}`);
     let isError = false;
-    let result;
+    let result: string;
+
     try {
       if (job.inputPath) {
         const p = await execProm(
@@ -146,19 +152,18 @@ export class JobsService {
     return { result, isError };
   }
 
-  async executePy(job: JobsEntity): Promise<{ result: string; isError: boolean }> {
+  async executePy(
+    job: JobsEntity,
+  ): Promise<{ result: string; isError: boolean }> {
     let isError = false;
-    let result;
+    let result: string;
+
     try {
       if (job.inputPath) {
-        const p = await execProm(
-          `python3 ${job.codePath} < ${job.inputPath}`,
-        );
+        const p = await execProm(`python3 ${job.codePath} < ${job.inputPath}`);
         result = p.stdout;
       } else {
-        const p = await execProm(
-          `python3 ${job.codePath}`,
-        );
+        const p = await execProm(`python3 ${job.codePath}`);
         result = p.stdout;
       }
     } catch (ex) {
@@ -168,19 +173,18 @@ export class JobsService {
     return { result, isError };
   }
 
-  async executeJs(job: JobsEntity): Promise<{ result: string; isError: boolean }> {
+  async executeJs(
+    job: JobsEntity,
+  ): Promise<{ result: string; isError: boolean }> {
     let isError = false;
-    let result;
+    let result: string;
+
     try {
       if (job.inputPath) {
-        const p = await execProm(
-          `node ${job.codePath} < ${job.inputPath}`,
-        );
+        const p = await execProm(`node ${job.codePath} < ${job.inputPath}`);
         result = p.stdout;
       } else {
-        const p = await execProm(
-          `node ${job.codePath}`,
-        );
+        const p = await execProm(`node ${job.codePath}`);
         result = p.stdout;
       }
     } catch (ex) {
@@ -190,3 +194,5 @@ export class JobsService {
     return { result, isError };
   }
 }
+
+export default JobsService;

@@ -1,7 +1,7 @@
-enum STATUS {
+enum StatusType {
   PENDING = 'PENDING',
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
 }
 
-export default STATUS;
+export default StatusType;
