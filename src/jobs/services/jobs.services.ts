@@ -96,6 +96,7 @@ class JobsService implements OnModuleInit {
   }
 
   /* Execute C++ */
+  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeCpp(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -124,6 +125,7 @@ class JobsService implements OnModuleInit {
   }
 
   /* Execute C */
+  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeC(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -152,6 +154,7 @@ class JobsService implements OnModuleInit {
   }
 
   /* Execute Python */
+  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executePy(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
@@ -174,6 +177,7 @@ class JobsService implements OnModuleInit {
   }
 
   /* Execute JavaScript */
+  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeJs(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {

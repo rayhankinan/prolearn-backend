@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN yarn
+
+# Install All Dependencies for Compiler
 RUN apt-get update
 RUN apt-get install -y python3
 RUN apt-get install -y python3-pip

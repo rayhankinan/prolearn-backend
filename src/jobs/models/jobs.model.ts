@@ -12,16 +12,16 @@ class JobsEntity extends Base {
   })
   extension: ExtensionType;
 
+  @Column({ type: 'varchar', length: 255 })
+  @Exclude()
+  codePath: string;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   @Exclude()
   inputPath: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   output: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  @Exclude()
-  codePath: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
