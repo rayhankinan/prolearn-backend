@@ -1,27 +1,27 @@
 import { Column, Entity } from 'typeorm';
-import Base from '@database/models/base';
-import EXTENSION from '@jobs/enum/extension.enum';
-import STATUS from '@jobs/enum/status.enum';
 import { Exclude } from 'class-transformer';
+import Base from '@database/models/base';
+import ExtensionType from '@jobs/enum/extension-type';
+import StatusType from '@jobs/enum/status-type';
 
 @Entity('jobs')
 class JobsEntity extends Base {
   @Column({
     type: 'enum',
-    enum: EXTENSION,
+    enum: ExtensionType,
   })
-  extension: EXTENSION;
+  extension: ExtensionType;
+
+  @Column({ type: 'varchar', length: 255 })
+  @Exclude()
+  codePath: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   @Exclude()
   inputPath: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   output: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  @Exclude()
-  codePath: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @Exclude()
@@ -33,10 +33,10 @@ class JobsEntity extends Base {
 
   @Column({
     type: 'enum',
-    enum: STATUS,
-    default: STATUS.PENDING,
+    enum: StatusType,
+    default: StatusType.PENDING,
   })
-  status: STATUS;
+  status: StatusType;
 }
 
 export default JobsEntity;
