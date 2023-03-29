@@ -2,15 +2,14 @@ FROM node:18
 
 WORKDIR /app
 
+RUN apt-get update
+
+# Install SSH Password Authentication
+RUN apt-get install sshpass
+
 COPY package*.json ./
 
 RUN yarn
-
-# Install All Dependencies for Compiler
-RUN apt-get update
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip
-RUN apt-get install build-essential
 
 COPY . .
 

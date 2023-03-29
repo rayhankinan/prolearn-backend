@@ -3,8 +3,8 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { join } from 'path';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import { codeDirPath, outputDirPath, inputDirPath } from '@jobs/temp-file/path';
+import sshConfig from '@jobs/config/ssh.config';
+import mountConfig from '@jobs/config/mount.config';
 import JobsEntity from '@jobs/models/jobs.model';
 import JobsEvent from '@jobs/enum/event';
 import execProm from '@jobs/utils/exec-promise';
@@ -23,15 +23,14 @@ class JobsService implements OnModuleInit {
     this.cloudLogger = new CloudLogger(JobsEntity.name);
   }
 
-  onModuleInit() {
-    if (!existsSync(outputDirPath)) {
-      mkdirSync(outputDirPath, { recursive: true });
-    }
-    if (!existsSync(codeDirPath)) {
-      mkdirSync(codeDirPath, { recursive: true });
-    }
-    if (!existsSync(inputDirPath)) {
-      mkdirSync(inputDirPath, { recursive: true });
+  async onModuleInit() {
+    for (const extension in ExtensionType) {
+      const { codeDirPath, inputDirPath, outputDirPath } =
+        mountConfig[ExtensionType[extension]];
+      const { hostname, username } = sshConfig;
+      await execProm(
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "mkdir -p ${codeDirPath};mkdir -p ${inputDirPath};mkdir -p ${outputDirPath}"`,
+      );
     }
   }
 
@@ -44,19 +43,26 @@ class JobsService implements OnModuleInit {
     code: string,
     input?: string,
   ): Promise<JobsEntity> {
+    const { codeDirPath, inputDirPath } = mountConfig[extension];
+    const { hostname, username } = sshConfig;
+
     const job = new JobsEntity();
     job.extension = extension;
 
     const codeFileName = `${Date.now()}.${extension}`;
     const codeFilePath = join(codeDirPath, codeFileName);
-    writeFileSync(codeFilePath, code);
+    await execProm(
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "touch ${codeFilePath} ; echo '${code}' > ${codeFilePath}"`,
+    );
 
     job.codePath = codeFilePath;
 
     if (input) {
       const inputFileName = `${Date.now()}.txt`;
       const inputFilePath = join(inputDirPath, inputFileName);
-      writeFileSync(inputFilePath, input);
+      await execProm(
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "touch ${inputFilePath} ; echo '${input}' > ${inputFilePath}"`,
+      );
 
       job.inputPath = inputFilePath;
     }
@@ -96,106 +102,122 @@ class JobsService implements OnModuleInit {
   }
 
   /* Execute C++ */
-  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeCpp(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
-    const jobId = job.id;
-    const outPath = join(outputDirPath, `${jobId}`);
+    const { outputDirPath } = mountConfig[job.extension];
+    const { hostname, username } = sshConfig;
+    const outPath = join(outputDirPath, `${job.id}`);
+
     let isError = false;
     let result: string;
 
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `g++ ${job.codePath} -o ${outPath} && cd ${outputDirPath} && ./${jobId} < ${job.inputPath}`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `g++ ${job.codePath} -o ${outPath} && cd ${outputDirPath} && ./${jobId}`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
         );
         result = p.stdout;
       }
-    } catch (ex) {
-      result = ex.stderr;
+    } catch (error) {
+      result = error.stderr as string;
       isError = true;
     }
+
     return { result, isError };
   }
 
   /* Execute C */
-  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeC(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
-    const jobId = job.id;
-    const outPath = join(outputDirPath, `${jobId}`);
+    const { outputDirPath } = mountConfig[job.extension];
+    const { hostname, username } = sshConfig;
+    const outPath = join(outputDirPath, `${job.id}`);
+
     let isError = false;
     let result: string;
 
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `gcc ${job.codePath} -o ${outPath}  &&  ls && cd ${outputDirPath} && ./${jobId} < ${job.inputPath}`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `gcc ${job.codePath} -o ${outPath} && cd ${outputDirPath} && ./${jobId}`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
         );
         result = p.stdout;
       }
-    } catch (ex) {
-      result = ex.stderr;
+    } catch (error) {
+      result = error.stderr as string;
       isError = true;
     }
+
     return { result, isError };
   }
 
   /* Execute Python */
-  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executePy(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
+    const { hostname, username } = sshConfig;
+
     let isError = false;
     let result: string;
 
     try {
       if (job.inputPath) {
-        const p = await execProm(`python3 ${job.codePath} < ${job.inputPath}`);
+        const p = await execProm(
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "python3 ${job.codePath} < ${job.inputPath}"`,
+        );
         result = p.stdout;
       } else {
-        const p = await execProm(`python3 ${job.codePath}`);
+        const p = await execProm(
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "python3 ${job.codePath}"`,
+        );
         result = p.stdout;
       }
-    } catch (ex) {
-      result = ex.stderr;
+    } catch (error) {
+      result = error.stderr as string;
       isError = true;
     }
+
     return { result, isError };
   }
 
   /* Execute JavaScript */
-  /* TODO: MASIH AMAT SANGAT GAK AMAN (SOLUSI: RUN INI MENGGUNAKAN COMMAND EXECUTION OVER SSH KE CONTAINER LAIN) */
   async executeJs(
     job: JobsEntity,
   ): Promise<{ result: string; isError: boolean }> {
+    const { hostname, username } = sshConfig;
+
     let isError = false;
     let result: string;
 
     try {
       if (job.inputPath) {
-        const p = await execProm(`node ${job.codePath} < ${job.inputPath}`);
+        const p = await execProm(
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "node ${job.codePath} < ${job.inputPath}"`,
+        );
         result = p.stdout;
       } else {
-        const p = await execProm(`node ${job.codePath}`);
+        const p = await execProm(
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "node ${job.codePath}"`,
+        );
         result = p.stdout;
       }
-    } catch (ex) {
-      result = ex.stderr;
+    } catch (error) {
+      result = error.stderr as string;
       isError = true;
     }
+
     return { result, isError };
   }
 

@@ -1,6 +1,6 @@
 enum ExtensionType {
-  CPP = 'cpp',
   C = 'c',
+  CPP = 'cpp',
   PYTHON = 'py',
   JAVASCRIPT = 'js',
 }
