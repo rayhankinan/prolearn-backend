@@ -29,7 +29,7 @@ class JobsService implements OnModuleInit {
         mountConfig[ExtensionType[extension]];
       const { hostname, username } = sshConfig;
       await execProm(
-        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "mkdir -p ${codeDirPath};mkdir -p ${inputDirPath};mkdir -p ${outputDirPath}"`,
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "mkdir -p ${codeDirPath};mkdir -p ${inputDirPath};mkdir -p ${outputDirPath}"`,
       );
     }
   }
@@ -51,8 +51,9 @@ class JobsService implements OnModuleInit {
 
     const codeFileName = `${Date.now()}.${extension}`;
     const codeFilePath = join(codeDirPath, codeFileName);
+    const cleanedCode = code.replace(/"/g, '\\"').replace(/'/g, "\\'");
     await execProm(
-      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "touch ${codeFilePath} ; echo '${code}' > ${codeFilePath}"`,
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${codeFilePath} ; echo '${cleanedCode}' > ${codeFilePath}"`,
     );
 
     job.codePath = codeFilePath;
@@ -60,8 +61,9 @@ class JobsService implements OnModuleInit {
     if (input) {
       const inputFileName = `${Date.now()}.txt`;
       const inputFilePath = join(inputDirPath, inputFileName);
+      const cleanedInput = input.replace(/"/g, '\\"').replace(/'/g, "\\'");
       await execProm(
-        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "touch ${inputFilePath} ; echo '${input}' > ${inputFilePath}"`,
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${inputFilePath} ; echo '${cleanedInput}' > ${inputFilePath}"`,
       );
 
       job.inputPath = inputFilePath;
@@ -115,12 +117,12 @@ class JobsService implements OnModuleInit {
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
         );
         result = p.stdout;
       }
@@ -146,12 +148,12 @@ class JobsService implements OnModuleInit {
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
         );
         result = p.stdout;
       }
@@ -175,12 +177,12 @@ class JobsService implements OnModuleInit {
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "python3 ${job.codePath} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${job.codePath} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "python3 ${job.codePath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${job.codePath}"`,
         );
         result = p.stdout;
       }
@@ -204,12 +206,12 @@ class JobsService implements OnModuleInit {
     try {
       if (job.inputPath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "node ${job.codePath} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${job.codePath} < ${job.inputPath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" ${username}@${hostname} "node ${job.codePath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${job.codePath}"`,
         );
         result = p.stdout;
       }
