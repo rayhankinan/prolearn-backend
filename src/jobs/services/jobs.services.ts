@@ -46,12 +46,11 @@ class JobsService implements OnModuleInit {
   ): Promise<JobsEntity> {
     const { codeDirPath, inputDirPath } = mountConfig[extension];
     const { hostname, username } = sshConfig;
-    const now = Date.now();
 
     const job = new JobsEntity();
     job.extension = extension;
 
-    const codeFileName = `${now}.${extension}`;
+    const codeFileName = `${uuidv4()}.${extension}`;
     const codeFilePath = join(codeDirPath, codeFileName);
     const cleanedCode = code.replace(/"/g, '\\"').replace(/'/g, "\\'");
 
@@ -60,7 +59,7 @@ class JobsService implements OnModuleInit {
     );
 
     if (input) {
-      const inputFileName = `${now}.txt`;
+      const inputFileName = `${uuidv4()}.txt`;
       const inputFilePath = join(inputDirPath, inputFileName);
       const cleanedInput = input.replace(/"/g, '\\"').replace(/'/g, "\\'");
       await execProm(
@@ -87,7 +86,6 @@ class JobsService implements OnModuleInit {
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
     const { hostname, username } = sshConfig;
-
     const { outputDirPath } = mountConfig[ExtensionType.CPP];
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
@@ -121,7 +119,6 @@ class JobsService implements OnModuleInit {
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
     const { hostname, username } = sshConfig;
-
     const { outputDirPath } = mountConfig[ExtensionType.C];
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
@@ -270,7 +267,7 @@ class JobsService implements OnModuleInit {
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
     await execProm(
-      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeFilePath} ; rm -rf ${inputFilePath} ; rm -rf ${outFilePath}"`,
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeFilePath} ; rm -rf ${outFilePath} ; rm -rf ${inputFilePath}"`,
     );
 
     await this.jobsRepository.save(job);
