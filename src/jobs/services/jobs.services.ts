@@ -100,6 +100,8 @@ class JobsService implements OnModuleInit {
     job.output = output.result;
     job.status = output.isError ? StatusType.FAILED : StatusType.SUCCESS;
 
+    await this.eventEmitter.emitAsync(JobsEvent.DELETED, job);
+
     await this.jobsRepository.save(job);
   }
 
@@ -225,7 +227,19 @@ class JobsService implements OnModuleInit {
 
   @OnEvent(JobsEvent.DELETED, { async: true })
   async deleteJob(job: JobsEntity): Promise<void> {
-    /* TODO: IMPLEMENTASIKAN INI */
+    const { codeDirPath, inputDirPath, outputDirPath } =
+      mountConfig[job.extension];
+    const { hostname, username } = sshConfig;
+
+    await execProm(
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeDirPath}/${job.id} ; rm -rf ${inputDirPath}/${job.id} ; rm -rf ${outputDirPath}/${job.id}"`,
+    );
+
+    /* Remove From Database */
+    job.codePath = null;
+    job.inputPath = null;
+
+    await this.jobsRepository.save(job);
   }
 }
 
