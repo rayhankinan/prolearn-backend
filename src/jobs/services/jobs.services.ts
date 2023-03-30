@@ -3,6 +3,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { join } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 import sshConfig from '@jobs/config/ssh.config';
 import mountConfig from '@jobs/config/mount.config';
 import JobsEntity from '@jobs/models/jobs.model';
@@ -45,86 +46,63 @@ class JobsService implements OnModuleInit {
   ): Promise<JobsEntity> {
     const { codeDirPath, inputDirPath } = mountConfig[extension];
     const { hostname, username } = sshConfig;
+    const now = Date.now();
 
     const job = new JobsEntity();
     job.extension = extension;
 
-    const codeFileName = `${Date.now()}.${extension}`;
+    const codeFileName = `${now}.${extension}`;
     const codeFilePath = join(codeDirPath, codeFileName);
     const cleanedCode = code.replace(/"/g, '\\"').replace(/'/g, "\\'");
+
     await execProm(
       `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${codeFilePath} ; echo '${cleanedCode}' > ${codeFilePath}"`,
     );
 
-    job.codePath = codeFilePath;
-
     if (input) {
-      const inputFileName = `${Date.now()}.txt`;
+      const inputFileName = `${now}.txt`;
       const inputFilePath = join(inputDirPath, inputFileName);
       const cleanedInput = input.replace(/"/g, '\\"').replace(/'/g, "\\'");
       await execProm(
         `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${inputFilePath} ; echo '${cleanedInput}' > ${inputFilePath}"`,
       );
 
-      job.inputPath = inputFilePath;
+      await this.eventEmitter.emitAsync(
+        JobsEvent.CREATED,
+        job,
+        codeFilePath,
+        inputFilePath,
+      );
+    } else {
+      await this.eventEmitter.emitAsync(JobsEvent.CREATED, job, codeFilePath);
     }
-
-    await this.eventEmitter.emitAsync(JobsEvent.CREATED, job);
 
     return await this.jobsRepository.save(job);
   }
 
-  @OnEvent(JobsEvent.CREATED, { async: true })
-  async startJob(job: JobsEntity): Promise<void> {
-    job.startAt = new Date();
-
-    let output: { result: string; isError: boolean };
-    switch (job.extension) {
-      case ExtensionType.CPP:
-        output = await this.executeCpp(job);
-        break;
-      case ExtensionType.C:
-        output = await this.executeC(job);
-        break;
-      case ExtensionType.PYTHON:
-        output = await this.executePy(job);
-        break;
-      case ExtensionType.JAVASCRIPT:
-        output = await this.executeJs(job);
-        break;
-      default:
-        throw new Error('Invalid Extension');
-    }
-
-    job.endAt = new Date();
-    job.output = output.result;
-    job.status = output.isError ? StatusType.FAILED : StatusType.SUCCESS;
-
-    await this.eventEmitter.emitAsync(JobsEvent.DELETED, job);
-
-    await this.jobsRepository.save(job);
-  }
-
   /* Execute C++ */
   async executeCpp(
-    job: JobsEntity,
+    codeFilePath: string,
+    outputFileName: string,
+    inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { outputDirPath } = mountConfig[job.extension];
     const { hostname, username } = sshConfig;
-    const outPath = join(outputDirPath, `${job.id}`);
+
+    const { outputDirPath } = mountConfig[ExtensionType.CPP];
+    const outFilePath = join(outputDirPath, `${outputFileName}`);
 
     let isError = false;
     let result: string;
 
     try {
-      if (job.inputPath) {
+      if (inputFilePath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
         );
         result = p.stdout;
       }
@@ -138,24 +116,27 @@ class JobsService implements OnModuleInit {
 
   /* Execute C */
   async executeC(
-    job: JobsEntity,
+    codeFilePath: string,
+    outputFileName: string,
+    inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { outputDirPath } = mountConfig[job.extension];
     const { hostname, username } = sshConfig;
-    const outPath = join(outputDirPath, `${job.id}`);
+
+    const { outputDirPath } = mountConfig[ExtensionType.C];
+    const outFilePath = join(outputDirPath, `${outputFileName}`);
 
     let isError = false;
     let result: string;
 
     try {
-      if (job.inputPath) {
+      if (inputFilePath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${job.codePath} -o ${outPath} ; cd ${outputDirPath} ; ./${job.id}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
         );
         result = p.stdout;
       }
@@ -169,7 +150,8 @@ class JobsService implements OnModuleInit {
 
   /* Execute Python */
   async executePy(
-    job: JobsEntity,
+    codeFilePath: string,
+    inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
     const { hostname, username } = sshConfig;
 
@@ -177,14 +159,14 @@ class JobsService implements OnModuleInit {
     let result: string;
 
     try {
-      if (job.inputPath) {
+      if (inputFilePath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${job.codePath} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${codeFilePath} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${job.codePath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${codeFilePath}"`,
         );
         result = p.stdout;
       }
@@ -198,7 +180,8 @@ class JobsService implements OnModuleInit {
 
   /* Execute JavaScript */
   async executeJs(
-    job: JobsEntity,
+    codeFilePath: string,
+    inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
     const { hostname, username } = sshConfig;
 
@@ -206,14 +189,14 @@ class JobsService implements OnModuleInit {
     let result: string;
 
     try {
-      if (job.inputPath) {
+      if (inputFilePath) {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${job.codePath} < ${job.inputPath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${codeFilePath} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${job.codePath}"`,
+          `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${codeFilePath}"`,
         );
         result = p.stdout;
       }
@@ -225,19 +208,70 @@ class JobsService implements OnModuleInit {
     return { result, isError };
   }
 
+  @OnEvent(JobsEvent.CREATED, { async: true })
+  async startJob(
+    job: JobsEntity,
+    codeFilePath: string,
+    inputFilePath?: string,
+  ): Promise<void> {
+    const outputFileName = uuidv4();
+    let output: { result: string; isError: boolean };
+
+    job.startAt = new Date();
+
+    switch (job.extension) {
+      case ExtensionType.CPP:
+        output = await this.executeCpp(
+          codeFilePath,
+          outputFileName,
+          inputFilePath,
+        );
+        break;
+      case ExtensionType.C:
+        output = await this.executeC(
+          codeFilePath,
+          outputFileName,
+          inputFilePath,
+        );
+        break;
+      case ExtensionType.PYTHON:
+        output = await this.executePy(codeFilePath, inputFilePath);
+        break;
+      case ExtensionType.JAVASCRIPT:
+        output = await this.executeJs(codeFilePath, inputFilePath);
+        break;
+      default:
+        throw new Error('Invalid Extension');
+    }
+
+    job.endAt = new Date();
+    job.output = output.result;
+    job.status = output.isError ? StatusType.FAILED : StatusType.SUCCESS;
+
+    await this.eventEmitter.emitAsync(
+      JobsEvent.DELETED,
+      job,
+      codeFilePath,
+      outputFileName,
+      inputFilePath,
+    );
+  }
+
   @OnEvent(JobsEvent.DELETED, { async: true })
-  async deleteJob(job: JobsEntity): Promise<void> {
-    const { codeDirPath, inputDirPath, outputDirPath } =
-      mountConfig[job.extension];
+  async deleteJob(
+    job: JobsEntity,
+    codeFilePath: string,
+    outputFileName: string,
+    inputFilePath?: string,
+  ): Promise<void> {
     const { hostname, username } = sshConfig;
 
-    await execProm(
-      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeDirPath}/${job.id} ; rm -rf ${inputDirPath}/${job.id} ; rm -rf ${outputDirPath}/${job.id}"`,
-    );
+    const { outputDirPath } = mountConfig[job.extension];
+    const outFilePath = join(outputDirPath, `${outputFileName}`);
 
-    /* Remove From Database */
-    job.codePath = null;
-    job.inputPath = null;
+    await execProm(
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeFilePath} ; rm -rf ${inputFilePath} ; rm -rf ${outFilePath}"`,
+    );
 
     await this.jobsRepository.save(job);
   }
