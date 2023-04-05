@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import QuizEntity from '@quiz/models/quiz.model';
-import SectionEntity from '@section/models/section.model';
 import QuizType from '@quiz/types/quiz.type';
 import UserEntity from '@user/models/user.model';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
@@ -14,8 +13,6 @@ class QuizService {
     private readonly cloudLogger: CloudLogger,
     @InjectRepository(QuizEntity)
     private readonly quizRepository: Repository<QuizEntity>,
-    @InjectRepository(SectionEntity)
-    private readonly sectionRepository: Repository<SectionEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(QuizUserEntity)
@@ -69,6 +66,7 @@ class QuizService {
   ): Promise<QuizUserEntity> {
     let quizUser = await this.quizUserRepository.findOne({
       where: { quizzes: { id: quizId }, users: { id: userId } },
+      relations: { quizzes: true, users: true },
     });
 
     if (!quizUser) {
