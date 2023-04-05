@@ -14,7 +14,7 @@ class QuizUserEntity extends Base {
   @ManyToOne(() => UserEntity, (user) => user.quizzes)
   users: Promise<UserEntity>;
 
-  @Column()
+  @Column({ type: 'int', default: 0 })
   correct_answer: number;
 }
 

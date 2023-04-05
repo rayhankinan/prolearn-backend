@@ -30,7 +30,7 @@ class JobsService implements OnModuleInit {
         mountConfig[ExtensionType[extension]];
       const { hostname, username } = sshConfig;
       await execProm(
-        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "mkdir -p ${codeDirPath};mkdir -p ${inputDirPath};mkdir -p ${outputDirPath}"`,
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "mkdir -p ${codeDirPath} ; mkdir -p ${inputDirPath} ; mkdir -p ${outputDirPath}"`,
       );
     }
   }

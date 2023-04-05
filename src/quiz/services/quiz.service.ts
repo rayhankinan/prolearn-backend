@@ -54,45 +54,53 @@ class QuizService {
     return await this.quizRepository.softRemove(quiz);
   }
 
+  async getHistory(userId: number, quizId: number): Promise<QuizUserEntity> {
+    const quizUser = await this.quizUserRepository.findOne({
+      where: { quizzes: { id: quizId }, users: { id: userId } },
+    });
+
+    return quizUser;
+  }
+
   async submitQuiz(
     userId: number,
     quizId: number,
     answer: number[],
   ): Promise<QuizUserEntity> {
-    var quizUser = await this.quizUserRepository.findOne({
+    let quizUser = await this.quizUserRepository.findOne({
       where: { quizzes: { id: quizId }, users: { id: userId } },
     });
 
     if (!quizUser) {
       quizUser = new QuizUserEntity();
+
+      const quiz = await this.quizRepository.findOne({
+        where: { id: quizId },
+      });
+      quizUser.quizzes = Promise.resolve(quiz);
+
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+      quizUser.users = Promise.resolve(user);
     }
 
-    const quiz = await this.quizRepository.findOne({
-      where: { id: quizId },
-    });
-    quizUser.quizzes = Promise.resolve(quiz);
+    const currentQuiz = await quizUser.quizzes;
+    const length = Math.min(
+      answer.length,
+      currentQuiz.content.questions.length,
+    );
 
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-    quizUser.users = Promise.resolve(user);
+    let correct_answer = 0;
+    for (let i = 0; i < length; i++) {
+      const ansQuestion = answer[i];
 
-    var length = Math.min(answer.length, quiz.content.questions.length);
-
-    var correct_answer = 0;
-    for (var i = 0; i < length; i++) {
-      var ansQuestion = answer[i];
-      if (quiz.content.questions[i].options[ansQuestion].isCorrect) {
+      if (currentQuiz.content.questions[i].options[ansQuestion].isCorrect)
         correct_answer++;
-      }
     }
     quizUser.correct_answer = correct_answer;
 
-    quizUser = await this.quizUserRepository.save(quizUser);
-
-    return await this.quizUserRepository.findOne({
-      where: { id: quizUser.id },
-    });
+    return await this.quizUserRepository.save(quizUser);
   }
 }
 
