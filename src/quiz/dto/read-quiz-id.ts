@@ -2,7 +2,7 @@ import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-class ViewHistoryDto {
+class ReadQuizIDDto {
   @ApiProperty({
     description: 'Quiz ID',
     required: true,
@@ -12,4 +12,4 @@ class ViewHistoryDto {
   readonly quizId: number;
 }
 
-export default ViewHistoryDto;
+export default ReadQuizIDDto;

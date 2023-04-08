@@ -18,7 +18,7 @@ import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import QuizService from '@quiz/services/quiz.service';
 import SubmitQuizDto from '@quiz/dto/submit-quiz';
-import ViewHistoryDto from '@quiz/dto/view-history';
+import ReadQuizIDDto from '@quiz/dto/read-quiz-id';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
 
 @Controller('quiz')
@@ -26,12 +26,12 @@ class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
   @ApiProperty({ description: 'View Quiz History' })
-  @Get()
+  @Get(':quizId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.STUDENT)
   async viewHistory(
     @Request() req: AuthRequest,
-    @Param() param: ViewHistoryDto,
+    @Param() param: ReadQuizIDDto,
   ) {
     try {
       const { user } = req;
@@ -53,13 +53,18 @@ class QuizController {
   }
 
   @ApiProperty({ description: 'Submit Quiz' })
-  @Post()
+  @Post(':quizId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
-  async submitQuiz(@Request() req: AuthRequest, @Body() body: SubmitQuizDto) {
+  async submitQuiz(
+    @Request() req: AuthRequest,
+    @Param() param: ReadQuizIDDto,
+    @Body() body: SubmitQuizDto,
+  ) {
     try {
       const { user } = req;
-      const { quizId, answer } = body;
+      const { quizId } = param;
+      const { answer } = body;
       const studentId = user.id;
 
       const quiz = await this.quizService.submitQuiz(studentId, quizId, answer);

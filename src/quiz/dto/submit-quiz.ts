@@ -4,14 +4,6 @@ import { Type } from 'class-transformer';
 
 class SubmitQuizDto {
   @ApiProperty({
-    description: 'Quiz ID',
-    required: true,
-  })
-  @IsNumber()
-  @Type(() => Number)
-  readonly quizId: number;
-
-  @ApiProperty({
     description: 'Quiz Answer',
     isArray: true,
     required: true,
