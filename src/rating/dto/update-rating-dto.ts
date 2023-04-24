@@ -15,13 +15,13 @@ class UpdateRatingDto {
     readonly rating: number;
 
     @ApiProperty({
-        description: 'Course ID',
+        description: 'Rating ID',
         type: Number,
         required: true,
     })
     @IsNumber()
     @Type(() => Number)
-    readonly courseId: number;
+    readonly ratingId: number;
 }
 
 export default UpdateRatingDto;

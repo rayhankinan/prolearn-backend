@@ -79,17 +79,11 @@ class RatingService {
 
   async updateRating(
     rating: number,
-    courseId: number,
-    userId: number,
+    ratingId: number,
   ): Promise<RatingEntity> {
     const ratingToUpdate = await this.ratingRepository.findOne({
       where: {
-        course: {
-          id: courseId,
-        },
-        user: {
-          id: userId,
-        },
+        id: ratingId,
       },
     });
 

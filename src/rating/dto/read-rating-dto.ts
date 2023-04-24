@@ -2,7 +2,7 @@ import { IsNumber } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 
-class GetRatingDto {
+class ReadRatingDto {
     @ApiProperty({
         description: 'Course ID',
         type: Number,
@@ -13,4 +13,4 @@ class GetRatingDto {
     readonly courseId: number;
 }
 
-export default GetRatingDto;
+export default ReadRatingDto;

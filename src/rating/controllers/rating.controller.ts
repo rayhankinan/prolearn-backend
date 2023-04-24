@@ -7,6 +7,7 @@ import {
   Get,
   Body,
   Param,
+  Put,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -17,10 +18,126 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RatingService from '@rating/services/rating.service';
+import CreateRatingDto from '@rating/dto/create-rating-dto';
+import ReadRatingDto from '@rating/dto/read-rating-dto';
+import UpdateRatingDto from '@rating/dto/update-rating-dto';
+import RatingEntity from '@rating/models/rating.model';
 
 @Controller('rating')
 class RatingController {
   constructor(private readonly ratingService: RatingService) {}
+
+  @ApiProperty({description: 'Average Rating'})
+  @Get(':courseId/average')
+  async getAverageRating(
+    @Param('courseId') params: ReadRatingDto,
+  ) {
+    try {
+      const { courseId } = params;
+
+      const averageRating = await this.ratingService.getAverageRating(
+        courseId,
+      );
+
+      return new ResponseObject<number>(
+        'Get Average Rating',
+        averageRating,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({description: 'Create Rating'})
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.STUDENT)
+  async createRating(
+    @Request() req: AuthRequest,
+    @Body() body: CreateRatingDto,
+  ) {
+    try {
+      const { user } = req;
+      const { courseId, rating } = body;
+      const userId = user.id;
+
+      const newRating = await this.ratingService.createRating(
+        rating,
+        courseId,
+        userId,
+      );
+
+      return new ResponseObject<RatingEntity>(
+        'Rating Created',
+        newRating,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({description: 'Update Rating'})
+  @Put()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.STUDENT)
+  async updateRating(
+    @Body() body: UpdateRatingDto,
+  ) {
+    try {
+      const { ratingId, rating } = body;
+
+      const updatedRating = await this.ratingService.updateRating(
+        rating,
+        ratingId,
+      );
+
+      return new ResponseObject<RatingEntity>(
+        'Rating Updated',
+        updatedRating,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({description: 'Get Rating'})
+  @Get(':courseId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.STUDENT)
+  async getRating(
+    @Request() req: AuthRequest,
+    @Param('courseId') params: ReadRatingDto,
+  ) {
+    try {
+      const { user } = req;
+      const { courseId } = params;
+      const userId = user.id;
+
+      const rating = await this.ratingService.getRating(
+        courseId,
+        userId,
+      );
+
+      return new ResponseObject<RatingEntity>(
+        'Get Rating',
+        rating,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
 }
 
 export default RatingController;
