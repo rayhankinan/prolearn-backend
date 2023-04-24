@@ -22,15 +22,6 @@ class CreateRatingDto {
     @IsNumber()
     @Type(() => Number)
     readonly courseId: number;
-
-    @ApiProperty({
-        description: 'User ID',
-        type: Number,
-        required: true,
-    })
-    @IsNumber()
-    @Type(() => Number)
-    readonly userId: number;
 }
 
 export default CreateRatingDto;
