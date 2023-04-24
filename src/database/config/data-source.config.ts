@@ -9,6 +9,7 @@ import UserSubscriber from '@user/subscribers/user.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
 import JobsEntity from '@jobs/models/jobs.model';
+import RatingEntity from '@rating/models/rating.model';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -30,7 +31,8 @@ const dataSourceOptions: DataSourceOptions = {
     FileEntity,
     QuizEntity,
     QuizUserEntity,
-    JobsEntity
+    JobsEntity,
+    RatingEntity,
   ],
   subscribers: [UserSubscriber],
   migrations: [AdminSeeding],

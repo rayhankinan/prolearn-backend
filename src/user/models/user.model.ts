@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import Base from '@database/models/base';
 import UserRole from '@user/enum/user-role';
@@ -13,6 +6,7 @@ import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import RatingEntity from '@rating/models/rating.model';
 
 @Entity('user')
 class UserEntity extends Base {
@@ -35,12 +29,14 @@ class UserEntity extends Base {
   @OneToMany(() => FileEntity, (file) => file.admin)
   files: Promise<FileEntity[]>;
 
-  @ManyToMany(() => CourseEntity, (course) => course.subscribers)
-  @JoinTable({ name: 'course_user' })
-  courses_subscribed: Promise<CourseEntity[]>;
-
   @OneToMany(() => QuizUserEntity, (quizUser) => quizUser.users)
   quizzes: Promise<QuizUserEntity[]>;
+
+  @OneToMany(() => RatingEntity, (rating) => rating.user)
+  ratings: Promise<RatingEntity[]>;
+
+  @ManyToMany(() => CourseEntity, (course) => course.subscribers)
+  courses_subscribed: Promise<CourseEntity[]>;
 }
 
 export default UserEntity;

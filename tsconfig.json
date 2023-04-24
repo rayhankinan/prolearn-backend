@@ -28,6 +28,7 @@
       "@user/*": ["src/user/*"],
       "@validator/*": ["src/validator/*"],
       "@jobs/*": ["src/jobs/*"],
+      "@rating/*": ["src/rating/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

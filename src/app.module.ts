@@ -18,6 +18,7 @@ import SectionModule from '@section/section.module';
 import QuizModule from '@quiz/quiz.module';
 import QuizUserModule from '@quizuser/quiz-user.module';
 import JobsModule from '@jobs/jobs.module';
+import RatingModule from '@rating/rating.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import JobsModule from '@jobs/jobs.module';
     QuizModule,
     QuizUserModule,
     JobsModule,
+    RatingModule,
   ],
   controllers: [],
   providers: [

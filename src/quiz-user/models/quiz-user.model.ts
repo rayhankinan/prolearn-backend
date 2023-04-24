@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import QuizEntity from '@quiz/models/quiz.model';
 import UserEntity from '@user/models/user.model';
 import Base from '@database/models/base';
@@ -6,16 +6,18 @@ import { Exclude } from 'class-transformer';
 
 @Entity('quiz_user')
 class QuizUserEntity extends Base {
-  @Exclude()
   @ManyToOne(() => QuizEntity, (quiz) => quiz.users)
+  @JoinColumn({ name: 'quiz_id' })
+  @Exclude()
   quizzes: Promise<QuizEntity>;
 
-  @Exclude()
   @ManyToOne(() => UserEntity, (user) => user.quizzes)
+  @JoinColumn({ name: 'user_id' })
+  @Exclude()
   users: Promise<UserEntity>;
 
   @Column({ type: 'int', default: 0 })
-  correct_answer: number;
+  correctAnswers: number;
 }
 
 export default QuizUserEntity;

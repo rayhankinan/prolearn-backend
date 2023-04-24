@@ -89,14 +89,14 @@ class QuizService {
       currentQuiz.content.questions.length,
     );
 
-    let correct_answer = 0;
+    let correctAnswers = 0;
     for (let i = 0; i < length; i++) {
       const ansQuestion = answer[i];
 
       if (currentQuiz.content.questions[i].options[ansQuestion].isCorrect)
-        correct_answer++;
+        correctAnswers++;
     }
-    quizUser.correct_answer = correct_answer;
+    quizUser.correctAnswers = correctAnswers;
 
     return await this.quizUserRepository.save(quizUser);
   }

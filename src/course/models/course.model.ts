@@ -16,6 +16,7 @@ import SectionEntity from '@section/models/section.model';
 import CategoryEntity from '@category/models/category.model';
 import FileEntity from '@file/models/file.model';
 import UserEntity from '@user/models/user.model';
+import RatingEntity from '@rating/models/rating.model';
 
 @Entity('course')
 class CourseEntity extends Base {
@@ -41,15 +42,19 @@ class CourseEntity extends Base {
   @OneToMany(() => SectionEntity, (section) => section.course)
   sections: Promise<SectionEntity[]>;
 
-  @ManyToMany(() => CategoryEntity, (category) => category.courses)
-  @JoinTable({ name: 'course_category' })
-  categories: Promise<CategoryEntity[]>;
+  @OneToMany(() => RatingEntity, (rating) => rating.course)
+  rating: Promise<RatingEntity[]>;
 
   @ManyToOne(() => UserEntity, (admin) => admin.courses)
   @JoinColumn({ name: 'admin_id' })
   admin: Promise<UserEntity>;
 
+  @ManyToMany(() => CategoryEntity, (category) => category.courses)
+  @JoinTable({ name: 'course_category' })
+  categories: Promise<CategoryEntity[]>;
+
   @ManyToMany(() => UserEntity, (student) => student.courses_subscribed)
+  @JoinTable({ name: 'course_user' })
   subscribers: Promise<UserEntity[]>;
 }
 

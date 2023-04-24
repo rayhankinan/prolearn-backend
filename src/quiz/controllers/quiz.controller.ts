@@ -15,11 +15,11 @@ import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
+import QuizUserEntity from '@quizuser/models/quiz-user.model';
 import AuthRequest from '@auth/interface/auth-request';
 import QuizService from '@quiz/services/quiz.service';
 import SubmitQuizDto from '@quiz/dto/submit-quiz';
 import ReadQuizIDDto from '@quiz/dto/read-quiz-id';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
 
 @Controller('quiz')
 class QuizController {
