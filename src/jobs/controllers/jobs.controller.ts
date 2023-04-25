@@ -12,7 +12,7 @@ import ResponseObject from '@response/class/response-object';
 import JobsService from '@jobs/services/jobs.services';
 import JobsEntity from '@jobs/models/jobs.model';
 import RunCompilerDto from '@jobs/dto/run-compiler';
-import GetJobStatusDto from '@jobs/dto/get-job-status';
+import ReadJobIDDto from '@jobs/dto/read-job-id';
 
 @Controller('jobs')
 class JobsController {
@@ -41,7 +41,7 @@ class JobsController {
 
   @ApiProperty({ description: 'Get Job Status' })
   @Get(':id')
-  async getJobStatus(@Param() param: GetJobStatusDto) {
+  async getJobStatus(@Param() param: ReadJobIDDto) {
     try {
       const { id } = param;
 

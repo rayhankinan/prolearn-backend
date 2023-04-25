@@ -7,6 +7,7 @@ import IsCourseLevel from '@course/validator/course-level';
 class FetchCourseDto {
   @ApiProperty({
     description: 'Category ID',
+    type: Number,
     isArray: true,
     required: false,
   })
@@ -17,6 +18,7 @@ class FetchCourseDto {
 
   @ApiProperty({
     description: 'Course Title',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -26,6 +28,7 @@ class FetchCourseDto {
 
   @ApiProperty({
     description: 'Course Difficulty',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -35,6 +38,7 @@ class FetchCourseDto {
 
   @ApiProperty({
     description: 'Page Limit',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -43,6 +47,7 @@ class FetchCourseDto {
 
   @ApiProperty({
     description: 'Page Number',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -50,7 +55,8 @@ class FetchCourseDto {
   readonly page: number;
 
   @ApiProperty({
-    description: 'subscribed',
+    description: 'Subscribed',
+    type: Boolean,
     required: false,
   })
   @IsOptional()

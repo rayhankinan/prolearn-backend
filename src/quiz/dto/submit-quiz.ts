@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class SubmitQuizDto {
   @ApiProperty({
     description: 'Quiz Answer',
+    type: Number,
     isArray: true,
     required: true,
   })

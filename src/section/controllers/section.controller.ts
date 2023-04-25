@@ -23,6 +23,7 @@ import SectionEntity from '@section/models/section.model';
 import SectionService from '@section/services/section.service';
 import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
+import ReadSectionIDDto from '@section/dto/read-section-id';
 import ReadSectionCourseDto from '@section/dto/read-section-course';
 import ReadSectionTitleDto from '@section/dto/read-section-title';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
@@ -31,9 +32,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import CreateSectionDto from '@section/dto/create-section';
-import UpdateSectionIDDto from '@section/dto/update-section-id';
 import UpdateSectionContentDto from '@section/dto/update-section-content';
-import DeleteSectionDto from '@section/dto/delete-section';
 import parseQuiz from '@quiz/utils/quiz.util';
 
 @Controller('section')
@@ -156,7 +155,7 @@ class SectionController {
   @UseInterceptors(FileInterceptor('file'))
   async editSection(
     @Request() req: AuthRequest,
-    @Param() param: UpdateSectionIDDto,
+    @Param() param: ReadSectionIDDto,
     @Body() body: UpdateSectionContentDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -204,7 +203,7 @@ class SectionController {
   @Roles(UserRole.ADMIN)
   async deleteSection(
     @Request() req: AuthRequest,
-    @Param() param: DeleteSectionDto,
+    @Param() param: ReadSectionIDDto,
   ) {
     try {
       const { user } = req;

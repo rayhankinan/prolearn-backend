@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class CreateCategoryDto {
   @ApiProperty({
     description: 'Category Title',
+    type: String,
     required: true,
   })
   @IsString()

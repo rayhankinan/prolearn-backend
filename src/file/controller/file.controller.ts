@@ -20,21 +20,19 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { Response } from 'express';
+import { lookup } from 'mime-types';
 import FileEntity from '@file/models/file.model';
 import FileService from '@file/services/file.service';
 import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
-import RenderFileDto from '@file/dto/render-file';
+import ReadFileIDDto from '@file/dto/read-file-id';
 import ReadFileNameDto from '@file/dto/read-file-name';
-import DeleteFileDto from '@file/dto/delete-file';
-import UpdateFileIDDto from '@file/dto/update-file-id';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import StorageType from '@storage/enum/storage-type';
-import { lookup } from 'mime-types';
 
 @Controller('file')
 class FileController {
@@ -63,7 +61,7 @@ class FileController {
   @ApiProperty({ description: 'Render File' })
   @Get(':id')
   async renderFile(
-    @Param() param: RenderFileDto,
+    @Param() param: ReadFileIDDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
@@ -86,7 +84,7 @@ class FileController {
   @ApiProperty({ description: 'Stream File' })
   @Get(':id')
   async streamFile(
-    @Param() param: RenderFileDto,
+    @Param() param: ReadFileIDDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
@@ -177,7 +175,7 @@ class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async updateFile(
     @Request() req: AuthRequest,
-    @Param() param: UpdateFileIDDto,
+    @Param() param: ReadFileIDDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -215,7 +213,7 @@ class FileController {
   @Roles(UserRole.ADMIN)
   async DeleteFileDto(
     @Request() req: AuthRequest,
-    @Param() param: DeleteFileDto,
+    @Param() param: ReadFileIDDto,
   ) {
     try {
       const { user } = req;

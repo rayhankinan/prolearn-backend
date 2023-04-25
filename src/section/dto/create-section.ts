@@ -12,6 +12,7 @@ import QuizType from '@quiz/types/quiz.type';
 class CreateSectionDto {
   @ApiProperty({
     description: 'Section Title',
+    type: String,
     required: true,
   })
   @IsString()
@@ -21,6 +22,7 @@ class CreateSectionDto {
 
   @ApiProperty({
     description: 'Section Objective',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -30,6 +32,7 @@ class CreateSectionDto {
 
   @ApiProperty({
     description: 'Section Duration',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -38,6 +41,7 @@ class CreateSectionDto {
 
   @ApiProperty({
     description: 'Section Course ID',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -46,6 +50,7 @@ class CreateSectionDto {
 
   @ApiProperty({
     description: 'Section Quiz Content',
+    type: String,
     required: false,
   })
   @IsOptional()

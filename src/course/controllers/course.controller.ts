@@ -18,12 +18,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { lookup } from 'mime-types';
 import CourseService from '@course/services/course.service';
 import ResponseObject from '@response/class/response-object';
 import ResponsePagination from '@response/class/response-pagination';
 import CreateCourseDto from '@course/dto/create-course';
-import DeleteCourseDto from '@course/dto/delete-course';
-import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import ReadCategoryIDDto from '@category/dto/read-category-id';
 import UpdateCourseContentDto from '@course/dto/update-course-content';
 import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
@@ -33,7 +33,7 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
-import { lookup } from 'mime-types';
+
 @Controller('course')
 export default class CourseController {
   constructor(private readonly courseService: CourseService) {}
@@ -201,7 +201,7 @@ export default class CourseController {
   @UseInterceptors(FileInterceptor('file'))
   async updateCourse(
     @Request() req: AuthRequest,
-    @Param() params: UpdateCategoryIDDto,
+    @Param() params: ReadCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -249,7 +249,7 @@ export default class CourseController {
   @Roles(UserRole.ADMIN)
   async deleteCourse(
     @Request() req: AuthRequest,
-    @Param() params: DeleteCourseDto,
+    @Param() params: ReadCategoryIDDto,
   ) {
     try {
       const { user } = req;

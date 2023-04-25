@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class RegisterUserDTO {
   @ApiProperty({
     description: 'Username',
+    type: String,
     required: true,
   })
   @IsString()
@@ -14,6 +15,7 @@ class RegisterUserDTO {
 
   @ApiProperty({
     description: 'Password',
+    type: String,
     required: true,
   })
   @IsString()

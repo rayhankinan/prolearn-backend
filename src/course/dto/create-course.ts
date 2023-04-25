@@ -9,6 +9,7 @@ import IsCourseStatus from '@course/validator/course-status';
 class CreateCourseDto {
   @ApiProperty({
     description: 'Course Title',
+    type: String,
     required: true,
   })
   @IsString()
@@ -18,6 +19,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Description',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -27,6 +29,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Difficulty',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -36,6 +39,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Category',
+    type: Number,
     isArray: true,
     required: false,
   })
@@ -46,6 +50,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Status',
+    type: String,
     required: false,
   })
   @IsOptional()

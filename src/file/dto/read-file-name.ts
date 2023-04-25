@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class ReadFileNameDto {
   @ApiProperty({
     description: 'File Name',
+    type: String,
     required: true,
   })
   @IsString()

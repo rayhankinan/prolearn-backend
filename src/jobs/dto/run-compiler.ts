@@ -7,6 +7,7 @@ import ExtensionType from '@jobs/enum/extension-type';
 class RunCompilerDto {
   @ApiProperty({
     description: 'File Extension',
+    type: String,
     required: true,
   })
   @IsExtensionType()
@@ -15,6 +16,7 @@ class RunCompilerDto {
 
   @ApiProperty({
     description: 'File Code',
+    type: String,
     required: true,
   })
   @IsString()
@@ -23,6 +25,7 @@ class RunCompilerDto {
 
   @ApiProperty({
     description: 'File Input',
+    type: String,
     required: false,
   })
   @IsOptional()

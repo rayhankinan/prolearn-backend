@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class ReadQuizIDDto {
   @ApiProperty({
     description: 'Quiz ID',
+    type: Number,
     required: true,
   })
   @IsNumber()

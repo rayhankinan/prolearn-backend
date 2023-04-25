@@ -1,10 +1,11 @@
-import { IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class CourseCategoryDto {
+class ReadSectionIDDto {
   @ApiProperty({
     description: 'Course ID',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -12,4 +13,4 @@ class CourseCategoryDto {
   readonly id: number;
 }
 
-export default CourseCategoryDto;
+export default ReadSectionIDDto;

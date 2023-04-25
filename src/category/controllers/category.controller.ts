@@ -19,8 +19,7 @@ import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
 import ReadCategoryTitleDto from '@category/dto/read-category-title';
 import CreateCategoryDto from '@category/dto/create-category';
-import DeleteCategoryDto from '@category/dto/delete-category';
-import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import ReadCategoryIDDto from '@category/dto/read-category-id';
 import UpdateCategoryTitleDto from '@category/dto/update-category-content';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
@@ -105,7 +104,7 @@ class CategoryController {
   @Roles(UserRole.ADMIN)
   async updateCategory(
     @Request() req: AuthRequest,
-    @Param() params: UpdateCategoryIDDto,
+    @Param() params: ReadCategoryIDDto,
     @Body() body: UpdateCategoryTitleDto,
   ) {
     try {
@@ -134,7 +133,7 @@ class CategoryController {
   @Roles(UserRole.ADMIN)
   async deleteCategory(
     @Request() req: AuthRequest,
-    @Param() params: DeleteCategoryDto,
+    @Param() params: ReadCategoryIDDto,
   ) {
     try {
       const { user } = req;

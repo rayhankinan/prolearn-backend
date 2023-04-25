@@ -26,7 +26,7 @@ import RatingEntity from '@rating/models/rating.model';
 class RatingController {
   constructor(private readonly ratingService: RatingService) {}
 
-  @ApiProperty({description: 'Create Rating'})
+  @ApiProperty({ description: 'Create Rating' })
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
@@ -45,10 +45,7 @@ class RatingController {
         userId,
       );
 
-      return new ResponseObject<RatingEntity>(
-        'Rating Created',
-        newRating,
-      );
+      return new ResponseObject<RatingEntity>('Rating Created', newRating);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,
@@ -61,10 +58,7 @@ class RatingController {
   @Get(':courseId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
-  async getRating(
-    @Request() req: AuthRequest,
-    @Param() params: ReadRatingDto,
-  ) {
+  async getRating(@Request() req: AuthRequest, @Param() params: ReadRatingDto) {
     try {
       const { user } = req;
       const { courseId } = params;
