@@ -6,6 +6,7 @@ import UserEntity from '@user/models/user.model';
 import FileEntity from '@file/models/file.model';
 import QuizEntity from '@quiz/models/quiz.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
+import RatingSubscriber from '@rating/subscribers/rating.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
 import QuizUserEntity from '@quizuser/models/quiz-user.model';
 import JobsEntity from '@jobs/models/jobs.model';
@@ -34,7 +35,7 @@ const dataSourceOptions: DataSourceOptions = {
     JobsEntity,
     RatingEntity,
   ],
-  subscribers: [UserSubscriber],
+  subscribers: [UserSubscriber, RatingSubscriber],
   migrations: [AdminSeeding],
 };
 

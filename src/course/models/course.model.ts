@@ -56,6 +56,9 @@ class CourseEntity extends Base {
   @ManyToMany(() => UserEntity, (student) => student.courses_subscribed)
   @JoinTable({ name: 'course_user' })
   subscribers: Promise<UserEntity[]>;
+
+  @Column({ type: 'numeric', precision: 2, scale: 1, default: 0 })
+  rating_avg: number;
 }
 
 export default CourseEntity;
