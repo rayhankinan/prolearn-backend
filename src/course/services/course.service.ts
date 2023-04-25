@@ -81,7 +81,7 @@ class CourseService {
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
     const course = await this.courseRepository.findOne({
       where: { id, admin: { id: adminId } },
-      relations: { categories: true, thumbnail: true },
+      relations: { categories: true, thumbnail: true }
     });
 
     return course;

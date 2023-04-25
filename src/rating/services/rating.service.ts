@@ -34,13 +34,15 @@ class RatingService {
         },
       },
     });
+    let averageRating = 0;
+    if (ratings.length !== 0) {
+      let totalRating = 0;
+      ratings.forEach((rating) => {
+        totalRating += rating.rating;
+      });
 
-    let totalRating = 0;
-    ratings.forEach((rating) => {
-      totalRating += rating.rating;
-    });
-
-    const averageRating = totalRating / ratings.length;
+      averageRating = totalRating / ratings.length;
+    }
 
     return averageRating;
   }
