@@ -44,6 +44,7 @@ class RatingSubscriber implements EntitySubscriberInterface<RatingEntity> {
     const ratings = await ratingRepository.find({
       where: { course: { id: course.id } },
     });
+
     const averageRating =
       ratings.length !== 0
         ? ratings.reduce((a, b) => a + b.rating, 0) / ratings.length

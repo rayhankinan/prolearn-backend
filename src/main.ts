@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import * as compression from 'compression';
+import helmet from 'helmet';
 import AppModule from './app.module';
-const helmet = require('helmet');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
