@@ -15,7 +15,7 @@ class RatingSubscriber implements EntitySubscriberInterface<RatingEntity> {
     return RatingEntity;
   }
 
-  async beforeInsert(event: InsertEvent<RatingEntity>) {
+  async afterInsert(event: InsertEvent<RatingEntity>) {
     const { entity, manager } = event;
     const courseId = (await entity.course).id;
     const ratingRepository = manager.getRepository(RatingEntity);
@@ -41,7 +41,7 @@ class RatingSubscriber implements EntitySubscriberInterface<RatingEntity> {
     await courseRepository.save(course);
   }
 
-  async beforeUpdate(event: UpdateEvent<RatingEntity>) {
+  async afterUpdate(event: UpdateEvent<RatingEntity>) {
     const { entity, manager } = event;
     const courseId = (await entity.course).id;
     const ratingRepository = manager.getRepository(RatingEntity);
