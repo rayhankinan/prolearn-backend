@@ -26,30 +26,6 @@ import RatingEntity from '@rating/models/rating.model';
 class RatingController {
   constructor(private readonly ratingService: RatingService) {}
 
-  @ApiProperty({description: 'Average Rating'})
-  @Get(':courseId/average')
-  async getAverageRating(
-    @Param() params: ReadRatingDto,
-  ) {
-    try {
-      const { courseId } = params;
-
-      const averageRating = await this.ratingService.getAverageRating(
-        courseId,
-      );
-
-      return new ResponseObject<number>(
-        'Get Average Rating',
-        averageRating,
-      );
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
-
   @ApiProperty({description: 'Create Rating'})
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
