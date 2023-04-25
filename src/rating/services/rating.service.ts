@@ -26,27 +26,6 @@ class RatingService {
     return rating;
   }
 
-  async getAverageRating(courseId: number): Promise<number> {
-    const ratings = await this.ratingRepository.find({
-      where: {
-        course: {
-          id: courseId,
-        },
-      },
-    });
-    let averageRating = 0;
-    if (ratings.length !== 0) {
-      let totalRating = 0;
-      ratings.forEach((rating) => {
-        totalRating += rating.rating;
-      });
-
-      averageRating = totalRating / ratings.length;
-    }
-
-    return averageRating;
-  }
-
   async createRating(
     rating: number,
     courseId: number,
