@@ -20,7 +20,6 @@ import AuthRequest from '@auth/interface/auth-request';
 import RatingService from '@rating/services/rating.service';
 import CreateRatingDto from '@rating/dto/create-rating-dto';
 import ReadRatingDto from '@rating/dto/read-rating-dto';
-import UpdateRatingDto from '@rating/dto/update-rating-dto';
 import RatingEntity from '@rating/models/rating.model';
 
 @Controller('rating')
@@ -30,7 +29,7 @@ class RatingController {
   @ApiProperty({description: 'Average Rating'})
   @Get(':courseId/average')
   async getAverageRating(
-    @Param('courseId') params: ReadRatingDto,
+    @Param() params: ReadRatingDto,
   ) {
     try {
       const { courseId } = params;
@@ -82,53 +81,23 @@ class RatingController {
     }
   }
 
-  @ApiProperty({description: 'Update Rating'})
-  @Put()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.STUDENT)
-  async updateRating(
-    @Body() body: UpdateRatingDto,
-  ) {
-    try {
-      const { ratingId, rating } = body;
-
-      const updatedRating = await this.ratingService.updateRating(
-        rating,
-        ratingId,
-      );
-
-      return new ResponseObject<RatingEntity>(
-        'Rating Updated',
-        updatedRating,
-      );
-    } catch (error) {
-      throw new HttpException(
-        (error as Error).message,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-  }
-
-  @ApiProperty({description: 'Get Rating'})
+  @ApiProperty({ description: 'Get Rating' })
   @Get(':courseId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   async getRating(
     @Request() req: AuthRequest,
-    @Param('courseId') params: ReadRatingDto,
+    @Param() params: ReadRatingDto,
   ) {
     try {
       const { user } = req;
       const { courseId } = params;
       const userId = user.id;
 
-      const rating = await this.ratingService.getRating(
-        courseId,
-        userId,
-      );
+      const rating = await this.ratingService.getRating(courseId, userId);
 
       return new ResponseObject<RatingEntity>(
-        'Get Rating',
+        'Rating retrieved successfully',
         rating,
       );
     } catch (error) {

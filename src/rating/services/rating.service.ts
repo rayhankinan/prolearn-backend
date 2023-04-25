@@ -20,14 +20,7 @@ class RatingService {
 
   async getRating(courseId: number, userId: number): Promise<RatingEntity> {
     const rating = await this.ratingRepository.findOne({
-      where: {
-        course: {
-          id: courseId,
-        },
-        user: {
-          id: userId,
-        },
-      },
+      where: { course: { id: courseId }, user: { id: userId } }
     });
 
     return rating;
@@ -57,39 +50,28 @@ class RatingService {
     courseId: number,
     userId: number,
   ): Promise<RatingEntity> {
-    const newRating = new RatingEntity();
-    newRating.rating = rating;
-
-    const course = await this.courseRepository.findOne({
-      where: {
-        id: courseId,
-      },
-    });
-    newRating.course = Promise.resolve(course);
-
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
-    newRating.user = Promise.resolve(user);
-
-    return await this.ratingRepository.save(newRating);
-  }
-
-  async updateRating(
-    rating: number,
-    ratingId: number,
-  ): Promise<RatingEntity> {
-    const ratingToUpdate = await this.ratingRepository.findOne({
-      where: {
-        id: ratingId,
-      },
+    let ratingUser = await this.ratingRepository.findOne({
+      where: { course: { id: courseId }, user: { id: userId } },
+      relations: { course: true }
     });
 
-    ratingToUpdate.rating = rating;
+    if (!ratingUser) {
+      ratingUser = new RatingEntity();
+      ratingUser.rating = rating;
+      const course = await this.courseRepository.findOne({
+        where: { id: courseId },
+      });
+      ratingUser.course = Promise.resolve(course);
 
-    return await this.ratingRepository.save(ratingToUpdate);
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+      ratingUser.user = Promise.resolve(user);
+    }
+
+    ratingUser.rating = rating;
+
+    return await this.ratingRepository.save(ratingUser);
   }
 }
 
