@@ -25,7 +25,7 @@ class SectionService {
     courseId: number,
     studentId: number,
   ): Promise<SectionEntity[]> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id: courseId, subscribers: { id: studentId } },
     });
 
@@ -42,7 +42,7 @@ class SectionService {
     title: string,
     studentId: number,
   ): Promise<SectionEntity[]> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id: courseId, subscribers: { id: studentId } },
     });
 
@@ -68,7 +68,7 @@ class SectionService {
     section.objective = objective;
     section.duration = duration;
 
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id: courseId, admin: { id: adminId } },
     });
     section.course = Promise.resolve(course);
@@ -100,14 +100,14 @@ class SectionService {
     quizType?: QuizType,
     fileContent?: Express.Multer.File,
   ): Promise<SectionEntity> {
-    const section = await this.sectionRepository.findOne({
+    const section = await this.sectionRepository.findOneOrFail({
       where: { id },
     });
     section.title = title;
     section.objective = objective;
     section.duration = duration;
 
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id: courseId, admin: { id: adminId } },
     });
     section.course = Promise.resolve(course);
@@ -149,7 +149,7 @@ class SectionService {
   }
 
   async delete(id: number, adminId: number): Promise<SectionEntity> {
-    const section = await this.sectionRepository.findOne({
+    const section = await this.sectionRepository.findOneOrFail({
       where: { id },
     });
     const file = await section.file;

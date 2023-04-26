@@ -20,7 +20,7 @@ class QuizService {
   ) {}
 
   async getQuizBySection(sectionId: number): Promise<QuizEntity> {
-    const quiz = await this.quizRepository.findOne({
+    const quiz = await this.quizRepository.findOneOrFail({
       where: { section: { id: sectionId } },
     });
 
@@ -35,7 +35,7 @@ class QuizService {
   }
 
   async edit(id: number, content: QuizType): Promise<QuizEntity> {
-    const quiz = await this.quizRepository.findOne({
+    const quiz = await this.quizRepository.findOneOrFail({
       where: { id },
     });
     quiz.content = content;
@@ -44,7 +44,7 @@ class QuizService {
   }
 
   async delete(id: number): Promise<QuizEntity> {
-    const quiz = await this.quizRepository.findOne({
+    const quiz = await this.quizRepository.findOneOrFail({
       where: { id },
     });
 
@@ -52,7 +52,7 @@ class QuizService {
   }
 
   async getHistory(userId: number, quizId: number): Promise<QuizUserEntity> {
-    const quizUser = await this.quizUserRepository.findOne({
+    const quizUser = await this.quizUserRepository.findOneOrFail({
       where: { quizzes: { id: quizId }, users: { id: userId } },
     });
 
@@ -72,12 +72,12 @@ class QuizService {
     if (!quizUser) {
       quizUser = new QuizUserEntity();
 
-      const quiz = await this.quizRepository.findOne({
+      const quiz = await this.quizRepository.findOneOrFail({
         where: { id: quizId },
       });
       quizUser.quizzes = Promise.resolve(quiz);
 
-      const user = await this.userRepository.findOne({
+      const user = await this.userRepository.findOneOrFail({
         where: { id: userId },
       });
       quizUser.users = Promise.resolve(user);

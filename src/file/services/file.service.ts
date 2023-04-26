@@ -32,7 +32,7 @@ class FileService {
   }
 
   async render(fileId: number): Promise<[Buffer, string]> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOneOrFail({
       where: { id: fileId, isAvailable: true },
     });
 
@@ -45,7 +45,7 @@ class FileService {
   }
 
   async stream(fileId: number): Promise<[Buffer, string]> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOneOrFail({
       where: { id: fileId, isAvailable: true },
     });
 
@@ -86,7 +86,7 @@ class FileService {
     file.isAvailable = false;
     file.uuid = uuidv4();
 
-    const admin = await this.userRepository.findOne({
+    const admin = await this.userRepository.findOneOrFail({
       where: { id: adminId },
     });
     file.admin = Promise.resolve(admin);
@@ -102,7 +102,7 @@ class FileService {
     type: StorageType,
     content: Express.Multer.File,
   ): Promise<FileEntity> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOneOrFail({
       where: { id, storageType: type, admin: { id: adminId } },
     });
     file.name = content.originalname;
@@ -119,7 +119,7 @@ class FileService {
     adminId: number,
     type: StorageType,
   ): Promise<FileEntity> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOneOrFail({
       where: { id, storageType: type, admin: { id: adminId } },
     });
 

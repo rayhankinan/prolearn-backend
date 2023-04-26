@@ -32,9 +32,9 @@ class UserService {
   }
 
   async subscribe(id: number, courseId: number): Promise<UserEntity> {
-    const student = await this.userRepository.findOne({ where: { id } });
+    const student = await this.userRepository.findOneOrFail({ where: { id } });
 
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id: courseId },
     });
     const currentCourses = await student.courses_subscribed;

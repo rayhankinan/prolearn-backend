@@ -42,7 +42,7 @@ class CategoryService {
     const category = new CategoryEntity();
     category.title = title;
 
-    const admin = await this.userRepository.findOne({
+    const admin = await this.userRepository.findOneOrFail({
       where: { id: adminId },
     });
     category.admin = Promise.resolve(admin);
@@ -55,7 +55,7 @@ class CategoryService {
     title: string,
     adminId: number,
   ): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
     category.title = title;
@@ -64,7 +64,7 @@ class CategoryService {
   }
 
   async delete(id: number, adminId: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
 

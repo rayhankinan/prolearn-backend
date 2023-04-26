@@ -36,7 +36,7 @@ class JobsService implements OnModuleInit {
   }
 
   async getJobById(id: number): Promise<JobsEntity> {
-    return await this.jobsRepository.findOne({ where: { id } });
+    return await this.jobsRepository.findOneOrFail({ where: { id } });
   }
 
   async createJob(

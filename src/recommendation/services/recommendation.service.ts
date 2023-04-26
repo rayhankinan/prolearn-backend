@@ -22,7 +22,7 @@ class RecommendationService {
     courseId: number,
     studentId: number,
   ): Promise<CourseEntity[]> {
-    const currentCourse = await this.courseRepository.findOne({
+    const currentCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId },
     });
 

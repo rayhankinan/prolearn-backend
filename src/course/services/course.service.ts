@@ -79,7 +79,7 @@ class CourseService {
   }
 
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
       relations: { categories: true, thumbnail: true },
     });
@@ -107,7 +107,7 @@ class CourseService {
     });
     course.categories = Promise.resolve(categories);
 
-    const admin = await this.userRepository.findOne({
+    const admin = await this.userRepository.findOneOrFail({
       where: { id: adminId },
     });
     course.admin = Promise.resolve(admin);
@@ -135,7 +135,7 @@ class CourseService {
     adminId: number,
     content?: Express.Multer.File,
   ): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
 
@@ -174,7 +174,7 @@ class CourseService {
   }
 
   async delete(id: number, adminId: number): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
     const thumbnail = await course.thumbnail;

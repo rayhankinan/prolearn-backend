@@ -19,11 +19,11 @@ class RatingService {
   ) {}
 
   async getRating(courseId: number, userId: number): Promise<RatingEntity> {
-    const subscribedCourse = await this.courseRepository.findOne({
+    const subscribedCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId, subscribers: { id: userId } },
     });
 
-    const rating = await this.ratingRepository.findOne({
+    const rating = await this.ratingRepository.findOneOrFail({
       where: { course: { id: subscribedCourse.id }, user: { id: userId } },
     });
 
@@ -35,7 +35,7 @@ class RatingService {
     courseId: number,
     userId: number,
   ): Promise<RatingEntity> {
-    const subscribedCourse = await this.courseRepository.findOne({
+    const subscribedCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId, subscribers: { id: userId } },
     });
 
@@ -46,12 +46,12 @@ class RatingService {
     if (!ratingUser) {
       ratingUser = new RatingEntity();
       ratingUser.rating = rating;
-      const course = await this.courseRepository.findOne({
+      const course = await this.courseRepository.findOneOrFail({
         where: { id: subscribedCourse.id },
       });
       ratingUser.course = Promise.resolve(course);
 
-      const user = await this.userRepository.findOne({
+      const user = await this.userRepository.findOneOrFail({
         where: { id: userId },
       });
       ratingUser.user = Promise.resolve(user);
