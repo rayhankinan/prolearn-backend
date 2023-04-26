@@ -117,7 +117,7 @@ class RecommendationService {
       cache: true,
     });
 
-    return _.xor(currentSubsribedCourse, recommendedSubscribedCourse);
+    return _.difference(recommendedSubscribedCourse, currentSubsribedCourse);
   }
 }
 
