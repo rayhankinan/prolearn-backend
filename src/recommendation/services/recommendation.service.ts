@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
+import { Equal, In, Not, Repository } from 'typeorm';
 import CloudLogger from '@logger/class/cloud-logger';
 import RatingEntity from '@rating/models/rating.model';
 import CourseEntity from '@course/models/course.model';
@@ -18,10 +18,7 @@ class RecommendationService {
   ) {}
 
   /* TODO: BISA DIBUAT PAGINATION */
-  async contentFiltering(
-    courseId: number,
-    studentId: number,
-  ): Promise<CourseEntity[]> {
+  async contentFiltering(courseId: number): Promise<CourseEntity[]> {
     const currentCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId },
     });
@@ -33,9 +30,9 @@ class RecommendationService {
       relations: {
         categories: true,
         thumbnail: true,
+        subscribers: true,
       },
       where: {
-        subscribers: { id: Not(studentId) },
         categories: { id: In(categoryIDs) },
       },
       cache: true,
