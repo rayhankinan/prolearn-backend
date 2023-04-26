@@ -29,8 +29,6 @@ class RecommendationService {
     const matchingCourses = await this.courseRepository.find({
       relations: {
         categories: true,
-        thumbnail: true,
-        subscribers: true,
       },
       where: {
         categories: { id: In(categoryIDs) },
@@ -38,7 +36,20 @@ class RecommendationService {
       cache: true,
     });
 
-    const jaccardTransforms = await jaccardMap(matchingCourses);
+    const matchingCourseIDs = matchingCourses.map((course) => course.id);
+
+    const recommendedCourses = await this.courseRepository.find({
+      relations: {
+        thumbnail: true,
+        categories: true,
+      },
+      where: {
+        id: In(matchingCourseIDs),
+      },
+      cache: true,
+    });
+
+    const jaccardTransforms = await jaccardMap(recommendedCourses);
     jaccardTransforms.sort(
       (A, B) =>
         jaccardIndex(categoryIDs, A.categoryIDs) -
@@ -49,13 +60,13 @@ class RecommendationService {
       (jaccardTransform) => jaccardTransform.courseId,
     );
 
-    matchingCourses.sort(
+    recommendedCourses.sort(
       (courseA, courseB) =>
-        recommendationIndices.indexOf(courseA.id) -
-        recommendationIndices.indexOf(courseB.id),
+        recommendationIndices.indexOf(courseB.id) -
+        recommendationIndices.indexOf(courseA.id),
     );
 
-    return matchingCourses;
+    return recommendedCourses;
   }
 }
 

@@ -1,6 +1,14 @@
-import { Get, Param, Controller, HttpException } from '@nestjs/common';
+import {
+  Get,
+  Param,
+  Controller,
+  HttpException,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
+import AuthRequest from '@auth/interface/auth-request';
 import ResponseList from '@response/class/response-list';
 import CourseEntity from '@course/models/course.model';
 import RecommendationService from '@recommendation/services/recommendation.service';
@@ -12,7 +20,10 @@ class RecommendationController {
 
   @ApiProperty({ description: 'Content Filtering' })
   @Get('content/:courseId')
-  async contentFiltering(@Param() param: ContentFilteringDto) {
+  async contentFiltering(
+    @Request() req: AuthRequest,
+    @Param() param: ContentFilteringDto,
+  ) {
     try {
       const { courseId } = param;
 

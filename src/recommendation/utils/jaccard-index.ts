@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 const jaccardIndex = (A: number[], B: number[]): number => {
   const intersection = _.intersection(A, B);
