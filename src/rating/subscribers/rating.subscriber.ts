@@ -26,7 +26,10 @@ class RatingSubscriber implements EntitySubscriberInterface<RatingEntity> {
 
     const averageRating =
       ratings.length !== 0
-        ? ratings.reduce((a, b) => a + b.rating, 0) / ratings.length
+        ? ratings.reduce(
+            (total, currentRating) => total + currentRating.rating,
+            0,
+          ) / ratings.length
         : 0;
 
     course.rating_avg = averageRating;
@@ -47,7 +50,10 @@ class RatingSubscriber implements EntitySubscriberInterface<RatingEntity> {
 
     const averageRating =
       ratings.length !== 0
-        ? ratings.reduce((a, b) => a + b.rating, 0) / ratings.length
+        ? ratings.reduce(
+            (total, currentRating) => total + currentRating.rating,
+            0,
+          ) / ratings.length
         : 0;
 
     course.rating_avg = averageRating;

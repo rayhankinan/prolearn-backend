@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import * as _ from 'lodash';
 import CloudLogger from '@logger/class/cloud-logger';
 import RatingEntity from '@rating/models/rating.model';
 import CourseEntity from '@course/models/course.model';
+import UserEntity from '@user/models/user.model';
 import jaccardIndex from '@recommendation/utils/jaccard-index';
 import jaccardMap from '@recommendation/utils/jaccard-map';
+import pearsonMap from '@recommendation/utils/pearson-map';
+import pearsonCorrelation from '@recommendation/utils/pearson-correlation';
 
 @Injectable()
 class RecommendationService {
@@ -15,9 +19,11 @@ class RecommendationService {
     private readonly ratingRepository: Repository<RatingEntity>,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  /* TODO: BISA DIBUAT PAGINATION */
+  /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
   async contentFiltering(courseId: number): Promise<CourseEntity[]> {
     const currentCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId },
@@ -67,6 +73,51 @@ class RecommendationService {
     );
 
     return recommendedCourses;
+  }
+
+  /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
+  async collaborativeFiltering(studentId: number): Promise<CourseEntity[]> {
+    const currentRatings = await this.ratingRepository.find({
+      cache: true,
+    });
+
+    const similarityMatrix = await pearsonMap(currentRatings);
+
+    const currentUsers = await this.userRepository.find({
+      select: {
+        id: true,
+      },
+      cache: true,
+    });
+
+    const currentUserIDs = currentUsers
+      .map((user) => user.id)
+      .filter((userId) => userId !== studentId);
+
+    const mostSimilarUserID = currentUserIDs.reduce((previous, current) => {
+      const previousCorrelation = pearsonCorrelation(
+        similarityMatrix[studentId],
+        similarityMatrix[previous],
+      );
+
+      const currentCorrelation = pearsonCorrelation(
+        similarityMatrix[studentId],
+        similarityMatrix[current],
+      );
+
+      return currentCorrelation > previousCorrelation ? current : previous;
+    });
+
+    const currentSubsribedCourse = await this.courseRepository.find({
+      where: { subscribers: { id: studentId } },
+      cache: true,
+    });
+    const recommendedSubscribedCourse = await this.courseRepository.find({
+      where: { subscribers: { id: mostSimilarUserID } },
+      cache: true,
+    });
+
+    return _.xor(currentSubsribedCourse, recommendedSubscribedCourse);
   }
 }
 
