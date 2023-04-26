@@ -35,7 +35,7 @@ import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
 
 @Controller('course')
-export default class CourseController {
+class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @ApiProperty({ description: 'Fetch Courses' })
@@ -270,3 +270,5 @@ export default class CourseController {
     }
   }
 }
+
+export default CourseController;

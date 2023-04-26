@@ -4,6 +4,7 @@ import LoggerModule from '@logger/logger.module';
 import CourseEntity from '@course/models/course.model';
 import RatingEntity from '@rating/models/rating.model';
 import RecommendationService from '@recommendation/services/recommendation.service';
+import RecommendationController from './controllers/recommendation.controller';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import RecommendationService from '@recommendation/services/recommendation.servi
     LoggerModule,
   ],
   providers: [RecommendationService],
-  controllers: [],
+  controllers: [RecommendationController],
 })
 class RecommendationModule {}
 
