@@ -21,14 +21,15 @@
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
       "@quiz/*": ["src/quiz/*"],
-      "@quizuser/*": ["src/quiz-user/*"],
+      "@quiz-user/*": ["src/quiz-user/*"],
       "@response/*": ["src/response/*"],
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
       "@validator/*": ["src/validator/*"],
       "@jobs/*": ["src/jobs/*"],
-      "@rating/*": ["src/rating/*"]
+      "@rating/*": ["src/rating/*"],
+      "@recommendation/*": ["src/recommendation/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

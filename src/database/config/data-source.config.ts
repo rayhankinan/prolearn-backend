@@ -8,7 +8,7 @@ import QuizEntity from '@quiz/models/quiz.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
 import RatingSubscriber from '@rating/subscribers/rating.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
 import JobsEntity from '@jobs/models/jobs.model';
 import RatingEntity from '@rating/models/rating.model';
 

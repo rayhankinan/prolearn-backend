@@ -5,7 +5,7 @@ import CloudLogger from '@logger/class/cloud-logger';
 import QuizEntity from '@quiz/models/quiz.model';
 import QuizType from '@quiz/types/quiz.type';
 import UserEntity from '@user/models/user.model';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
 
 @Injectable()
 class QuizService {

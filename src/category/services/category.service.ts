@@ -23,6 +23,7 @@ class CategoryService {
       .addSelect('category.title', 'title')
       .addSelect('COUNT(course.id)', 'total_course')
       .groupBy('category.id')
+      .cache(true)
       .getRawMany();
 
     return categories;

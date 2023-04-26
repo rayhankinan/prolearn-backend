@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import LoggerModule from '@logger/logger.module';
 import QuizEntity from '@quiz/models/quiz.model';
 import QuizService from '@quiz/services/quiz.service';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
 import UserEntity from '@user/models/user.model';
 import QuizController from '@quiz/controllers/quiz.controller';
 

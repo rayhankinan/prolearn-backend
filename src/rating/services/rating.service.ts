@@ -19,8 +19,12 @@ class RatingService {
   ) {}
 
   async getRating(courseId: number, userId: number): Promise<RatingEntity> {
+    const subscribedCourse = await this.courseRepository.findOne({
+      where: { id: courseId, subscribers: { id: userId } },
+    });
+
     const rating = await this.ratingRepository.findOne({
-      where: { course: { id: courseId }, user: { id: userId } }
+      where: { course: { id: subscribedCourse.id }, user: { id: userId } },
     });
 
     return rating;
@@ -31,16 +35,19 @@ class RatingService {
     courseId: number,
     userId: number,
   ): Promise<RatingEntity> {
+    const subscribedCourse = await this.courseRepository.findOne({
+      where: { id: courseId, subscribers: { id: userId } },
+    });
+
     let ratingUser = await this.ratingRepository.findOne({
-      where: { course: { id: courseId }, user: { id: userId } },
-      relations: { course: true }
+      where: { course: { id: subscribedCourse.id }, user: { id: userId } },
     });
 
     if (!ratingUser) {
       ratingUser = new RatingEntity();
       ratingUser.rating = rating;
       const course = await this.courseRepository.findOne({
-        where: { id: courseId },
+        where: { id: subscribedCourse.id },
       });
       ratingUser.course = Promise.resolve(course);
 
@@ -57,5 +64,3 @@ class RatingService {
 }
 
 export default RatingService;
-
-

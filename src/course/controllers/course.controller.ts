@@ -47,7 +47,7 @@ export default class CourseController {
   ) {
     try {
       const { user } = req;
-      const { categoryId, title, difficulty, limit, page, subscribed } = query;
+      const { categoryIDs, title, difficulty, limit, page, subscribed } = query;
       const adminId =
         user !== undefined
           ? user.role === UserRole.ADMIN
@@ -63,14 +63,14 @@ export default class CourseController {
 
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
-          categoryId,
+          categoryIDs,
           title,
           difficulty,
-          limit,
-          page,
           subscribed,
           adminId,
           studentId,
+          limit,
+          page,
         );
 
       return new ResponsePagination<CourseEntity>(
@@ -92,18 +92,18 @@ export default class CourseController {
   @Get('visitor')
   async fetchCourseVisitor(@Query() query: FetchCourseDto) {
     try {
-      const { categoryId, title, difficulty, limit, page } = query;
+      const { categoryIDs, title, difficulty, limit, page } = query;
 
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
-          categoryId,
+          categoryIDs,
           title,
           difficulty,
-          limit,
-          page,
           false,
           undefined,
           undefined,
+          limit,
+          page,
         );
 
       return new ResponsePagination<CourseEntity>(

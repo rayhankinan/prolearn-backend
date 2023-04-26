@@ -5,7 +5,7 @@ import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
 import RatingEntity from '@rating/models/rating.model';
 
 @Entity('user')

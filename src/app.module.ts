@@ -16,9 +16,10 @@ import UserModule from '@user/user.module';
 import FileModule from '@file/file.module';
 import SectionModule from '@section/section.module';
 import QuizModule from '@quiz/quiz.module';
-import QuizUserModule from '@quizuser/quiz-user.module';
+import QuizUserModule from '@quiz-user/quiz-user.module';
 import JobsModule from '@jobs/jobs.module';
 import RatingModule from '@rating/rating.module';
+import RecommendationModule from '@recommendation/recommendation.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import RatingModule from '@rating/rating.module';
     QuizUserModule,
     JobsModule,
     RatingModule,
+    RecommendationModule,
   ],
   controllers: [],
   providers: [

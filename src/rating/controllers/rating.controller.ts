@@ -7,7 +7,6 @@ import {
   Get,
   Body,
   Param,
-  Put,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
@@ -45,7 +44,7 @@ class RatingController {
         userId,
       );
 
-      return new ResponseObject<RatingEntity>('Rating Created', newRating);
+      return new ResponseObject<RatingEntity>('Rating created', newRating);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,
@@ -58,10 +57,10 @@ class RatingController {
   @Get(':courseId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
-  async getRating(@Request() req: AuthRequest, @Param() params: ReadRatingDto) {
+  async getRating(@Request() req: AuthRequest, @Param() param: ReadRatingDto) {
     try {
       const { user } = req;
-      const { courseId } = params;
+      const { courseId } = param;
       const userId = user.id;
 
       const rating = await this.ratingService.getRating(courseId, userId);

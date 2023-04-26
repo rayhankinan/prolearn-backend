@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import LoggerModule from '@logger/logger.module';
-import QuizUserEntity from '@quizuser/models/quiz-user.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
 
 @Module({
   imports: [TypeOrmModule.forFeature([QuizUserEntity]), LoggerModule],
