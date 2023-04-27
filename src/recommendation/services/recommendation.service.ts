@@ -62,9 +62,9 @@ class RecommendationService {
         jaccardIndex(categoryIDs, B.categoryIDs),
     );
 
-    const recommendationIndices = jaccardTransforms.map(
-      (jaccardTransform) => jaccardTransform.courseId,
-    );
+    const recommendationIndices = jaccardTransforms
+      .map((jaccardTransform) => jaccardTransform.courseId)
+      .filter((recommendationIndex) => recommendationIndex !== courseId);
 
     recommendedCourses.sort(
       (courseA, courseB) =>
