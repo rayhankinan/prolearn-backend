@@ -39,7 +39,7 @@ class RecommendationService {
         categories: true,
       },
       where: {
-        id: Not(courseId),
+        id: Not(currentCourse.id),
         categories: { id: In(categoryIDs) },
       },
       cache: true,
@@ -67,6 +67,7 @@ class RecommendationService {
 
   /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
   async collaborativeFiltering(studentId: number): Promise<CourseEntity[]> {
+    /* Get all ratings */
     const currentRatings = await this.ratingRepository.find({
       cache: true,
     });
@@ -77,12 +78,11 @@ class RecommendationService {
       select: {
         id: true,
       },
+      where: { id: Not(studentId) },
       cache: true,
     });
 
-    const currentUserIDs = currentUsers
-      .map((user) => user.id)
-      .filter((userId) => userId !== studentId);
+    const currentUserIDs = currentUsers.map((user) => user.id);
 
     const mostSimilarUserID = currentUserIDs.reduce((previous, current) => {
       const previousCorrelation = pearsonCorrelation(
@@ -98,14 +98,17 @@ class RecommendationService {
       return currentCorrelation > previousCorrelation ? current : previous;
     });
 
-    const currentSubsribedCourse = await this.courseRepository.find({
-      where: { subscribers: { id: studentId } },
-      cache: true,
-    });
-    const recommendedSubscribedCourse = await this.courseRepository.find({
-      where: { subscribers: { id: mostSimilarUserID } },
-      cache: true,
-    });
+    const [currentSubsribedCourse, recommendedSubscribedCourse] =
+      await Promise.all([
+        this.courseRepository.find({
+          where: { subscribers: { id: studentId } },
+          cache: true,
+        }),
+        this.courseRepository.find({
+          where: { subscribers: { id: mostSimilarUserID } },
+          cache: true,
+        }),
+      ]);
 
     return _.difference(recommendedSubscribedCourse, currentSubsribedCourse);
   }
