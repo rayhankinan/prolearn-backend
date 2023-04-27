@@ -1,6 +1,7 @@
 import { IsNumber, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import RatingBound from '@rating/type/rating-bound';
 
 class CreateRatingDto {
   @ApiProperty({
@@ -9,8 +10,8 @@ class CreateRatingDto {
     required: true,
   })
   @IsNumber()
-  @Min(0.0)
-  @Max(5.0)
+  @Min(RatingBound.MIN)
+  @Max(RatingBound.MAX)
   @Type(() => Number)
   readonly rating: number;
 

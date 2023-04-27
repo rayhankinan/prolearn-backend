@@ -10,6 +10,7 @@ import jaccardIndex from '@recommendation/utils/jaccard-index';
 import jaccardMap from '@recommendation/utils/jaccard-map';
 import pearsonMap from '@recommendation/utils/pearson-map';
 import pearsonCorrelation from '@recommendation/utils/pearson-correlation';
+import UserRole from '@user/enum/user-role';
 
 @Injectable()
 class RecommendationService {
@@ -79,7 +80,7 @@ class RecommendationService {
       select: {
         id: true,
       },
-      where: { id: Not(studentId) },
+      where: { id: Not(studentId), role: UserRole.STUDENT },
       cache: true,
     });
 
@@ -112,7 +113,11 @@ class RecommendationService {
         }),
       ]);
 
-    return _.difference(recommendedSubscribedCourse, currentSubscribedCourse);
+    return _.differenceBy(
+      recommendedSubscribedCourse,
+      currentSubscribedCourse,
+      (course) => course.id,
+    );
   }
 }
 
