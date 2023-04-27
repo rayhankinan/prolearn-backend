@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import * as _ from 'lodash';
 import CloudLogger from '@logger/class/cloud-logger';
 import RatingEntity from '@rating/models/rating.model';
@@ -25,6 +25,7 @@ class RecommendationService {
 
   /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
   async contentFiltering(courseId: number): Promise<CourseEntity[]> {
+    /* Check whether course exists or not */
     const currentCourse = await this.courseRepository.findOneOrFail({
       where: { id: courseId },
     });
@@ -32,47 +33,36 @@ class RecommendationService {
     const categories = await currentCourse.categories;
     const categoryIDs = categories.map((category) => category.id);
 
+    /* Get all matching courses with intersecting category */
     const matchingCourses = await this.courseRepository.find({
       relations: {
         categories: true,
       },
       where: {
+        id: Not(courseId),
         categories: { id: In(categoryIDs) },
       },
       cache: true,
     });
 
-    const matchingCourseIDs = matchingCourses.map((course) => course.id);
-
-    const recommendedCourses = await this.courseRepository.find({
-      relations: {
-        thumbnail: true,
-        categories: true,
-      },
-      where: {
-        id: In(matchingCourseIDs),
-      },
-      cache: true,
-    });
-
-    const jaccardTransforms = await jaccardMap(recommendedCourses);
+    const jaccardTransforms = await jaccardMap(matchingCourses);
     jaccardTransforms.sort(
       (A, B) =>
         jaccardIndex(categoryIDs, A.categoryIDs) -
         jaccardIndex(categoryIDs, B.categoryIDs),
     );
 
-    const recommendationIndices = jaccardTransforms
-      .map((jaccardTransform) => jaccardTransform.courseId)
-      .filter((recommendationIndex) => recommendationIndex !== courseId);
-
-    recommendedCourses.sort(
-      (courseA, courseB) =>
-        recommendationIndices.indexOf(courseB.id) -
-        recommendationIndices.indexOf(courseA.id),
+    const matchingIndices = jaccardTransforms.map(
+      (jaccardTransform) => jaccardTransform.courseId,
     );
 
-    return recommendedCourses;
+    matchingCourses.sort(
+      (courseA, courseB) =>
+        matchingIndices.indexOf(courseB.id) -
+        matchingIndices.indexOf(courseA.id),
+    );
+
+    return matchingCourses;
   }
 
   /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
