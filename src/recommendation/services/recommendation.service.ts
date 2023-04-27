@@ -23,7 +23,7 @@ class RecommendationService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  /* TODO: BISA DIBUAT PAGINATION DAN FETCH DATABASE DIEFISIENKAN */
+  /* TODO: BISA DIBUAT PAGINATION */
   async contentFiltering(courseId: number): Promise<CourseEntity[]> {
     /* Check whether course exists or not */
     const currentCourse = await this.courseRepository.findOneOrFail({

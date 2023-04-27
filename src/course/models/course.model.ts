@@ -10,6 +10,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import Base from '@database/models/base';
+import ColumnNumericTransformer from '@database/utils/column-numeric-transformer';
 import CourseLevel from '@course/enum/course-level';
 import CourseStatus from '@course/enum/course-status';
 import SectionEntity from '@section/models/section.model';
@@ -33,7 +34,13 @@ class CourseEntity extends Base {
   @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.ACTIVE })
   status: CourseStatus;
 
-  @Column({ type: 'numeric', precision: 2, scale: 1, default: 0 })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 1,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
   rating_avg: number;
 
   @OneToOne(() => FileEntity, (file) => file.course, {
