@@ -74,6 +74,7 @@ class RecommendationService {
 
     const similarityMatrix = await pearsonMap(currentRatings);
 
+    /* Get all users except themselves */
     const currentUsers = await this.userRepository.find({
       select: {
         id: true,
@@ -86,19 +87,20 @@ class RecommendationService {
 
     const mostSimilarUserID = currentUserIDs.reduce((previous, current) => {
       const previousCorrelation = pearsonCorrelation(
-        similarityMatrix[studentId],
-        similarityMatrix[previous],
+        similarityMatrix[studentId] || new Map<number, number>(),
+        similarityMatrix[previous] || new Map<number, number>(),
       );
 
       const currentCorrelation = pearsonCorrelation(
-        similarityMatrix[studentId],
-        similarityMatrix[current],
+        similarityMatrix[studentId] || new Map<number, number>(),
+        similarityMatrix[current] || new Map<number, number>(),
       );
 
       return currentCorrelation > previousCorrelation ? current : previous;
     });
 
-    const [currentSubsribedCourse, recommendedSubscribedCourse] =
+    /* Get current subscribed course and most similar user's subscribed course */
+    const [currentSubscribedCourse, recommendedSubscribedCourse] =
       await Promise.all([
         this.courseRepository.find({
           where: { subscribers: { id: studentId } },
@@ -110,7 +112,7 @@ class RecommendationService {
         }),
       ]);
 
-    return _.difference(recommendedSubscribedCourse, currentSubsribedCourse);
+    return _.difference(recommendedSubscribedCourse, currentSubscribedCourse);
   }
 }
 
