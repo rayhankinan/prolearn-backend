@@ -49,6 +49,29 @@ class CategoryController {
     }
   }
 
+  @ApiProperty({ description: 'Get Category By Subscribed' })
+  @Get('subscribed')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.STUDENT)
+  async getCategoriesBySubscribed(@Request() req: AuthRequest) {
+    try {
+      const { user } = req;
+      const userId = user.id;
+
+      const categories = await this.categoryService.getCategoriesBySubscribed(userId);
+
+      return new ResponseList<CategoryEntity>(
+        'Categories fetched successfully',
+        categories,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
   @ApiProperty({ description: 'Search Categories using Query' })
   @Get()
   async getCategoriesByTitle(@Query() query: ReadCategoryTitleDto) {

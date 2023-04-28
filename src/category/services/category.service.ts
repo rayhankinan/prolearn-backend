@@ -29,6 +29,23 @@ class CategoryService {
     return categories;
   }
 
+  async getCategoriesBySubscribed(userId: number): Promise<CategoryEntity[]> {
+    const categories = await this.categoryRepository
+    // select * from course_user where userId = userId
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.courses', 'course')
+      .leftJoinAndSelect('course.subscribers', 'user')
+      .select('category.id', 'id')
+      .addSelect('category.title', 'title')
+      .addSelect('COUNT(course.id)', 'total_course')
+      .where('user.id = :userId', { userId })
+      .groupBy('category.id')
+      .cache(true)
+      .getRawMany();
+
+    return categories;
+  }
+
   async searchCategoriesByTitle(title: string): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository.find({
       where: { title: title ? ILike(`%${title}%`) : undefined },
