@@ -16,9 +16,32 @@ class CategoryService {
   ) {}
 
   async getAllCategories(): Promise<CategoryEntity[]> {
-    const categories = await this.categoryRepository.find({
-      cache: true,
-    });
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.courses', 'course')
+      .select('category.id', 'id')
+      .addSelect('category.title', 'title')
+      .addSelect('COUNT(course.id)', 'total_course')
+      .groupBy('category.id')
+      .cache(true)
+      .getRawMany();
+
+    return categories;
+  }
+
+  async getCategoriesBySubscribed(userId: number): Promise<CategoryEntity[]> {
+    const categories = await this.categoryRepository
+      // select * from course_user where userId = userId
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.courses', 'course')
+      .leftJoinAndSelect('course.subscribers', 'user')
+      .select('category.id', 'id')
+      .addSelect('category.title', 'title')
+      .addSelect('COUNT(course.id)', 'total_course')
+      .where('user.id = :userId', { userId })
+      .groupBy('category.id')
+      .cache(true)
+      .getRawMany();
 
     return categories;
   }
@@ -36,7 +59,7 @@ class CategoryService {
     const category = new CategoryEntity();
     category.title = title;
 
-    const admin = await this.userRepository.findOne({
+    const admin = await this.userRepository.findOneOrFail({
       where: { id: adminId },
     });
     category.admin = Promise.resolve(admin);
@@ -49,7 +72,7 @@ class CategoryService {
     title: string,
     adminId: number,
   ): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
     category.title = title;
@@ -58,7 +81,7 @@ class CategoryService {
   }
 
   async delete(id: number, adminId: number): Promise<CategoryEntity> {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
 

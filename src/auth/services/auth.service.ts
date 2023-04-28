@@ -13,7 +13,9 @@ class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<Payload> {
-    const user = await this.userRepository.findOne({ where: { username } });
+    const user = await this.userRepository.findOneOrFail({
+      where: { username },
+    });
 
     const isValid = await verify(user?.password, password);
     if (!isValid) {

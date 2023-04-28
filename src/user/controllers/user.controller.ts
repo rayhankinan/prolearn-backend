@@ -14,12 +14,12 @@ import LocalAuthGuard from '@auth/guard/local.guard';
 import AuthRequest from '@auth/interface/auth-request';
 import ResponseObject from '@response/class/response-object';
 import RegisterUserDTO from '@user/dto/register-user';
+import SubscriptionUserDTO from '@user/dto/subscription-user';
 import UserEntity from '@user/models/user.model';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
-import SubscriptionUserDTO from '@user/dto/subscription-user';
 
 @Controller('user')
 class UserController {
@@ -32,7 +32,12 @@ class UserController {
     try {
       const token = await this.userService.tokenize(req.user);
 
-      return new ResponseObject<string>('Login is successful', token, null, req.user.role);
+      return new ResponseObject<string>(
+        'Login is successful',
+        token,
+        null,
+        req.user.role,
+      );
     } catch (error) {
       throw new HttpException(
         (error as Error).message,
@@ -49,10 +54,7 @@ class UserController {
 
       const user = await this.userService.register(username, password);
 
-      return new ResponseObject<UserEntity>(
-        'Registered successfully',
-        user,
-      );
+      return new ResponseObject<UserEntity>('Registered successfully', user);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,
@@ -76,10 +78,7 @@ class UserController {
 
       const student = await this.userService.subscribe(userId, courseId);
 
-      return new ResponseObject<UserEntity>(
-        'Subscribed successfully',
-        student,
-      );
+      return new ResponseObject<UserEntity>('Subscribed successfully', student);
     } catch (error) {
       throw new HttpException(
         (error as Error).message,

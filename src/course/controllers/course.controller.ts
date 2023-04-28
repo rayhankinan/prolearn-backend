@@ -12,16 +12,18 @@ import {
   Request,
   UploadedFile,
   UseInterceptors,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { lookup } from 'mime-types';
 import CourseService from '@course/services/course.service';
 import ResponseObject from '@response/class/response-object';
 import ResponsePagination from '@response/class/response-pagination';
 import CreateCourseDto from '@course/dto/create-course';
-import DeleteCourseDto from '@course/dto/delete-course';
-import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import ReadCategoryIDDto from '@category/dto/read-category-id';
 import UpdateCourseContentDto from '@course/dto/update-course-content';
 import ReadCourseIDDto from '@course/dto/read-course-id';
 import FetchCourseDto from '@course/dto/fetch-course';
@@ -31,10 +33,9 @@ import Roles from '@user/guard/roles.decorator';
 import UserRole from '@user/enum/user-role';
 import AuthRequest from '@auth/interface/auth-request';
 import RolesGuard from '@user/guard/roles.guard';
-import pngOnlyPipe from '@file/pipe/png-only';
 
 @Controller('course')
-export default class CourseController {
+class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @ApiProperty({ description: 'Fetch Courses' })
@@ -46,7 +47,7 @@ export default class CourseController {
   ) {
     try {
       const { user } = req;
-      const { categoryId, title, difficulty, limit, page, subscribed } = query;
+      const { categoryIDs, title, difficulty, limit, page, subscribed } = query;
       const adminId =
         user !== undefined
           ? user.role === UserRole.ADMIN
@@ -62,14 +63,14 @@ export default class CourseController {
 
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
-          categoryId,
+          categoryIDs,
           title,
           difficulty,
-          limit,
-          page,
           subscribed,
           adminId,
           studentId,
+          limit,
+          page,
         );
 
       return new ResponsePagination<CourseEntity>(
@@ -89,22 +90,20 @@ export default class CourseController {
 
   @ApiProperty({ description: 'Fetch Courses for Visitor' })
   @Get('visitor')
-  async fetchCourseVisitor(
-    @Query() query: FetchCourseDto,
-  ) {
+  async fetchCourseVisitor(@Query() query: FetchCourseDto) {
     try {
-      const { categoryId, title, difficulty, limit, page } = query;
+      const { categoryIDs, title, difficulty, limit, page } = query;
 
       const { courses, count, currentPage, totalPage } =
         await this.courseService.fetchCourse(
-          categoryId,
+          categoryIDs,
           title,
           difficulty,
-          limit,
-          page,
           false,
           undefined,
           undefined,
+          limit,
+          page,
         );
 
       return new ResponsePagination<CourseEntity>(
@@ -157,7 +156,15 @@ export default class CourseController {
   async createCourse(
     @Request() req: AuthRequest,
     @Body() createCourseDto: CreateCourseDto,
-    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.png') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    content?: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -194,9 +201,17 @@ export default class CourseController {
   @UseInterceptors(FileInterceptor('file'))
   async updateCourse(
     @Request() req: AuthRequest,
-    @Param() params: UpdateCategoryIDDto,
+    @Param() params: ReadCategoryIDDto,
     @Body() updateCourseDto: UpdateCourseContentDto,
-    @UploadedFile(pngOnlyPipe) content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.png') as string }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    content?: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -234,7 +249,7 @@ export default class CourseController {
   @Roles(UserRole.ADMIN)
   async deleteCourse(
     @Request() req: AuthRequest,
-    @Param() params: DeleteCourseDto,
+    @Param() params: ReadCategoryIDDto,
   ) {
     try {
       const { user } = req;
@@ -255,3 +270,5 @@ export default class CourseController {
     }
   }
 }
+
+export default CourseController;

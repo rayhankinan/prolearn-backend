@@ -19,8 +19,7 @@ import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
 import ReadCategoryTitleDto from '@category/dto/read-category-title';
 import CreateCategoryDto from '@category/dto/create-category';
-import DeleteCategoryDto from '@category/dto/delete-category';
-import UpdateCategoryIDDto from '@category/dto/update-category-id';
+import ReadCategoryIDDto from '@category/dto/read-category-id';
 import UpdateCategoryTitleDto from '@category/dto/update-category-content';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
@@ -37,6 +36,31 @@ class CategoryController {
   async getAllCategories() {
     try {
       const categories = await this.categoryService.getAllCategories();
+
+      return new ResponseList<CategoryEntity>(
+        'Categories fetched successfully',
+        categories,
+      );
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiProperty({ description: 'Get Category By Subscribed' })
+  @Get('subscribed')
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.STUDENT)
+  async getCategoriesBySubscribed(@Request() req: AuthRequest) {
+    try {
+      const { user } = req;
+      const userId = user.id;
+
+      const categories = await this.categoryService.getCategoriesBySubscribed(
+        userId,
+      );
 
       return new ResponseList<CategoryEntity>(
         'Categories fetched successfully',
@@ -105,7 +129,7 @@ class CategoryController {
   @Roles(UserRole.ADMIN)
   async updateCategory(
     @Request() req: AuthRequest,
-    @Param() params: UpdateCategoryIDDto,
+    @Param() params: ReadCategoryIDDto,
     @Body() body: UpdateCategoryTitleDto,
   ) {
     try {
@@ -134,7 +158,7 @@ class CategoryController {
   @Roles(UserRole.ADMIN)
   async deleteCategory(
     @Request() req: AuthRequest,
-    @Param() params: DeleteCategoryDto,
+    @Param() params: ReadCategoryIDDto,
   ) {
     try {
       const { user } = req;

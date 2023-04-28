@@ -20,12 +20,16 @@
       "@database/*": ["src/database/*"],
       "@logger/*": ["src/logger/*"],
       "@queue/*": ["src/queue/*"],
+      "@quiz/*": ["src/quiz/*"],
+      "@quiz-user/*": ["src/quiz-user/*"],
       "@response/*": ["src/response/*"],
       "@section/*": ["src/section/*"],
       "@storage/*": ["src/storage/*"],
       "@user/*": ["src/user/*"],
       "@validator/*": ["src/validator/*"],
-      "@video/*": ["src/video/*"]
+      "@jobs/*": ["src/jobs/*"],
+      "@rating/*": ["src/rating/*"],
+      "@recommendation/*": ["src/recommendation/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -5,6 +5,8 @@ import UserRole from '@user/enum/user-role';
 import CourseEntity from '@course/models/course.model';
 import FileEntity from '@file/models/file.model';
 import CategoryEntity from '@category/models/category.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
+import RatingEntity from '@rating/models/rating.model';
 
 @Entity('user')
 class UserEntity extends Base {
@@ -15,7 +17,7 @@ class UserEntity extends Base {
   @Exclude()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT})
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.STUDENT })
   readonly role: UserRole;
 
   @OneToMany(() => CourseEntity, (course) => course.admin)
@@ -27,8 +29,13 @@ class UserEntity extends Base {
   @OneToMany(() => FileEntity, (file) => file.admin)
   files: Promise<FileEntity[]>;
 
+  @OneToMany(() => QuizUserEntity, (quizUser) => quizUser.users)
+  quizzes: Promise<QuizUserEntity[]>;
+
+  @OneToMany(() => RatingEntity, (rating) => rating.user)
+  ratings: Promise<RatingEntity[]>;
+
   @ManyToMany(() => CourseEntity, (course) => course.subscribers)
-  @JoinTable({ name: 'course_user' })
   courses_subscribed: Promise<CourseEntity[]>;
 }
 

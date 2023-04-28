@@ -13,19 +13,20 @@ import {
   StreamableFile,
   UseInterceptors,
   UploadedFile,
+  ParseFilePipe,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProperty } from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { Response } from 'express';
+import { lookup } from 'mime-types';
 import FileEntity from '@file/models/file.model';
 import FileService from '@file/services/file.service';
 import ResponseObject from '@response/class/response-object';
 import ResponseList from '@response/class/response-list';
-import RenderFileDto from '@file/dto/render-file';
+import ReadFileIDDto from '@file/dto/read-file-id';
 import ReadFileNameDto from '@file/dto/read-file-name';
-import DeleteFileDto from '@file/dto/delete-file';
-import UpdateFileIDDto from '@file/dto/update-file-id';
 import JwtAuthGuard from '@auth/guard/jwt.guard';
 import RolesGuard from '@user/guard/roles.guard';
 import Roles from '@user/guard/roles.decorator';
@@ -60,16 +61,36 @@ class FileController {
   @ApiProperty({ description: 'Render File' })
   @Get(':id')
   async renderFile(
-    @Param() param: RenderFileDto,
+    @Param() param: ReadFileIDDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
       const { id } = param;
 
-      const [buffer, mimetype] = await this.fileService.render(
-        id,
-        StorageType.FILE,
+      const [buffer, mimetype] = await this.fileService.render(id);
+      res.set({
+        'Content-Type': mimetype,
+      });
+
+      return new StreamableFile(buffer);
+    } catch (error) {
+      throw new HttpException(
+        (error as Error).message,
+        StatusCodes.BAD_REQUEST,
       );
+    }
+  }
+
+  @ApiProperty({ description: 'Stream File' })
+  @Get(':id')
+  async streamFile(
+    @Param() param: ReadFileIDDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const { id } = param;
+
+      const [buffer, mimetype] = await this.fileService.stream(id);
       res.set({
         'Content-Type': mimetype,
       });
@@ -98,7 +119,7 @@ class FileController {
 
       const files = await this.fileService.searchFilesByName(
         name,
-        StorageType.FILE,
+        StorageType.IMAGE,
         adminId,
       );
 
@@ -118,7 +139,15 @@ class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async createFile(
     @Request() req: AuthRequest,
-    @UploadedFile() content: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.png') as string }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -126,7 +155,7 @@ class FileController {
 
       const file = await this.fileService.create(
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -146,8 +175,16 @@ class FileController {
   @UseInterceptors(FileInterceptor('file'))
   async updateFile(
     @Request() req: AuthRequest,
-    @Param() param: UpdateFileIDDto,
-    @UploadedFile() content: Express.Multer.File,
+    @Param() param: ReadFileIDDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: lookup('.png') as string }),
+        ],
+        fileIsRequired: true,
+      }),
+    )
+    content: Express.Multer.File,
   ) {
     try {
       const { user } = req;
@@ -157,7 +194,7 @@ class FileController {
       const file = await this.fileService.edit(
         id,
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -176,14 +213,18 @@ class FileController {
   @Roles(UserRole.ADMIN)
   async DeleteFileDto(
     @Request() req: AuthRequest,
-    @Param() param: DeleteFileDto,
+    @Param() param: ReadFileIDDto,
   ) {
     try {
       const { user } = req;
       const { id } = param;
       const adminId = user.id;
 
-      const file = await this.fileService.delete(id, adminId, StorageType.FILE);
+      const file = await this.fileService.delete(
+        id,
+        adminId,
+        StorageType.IMAGE,
+      );
 
       return new ResponseObject<FileEntity>('File deleted successfully', file);
     } catch (error) {

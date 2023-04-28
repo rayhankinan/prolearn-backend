@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import CourseLevel from '@course/enum/course-level';
@@ -9,14 +9,17 @@ import IsCourseStatus from '@course/validator/course-status';
 class CreateCourseDto {
   @ApiProperty({
     description: 'Course Title',
+    type: String,
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly title: string;
 
   @ApiProperty({
     description: 'Course Description',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -26,6 +29,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Difficulty',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -35,6 +39,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Category',
+    type: Number,
     isArray: true,
     required: false,
   })
@@ -45,6 +50,7 @@ class CreateCourseDto {
 
   @ApiProperty({
     description: 'Course Status',
+    type: String,
     required: false,
   })
   @IsOptional()

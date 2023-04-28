@@ -26,14 +26,14 @@ class CourseService {
   }
 
   async fetchCourse(
-    categoryId: number[],
+    categoryIDs: number[],
     title: string,
     difficulty: CourseLevel,
-    limit: number,
-    page: number,
     subscribed: boolean,
     adminId: number,
     studentId: number,
+    limit: number,
+    page: number,
   ): Promise<{
     courses: CourseEntity[];
     count: number;
@@ -46,7 +46,7 @@ class CourseService {
       },
       title: title ? ILike(`%${title}%`) : undefined,
       difficulty,
-      categories: { id: categoryId ? In(categoryId) : undefined },
+      categories: { id: categoryIDs ? In(categoryIDs) : undefined },
       subscribers: subscribed ? { id: studentId } : undefined,
     };
 
@@ -79,7 +79,7 @@ class CourseService {
   }
 
   async getCourseById(id: number, adminId: number): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
       relations: { categories: true, thumbnail: true },
     });
@@ -92,7 +92,7 @@ class CourseService {
     description: string,
     difficulty: CourseLevel,
     status: CourseStatus,
-    categoryIds: number[],
+    categoryIDs: number[],
     adminId: number,
     content?: Express.Multer.File,
   ): Promise<CourseEntity> {
@@ -103,11 +103,11 @@ class CourseService {
     course.status = status;
 
     const categories = await this.categoryRepository.find({
-      where: { id: In(categoryIds) },
+      where: { id: In(categoryIDs) },
     });
     course.categories = Promise.resolve(categories);
 
-    const admin = await this.userRepository.findOne({
+    const admin = await this.userRepository.findOneOrFail({
       where: { id: adminId },
     });
     course.admin = Promise.resolve(admin);
@@ -115,7 +115,7 @@ class CourseService {
     if (content) {
       const savedFile = await this.fileService.create(
         adminId,
-        StorageType.FILE,
+        StorageType.IMAGE,
         content,
       );
 
@@ -135,7 +135,7 @@ class CourseService {
     adminId: number,
     content?: Express.Multer.File,
   ): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
 
@@ -156,14 +156,14 @@ class CourseService {
         const editedFile = await this.fileService.edit(
           thumbnail.id,
           adminId,
-          StorageType.FILE,
+          StorageType.IMAGE,
           content,
         );
         course.thumbnail = Promise.resolve(editedFile);
       } else {
         const newFile = await this.fileService.create(
           adminId,
-          StorageType.FILE,
+          StorageType.IMAGE,
           content,
         );
         course.thumbnail = Promise.resolve(newFile);
@@ -174,13 +174,13 @@ class CourseService {
   }
 
   async delete(id: number, adminId: number): Promise<CourseEntity> {
-    const course = await this.courseRepository.findOne({
+    const course = await this.courseRepository.findOneOrFail({
       where: { id, admin: { id: adminId } },
     });
     const thumbnail = await course.thumbnail;
 
     if (thumbnail) {
-      await this.fileService.delete(thumbnail.id, adminId, StorageType.FILE);
+      await this.fileService.delete(thumbnail.id, adminId, StorageType.IMAGE);
     }
 
     return await this.courseRepository.softRemove(course);

@@ -1,18 +1,28 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import QuizType from '@quiz/types/quiz.type';
 
 class CreateSectionDto {
   @ApiProperty({
     description: 'Section Title',
+    type: String,
     required: true,
   })
   @IsString()
+  @MaxLength(255)
   @Type(() => String)
   readonly title: string;
 
   @ApiProperty({
     description: 'Section Objective',
+    type: String,
     required: false,
   })
   @IsOptional()
@@ -22,6 +32,7 @@ class CreateSectionDto {
 
   @ApiProperty({
     description: 'Section Duration',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -29,16 +40,8 @@ class CreateSectionDto {
   readonly duration: number;
 
   @ApiProperty({
-    description: 'Section Parent',
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  readonly parentId?: number;
-
-  @ApiProperty({
     description: 'Section Course ID',
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -46,13 +49,13 @@ class CreateSectionDto {
   readonly courseId: number;
 
   @ApiProperty({
-    description: 'Section Ancestor',
-    required: true,
+    description: 'Section Quiz Content',
+    type: String,
+    required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @Type(() => Boolean)
-  readonly isAncestor: boolean;
+  @Type(() => String)
+  readonly quizContent?: string;
 }
 
 export default CreateSectionDto;

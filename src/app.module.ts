@@ -1,9 +1,9 @@
 import {
   CacheInterceptor,
-  CacheModule,
   ClassSerializerInterceptor,
   Module,
 } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -15,6 +15,11 @@ import CourseModule from '@course/course.module';
 import UserModule from '@user/user.module';
 import FileModule from '@file/file.module';
 import SectionModule from '@section/section.module';
+import QuizModule from '@quiz/quiz.module';
+import QuizUserModule from '@quiz-user/quiz-user.module';
+import JobsModule from '@jobs/jobs.module';
+import RatingModule from '@rating/rating.module';
+import RecommendationModule from '@recommendation/recommendation.module';
 
 @Module({
   imports: [
@@ -27,6 +32,11 @@ import SectionModule from '@section/section.module';
     CourseModule,
     SectionModule,
     FileModule,
+    QuizModule,
+    QuizUserModule,
+    JobsModule,
+    RatingModule,
+    RecommendationModule,
   ],
   controllers: [],
   providers: [

@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class ReadSectionCourseDto {
   @ApiProperty({
     description: 'Course ID',
+    type: Number,
     required: true,
   })
   @IsNumber()

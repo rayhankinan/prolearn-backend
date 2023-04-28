@@ -2,14 +2,15 @@ import { DataSourceOptions } from 'typeorm';
 import CategoryEntity from '@category/models/category.model';
 import CourseEntity from '@course/models/course.model';
 import SectionEntity from '@section/models/section.model';
-import MaterialEntity from '@section/models/material.model';
-import ProjectEntity from '@section/models/project.model';
-import QuizEntity from '@section/models/quiz.model';
 import UserEntity from '@user/models/user.model';
 import FileEntity from '@file/models/file.model';
+import QuizEntity from '@quiz/models/quiz.model';
 import UserSubscriber from '@user/subscribers/user.subscriber';
+import RatingSubscriber from '@rating/subscribers/rating.subscriber';
 import AdminSeeding from '@database/migrations/admin-migration';
-import VideoEntity from '@section/models/video.model';
+import QuizUserEntity from '@quiz-user/models/quiz-user.model';
+import JobsEntity from '@jobs/models/jobs.model';
+import RatingEntity from '@rating/models/rating.model';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -27,14 +28,14 @@ const dataSourceOptions: DataSourceOptions = {
     CategoryEntity,
     CourseEntity,
     SectionEntity,
-    MaterialEntity,
-    VideoEntity,
-    ProjectEntity,
-    QuizEntity,
     UserEntity,
     FileEntity,
+    QuizEntity,
+    QuizUserEntity,
+    JobsEntity,
+    RatingEntity,
   ],
-  subscribers: [UserSubscriber],
+  subscribers: [UserSubscriber, RatingSubscriber],
   migrations: [AdminSeeding],
 };
 

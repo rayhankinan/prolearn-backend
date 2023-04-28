@@ -5,6 +5,7 @@ import { Type } from 'class-transformer';
 class ReadSectionTitleDto {
   @ApiProperty({
     description: 'Section Title',
+    type: String,
     required: true,
   })
   @IsString()
