@@ -6,11 +6,11 @@ import CloudLogger from '@logger/class/cloud-logger';
 import RatingEntity from '@rating/models/rating.model';
 import CourseEntity from '@course/models/course.model';
 import UserEntity from '@user/models/user.model';
+import UserRole from '@user/enum/user-role';
 import jaccardIndex from '@recommendation/utils/jaccard-index';
 import jaccardMap from '@recommendation/utils/jaccard-map';
 import pearsonMap from '@recommendation/utils/pearson-map';
 import pearsonCorrelation from '@recommendation/utils/pearson-correlation';
-import UserRole from '@user/enum/user-role';
 
 @Injectable()
 class RecommendationService {

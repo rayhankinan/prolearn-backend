@@ -1,9 +1,9 @@
 import {
   CacheInterceptor,
-  CacheModule,
   ClassSerializerInterceptor,
   Module,
 } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';

@@ -31,7 +31,7 @@ class CategoryService {
 
   async getCategoriesBySubscribed(userId: number): Promise<CategoryEntity[]> {
     const categories = await this.categoryRepository
-    // select * from course_user where userId = userId
+      // select * from course_user where userId = userId
       .createQueryBuilder('category')
       .leftJoinAndSelect('category.courses', 'course')
       .leftJoinAndSelect('course.subscribers', 'user')

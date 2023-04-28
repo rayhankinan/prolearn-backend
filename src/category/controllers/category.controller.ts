@@ -58,7 +58,9 @@ class CategoryController {
       const { user } = req;
       const userId = user.id;
 
-      const categories = await this.categoryService.getCategoriesBySubscribed(userId);
+      const categories = await this.categoryService.getCategoriesBySubscribed(
+        userId,
+      );
 
       return new ResponseList<CategoryEntity>(
         'Categories fetched successfully',
