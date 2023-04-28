@@ -33,6 +33,7 @@ class SectionService {
       relations: { file: true, quiz: true },
       where: { course: { id: course.id } },
       cache: true,
+      order: { id: 'ASC' },
     });
 
     return sections;
