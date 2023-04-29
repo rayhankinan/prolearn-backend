@@ -28,9 +28,9 @@ class JobsService implements OnModuleInit {
     for (const extension in ExtensionType) {
       const { codeDirPath, inputDirPath, outputDirPath } =
         mountConfig[ExtensionType[extension]];
-      const { hostname, username } = sshConfig;
+      const { hostname, username, port } = sshConfig;
       await execProm(
-        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "mkdir -p ${codeDirPath} ; mkdir -p ${inputDirPath} ; mkdir -p ${outputDirPath}"`,
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "mkdir -p ${codeDirPath} ; mkdir -p ${inputDirPath} ; mkdir -p ${outputDirPath}"`,
       );
     }
   }
@@ -45,7 +45,7 @@ class JobsService implements OnModuleInit {
     input?: string,
   ): Promise<JobsEntity> {
     const { codeDirPath, inputDirPath } = mountConfig[extension];
-    const { hostname, username } = sshConfig;
+    const { hostname, username, port } = sshConfig;
 
     const job = new JobsEntity();
     job.extension = extension;
@@ -55,7 +55,7 @@ class JobsService implements OnModuleInit {
     const cleanedCode = code.replace(/"/g, '\\"').replace(/'/g, "\\'");
 
     await execProm(
-      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${codeFilePath} ; echo '${cleanedCode}' > ${codeFilePath}"`,
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "touch ${codeFilePath} ; echo '${cleanedCode}' > ${codeFilePath}"`,
     );
 
     if (input) {
@@ -63,7 +63,7 @@ class JobsService implements OnModuleInit {
       const inputFilePath = join(inputDirPath, inputFileName);
       const cleanedInput = input.replace(/"/g, '\\"').replace(/'/g, "\\'");
       await execProm(
-        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "touch ${inputFilePath} ; echo '${cleanedInput}' > ${inputFilePath}"`,
+        `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "touch ${inputFilePath} ; echo '${cleanedInput}' > ${inputFilePath}"`,
       );
 
       await this.eventEmitter.emitAsync(
@@ -85,7 +85,7 @@ class JobsService implements OnModuleInit {
     outputFileName: string,
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { hostname, username, timeout } = sshConfig;
+    const { hostname, username, timeout, port } = sshConfig;
     const { outputDirPath } = mountConfig[ExtensionType.CPP];
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
@@ -95,12 +95,12 @@ class JobsService implements OnModuleInit {
     try {
       if (inputFilePath) {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "g++ ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
         );
         result = p.stdout;
       }
@@ -118,7 +118,7 @@ class JobsService implements OnModuleInit {
     outputFileName: string,
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { hostname, username, timeout } = sshConfig;
+    const { hostname, username, timeout, port } = sshConfig;
     const { outputDirPath } = mountConfig[ExtensionType.C];
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
@@ -128,12 +128,12 @@ class JobsService implements OnModuleInit {
     try {
       if (inputFilePath) {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "gcc ${codeFilePath} -o ${outFilePath} ; cd ${outputDirPath} ; ./${outputFileName}"`,
         );
         result = p.stdout;
       }
@@ -150,7 +150,7 @@ class JobsService implements OnModuleInit {
     codeFilePath: string,
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { hostname, username, timeout } = sshConfig;
+    const { hostname, username, timeout, port } = sshConfig;
 
     let isError = false;
     let result: string;
@@ -158,12 +158,12 @@ class JobsService implements OnModuleInit {
     try {
       if (inputFilePath) {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${codeFilePath} < ${inputFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "python3 ${codeFilePath} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "python3 ${codeFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "python3 ${codeFilePath}"`,
         );
         result = p.stdout;
       }
@@ -180,7 +180,7 @@ class JobsService implements OnModuleInit {
     codeFilePath: string,
     inputFilePath?: string,
   ): Promise<{ result: string; isError: boolean }> {
-    const { hostname, username, timeout } = sshConfig;
+    const { hostname, username, timeout, port } = sshConfig;
 
     let isError = false;
     let result: string;
@@ -188,12 +188,12 @@ class JobsService implements OnModuleInit {
     try {
       if (inputFilePath) {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${codeFilePath} < ${inputFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "node ${codeFilePath} < ${inputFilePath}"`,
         );
         result = p.stdout;
       } else {
         const p = await execProm(
-          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "node ${codeFilePath}"`,
+          `timeout ${timeout} sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "node ${codeFilePath}"`,
         );
         result = p.stdout;
       }
@@ -261,13 +261,13 @@ class JobsService implements OnModuleInit {
     outputFileName: string,
     inputFilePath?: string,
   ): Promise<void> {
-    const { hostname, username } = sshConfig;
+    const { hostname, username, port } = sshConfig;
 
     const { outputDirPath } = mountConfig[job.extension];
     const outFilePath = join(outputDirPath, `${outputFileName}`);
 
     await execProm(
-      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} "rm -rf ${codeFilePath} ; rm -rf ${outFilePath} ; rm -rf ${inputFilePath}"`,
+      `sshpass -e ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "LogLevel=ERROR" ${username}@${hostname} -p ${port} "rm -rf ${codeFilePath} ; rm -rf ${outFilePath} ; rm -rf ${inputFilePath}"`,
     );
 
     await this.jobsRepository.save(job);
