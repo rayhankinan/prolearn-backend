@@ -6,12 +6,6 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Update Ubuntu
-RUN apt-get update
-
-# Install SSH Password Authentication
-RUN apt-get install sshpass
-
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
@@ -20,6 +14,12 @@ RUN \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
+
+# Update Ubuntu
+RUN apt-get update
+
+# Install SSH Password Authentication
+RUN apt-get install sshpass
 
 # Rebuild the source code only when needed
 FROM base AS builder
