@@ -17,4 +17,4 @@ deploy:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID # Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$SERVICE_NAME # Run the gcloud build command to build our image
-    - gcloud compute instances create-with-container $SERVICE_NAME --zone=asia-southeast2-a --machine-type=e2-standard-2 --boot-disk-size=50GB --boot-disk-type=pd-balanced --container-image=gcr.io/$GCP_PROJECT_ID/$SERVICE_NAME --container-restart-policy=always --container-stdin --container-tty # Run the gcloud compute instance command to host our ssh server
+    - gcloud compute instances create-with-container $SERVICE_NAME --zone=asia-southeast2-b --machine-type=e2-standard-2 --boot-disk-size=50GB --boot-disk-type=pd-balanced --container-image=gcr.io/$GCP_PROJECT_ID/$SERVICE_NAME --container-restart-policy=always --container-stdin --container-tty # Run the gcloud compute instance command to host our ssh server
