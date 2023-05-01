@@ -2,6 +2,7 @@ FROM node:18
 
 WORKDIR /app
 
+# Update linux packages
 RUN apt-get update
 
 # Install SSH Password Authentication
