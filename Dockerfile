@@ -1,9 +1,14 @@
-FROM node:18 AS base
+FROM node:18-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+
+# Update Ubuntu
+RUN apk update
 RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache sshpass
+
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -15,11 +20,8 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# Update Ubuntu
-RUN apt-get update
 
-# Install SSH Password Authentication
-RUN apt-get install sshpass
+
 
 # Rebuild the source code only when needed
 FROM base AS builder
