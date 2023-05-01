@@ -15,7 +15,7 @@ async function bootstrap() {
   app.use(compression());
 
   /* CORS */
-  app.enableCors();
+  app.enableCors({ origin: '*' });
 
   /* Input Validation */
   app.useGlobalPipes(
